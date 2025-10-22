@@ -1,0 +1,18 @@
+# Author:  Michael Jørgensen
+#
+# Description: Makefile for simulating the axi_fifo_wide.vhd file.
+
+# List of source files
+SRC += $(SRC_DIR)/axi_fifo_wide.vhd
+
+# List of test specific simulation files
+SRC += tb_axi_fifo_wide.vhd
+
+# Top level entity
+DUT = axi_fifo_wide
+
+# Test duration
+STOP_TIME = 10us
+
+include ../Makefile.inc
+

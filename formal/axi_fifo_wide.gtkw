@@ -1,0 +1,43 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Wed Oct 22 12:37:16 2025
+[*]
+[dumpfile] "/home/mfj/git/Weibel/pcb1036/main/formal/axi_fifo_wide_bmc/engine_0/trace.vcd"
+[dumpfile_mtime] "Wed Oct 22 12:35:46 2025"
+[dumpfile_size] 1424
+[savefile] "/home/mfj/git/Weibel/pcb1036/main/formal/axi_fifo_wide.gtkw"
+[timestart] 0
+[size] 1328 869
+[pos] -122 -135
+*-3.639464 11 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] axi_fifo_wide.
+[sst_width] 210
+[signals_width] 243
+[sst_expanded] 1
+[sst_vpaned_height] 237
+@28
+axi_fifo_wide.clk_i
+axi_fifo_wide.rst_i
+[color] 7
+axi_fifo_wide.s_ready_o
+[color] 2
+axi_fifo_wide.s_valid_i
+@22
+axi_fifo_wide.s_data_i[7:0]
+@28
+axi_fifo_wide.s_bytes_i
+[color] 7
+axi_fifo_wide.m_ready_i
+axi_fifo_wide.m_bytes_i
+[color] 2
+axi_fifo_wide.m_valid_o
+@22
+axi_fifo_wide.m_data_o[7:0]
+@28
+axi_fifo_wide.m_bytes_o
+@22
+axi_fifo_wide.data[7:0]
+@28
+axi_fifo_wide.bytes
+[pattern_trace] 1
+[pattern_trace] 0
