@@ -7,6 +7,7 @@ library ieee;
 
 entity tcp_wrapper is
   generic (
+    G_SHOW_PROTOCOL           : boolean;
     G_INITIAL_SEQUENCE_NUMBER : std_logic_vector(31 downto 0);
     G_SIM_NAME                : string;  -- Used in simulation
     G_IP_PAYLOAD_BYTES        : natural; -- Width of IP payload data interface
@@ -106,19 +107,27 @@ architecture synthesis of tcp_wrapper is
     return res_v;
   end function byte_reverse;
 
+  signal   session_established_d : std_logic;
+
 begin
 
   assert G_IP_PAYLOAD_BYTES > C_TCP_HEADER;
 
+  session_tx_ready_o <= session_established_o and tx_valid and
+                        (ip_payload_tx_ready_i or not ip_payload_tx_valid_o);
+
   tx_proc : process (clk_i)
   begin
     if rising_edge(clk_i) then
+      session_established_d <= session_established_o;
+
       if ip_payload_tx_ready_i = '1' then
         tx_ready              <= '1';
         ip_payload_tx_valid_o <= '0';
       end if;
 
-      if ip_payload_tx_valid_o = '0' and tx_valid = '1' then
+      if (ip_payload_tx_valid_o = '0' or ip_payload_tx_ready_i = '1') and tx_valid = '1' then
+        -- Prepare TCP header
         ip_payload_tx_data_o(R_TCP_SRC_PORT)    <= byte_reverse(tx_src_port);
         ip_payload_tx_data_o(R_TCP_DST_PORT)    <= byte_reverse(tx_dst_port);
         ip_payload_tx_data_o(R_TCP_SEQ_NUMBER)  <= byte_reverse(tx_seq_number);
@@ -131,8 +140,27 @@ begin
         ip_payload_tx_data_o(R_TCP_URGENT_PTR)  <= byte_reverse(tx_urgent_ptr);
         ip_payload_tx_bytes_o                   <= C_TCP_HEADER;
         ip_payload_tx_last_o                    <= '1';
-        ip_payload_tx_valid_o                   <= '1';
-        tx_ready                                <= '0';
+
+        if session_established_o = '0' then
+          -- Session being established, send TCP header.
+          ip_payload_tx_valid_o <= '1';
+          tx_ready              <= '0';
+        end if;
+
+        if session_tx_valid_i = '1' and session_tx_ready_o = '1' then
+          if G_SHOW_PROTOCOL then
+            report G_SIM_NAME & " : Send TCP header with " & to_string(session_tx_bytes_i) &
+                   " bytes of data:" &
+                   to_hstring(session_tx_data_i(session_tx_bytes_i * 8 - 1 downto 0));
+          end if;
+          -- Session is established, send TCP header with data.
+          ip_payload_tx_data_o(C_TCP_HEADER * 8 + session_tx_bytes_i * 8 - 1 downto C_TCP_HEADER * 8)
+                                <= session_tx_data_i(session_tx_bytes_i * 8 - 1 downto 0);
+
+          ip_payload_tx_bytes_o <= C_TCP_HEADER + session_tx_bytes_i;
+          ip_payload_tx_valid_o <= '1';
+          tx_ready              <= '0';
+        end if;
       end if;
 
       if rst_i = '1' then
@@ -163,8 +191,21 @@ begin
         rx_window             <= byte_reverse(ip_payload_rx_data_i(R_TCP_WINDOW));
         rx_chksum             <= byte_reverse(ip_payload_rx_data_i(R_TCP_CHKSUM));
         rx_urgent_ptr         <= byte_reverse(ip_payload_rx_data_i(R_TCP_URGENT_PTR));
+
+        -- Process TCP header.
         rx_valid              <= '1';
         ip_payload_rx_ready_o <= '0';
+
+        if ip_payload_rx_bytes_i > C_TCP_HEADER then
+          session_rx_valid_o <= '1';
+          session_rx_bytes_o <= ip_payload_rx_bytes_i - C_TCP_HEADER;
+          if G_SESSION_BYTES + C_TCP_HEADER <= G_IP_PAYLOAD_BYTES then
+            session_rx_data_o <= ip_payload_rx_data_i(G_SESSION_BYTES * 8 - 1 + C_TCP_HEADER * 8 downto C_TCP_HEADER * 8);
+          else
+            session_rx_data_o(G_IP_PAYLOAD_BYTES * 8 - 1 - C_TCP_HEADER * 8 downto 0)
+              <= ip_payload_rx_data_i(G_IP_PAYLOAD_BYTES * 8 - 1 downto C_TCP_HEADER * 8);
+          end if;
+        end if;
       end if;
 
       if rst_i = '1' then
@@ -176,6 +217,7 @@ begin
 
   tcp_protocol_inst : entity work.tcp_protocol
     generic map (
+      G_DEBUG                   => G_SHOW_PROTOCOL,
       G_INITIAL_SEQUENCE_NUMBER => G_INITIAL_SEQUENCE_NUMBER,
       G_SIM_NAME                => G_SIM_NAME
     )

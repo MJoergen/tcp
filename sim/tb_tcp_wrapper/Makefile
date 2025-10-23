@@ -14,7 +14,12 @@ SRC += data_logger.vhd
 DUT = tcp_wrapper
 
 # Test duration
-STOP_TIME = 2ms
+STOP_TIME = 2us
+
+# Test specific generics
+#GENERIC += -gG_SHOW_TESTS=true
+#GENERIC += -gG_SHOW_PACKETS=true
+#GENERIC += -gG_SHOW_PROTOCOL=true
 
 # Don't stop on errors
 ASSERT_LEVEL = none

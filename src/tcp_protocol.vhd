@@ -6,6 +6,7 @@ library ieee;
 
 entity tcp_protocol is
   generic (
+    G_DEBUG                   : boolean;
     G_INITIAL_SEQUENCE_NUMBER : std_logic_vector(31 downto 0);
     G_SIM_NAME                : string -- Used in simulation
   );
@@ -95,7 +96,7 @@ begin
         tx_options_o     <= (others => '0');
       end if;
 
-      if rx_valid_i = '1' and rx_ready_o = '1' then
+      if rx_valid_i = '1' and rx_ready_o = '1' and G_DEBUG then
         report G_SIM_NAME & ": Received packet";
       end if;
 
@@ -105,7 +106,9 @@ begin
           -- Waiting for a connection request from any remote TCP end-point.
           if rx_valid_i = '1' and rx_ready_o = '1' then
             if rx_flags_i(C_FLAGS_SYN) = '1' and rx_flags_i(C_FLAGS_ACK) = '0' and rx_dst_port_i = src_port then
-              report G_SIM_NAME & ": LISTEN_ST: SYN received";
+              if G_DEBUG then
+                report G_SIM_NAME & ": LISTEN_ST: SYN received";
+              end if;
               dst_port                <= rx_src_port_i;
               tx_ack_number           <= std_logic_vector(unsigned(rx_seq_number_i) + 1);
 
@@ -117,7 +120,9 @@ begin
               tx_valid_o              <= '1';
               state                   <= SYN_RECEIVED_ST;
             else
-              report G_SIM_NAME & ": LISTEN_ST: Sending RST";
+              if G_DEBUG then
+                report G_SIM_NAME & ": LISTEN_ST: Sending RST";
+              end if;
               -- Send RST
               tx_src_port_o           <= rx_dst_port_i;
               tx_dst_port_o           <= rx_src_port_i;
@@ -131,7 +136,9 @@ begin
           -- request.
           if rx_valid_i = '1' and rx_ready_o = '1' then
             if rx_flags_i(C_FLAGS_SYN) = '1' and rx_flags_i(C_FLAGS_ACK) = '1' and rx_dst_port_i = src_port then
-              report G_SIM_NAME & ": SYN_SENT_ST: SYN-ACK received";
+              if G_DEBUG then
+                report G_SIM_NAME & ": SYN_SENT_ST: SYN-ACK received";
+              end if;
               tx_seq_number           <= std_logic_vector(unsigned(tx_seq_number) + 1);
               tx_ack_number           <= std_logic_vector(unsigned(rx_seq_number_i) + 1);
 
@@ -144,7 +151,9 @@ begin
               tx_valid_o              <= '1';
               state                   <= ESTABLISHED_ST;
             else
-              report G_SIM_NAME & ": SYN_SENT_ST: Sending RST";
+              if G_DEBUG then
+                report G_SIM_NAME & ": SYN_SENT_ST: Sending RST";
+              end if;
               -- Send RST
               tx_src_port_o           <= rx_src_port_i;
               tx_dst_port_o           <= rx_dst_port_i;
@@ -158,17 +167,14 @@ begin
           -- received and sent a connection request.
           if rx_valid_i = '1' and rx_ready_o = '1' then
             if rx_flags_i(C_FLAGS_SYN) = '0' and rx_flags_i(C_FLAGS_ACK) = '1' and rx_dst_port_i = src_port then
-              report G_SIM_NAME & ": SYN_RECEIVED_ST: SYN-ACK received";
---              dst_port                <= rx_dst_port_i;
---
---              -- Send ACK
---              tx_dst_port_o           <= rx_dst_port_i;
---              tx_flags_o(C_FLAGS_ACK) <= '1';
---              tx_flags_o(C_FLAGS_SYN) <= '0';
---              tx_valid_o              <= '1';
-              state                   <= ESTABLISHED_ST;
+              if G_DEBUG then
+                report G_SIM_NAME & ": SYN_RECEIVED_ST: SYN-ACK received";
+              end if;
+              state <= ESTABLISHED_ST;
             else
-              report G_SIM_NAME & ": SYN_RECEIVED_ST: Sending RST";
+              if G_DEBUG then
+                report G_SIM_NAME & ": SYN_RECEIVED_ST: Sending RST";
+              end if;
               -- Send RST
               tx_src_port_o           <= rx_src_port_i;
               tx_dst_port_o           <= rx_dst_port_i;
@@ -180,8 +186,10 @@ begin
         when ESTABLISHED_ST =>
           -- An open connection, data received can be delivered to the user. The normal
           -- state for the data transfer phase of the connection.
-          established_o <= '1';
-          state         <= ESTABLISHED_ST;
+          established_o           <= '1';
+          tx_flags_o(C_FLAGS_ACK) <= '1';
+          tx_valid_o              <= '1';
+          state                   <= ESTABLISHED_ST;
 
         when FIN_WAIT_1_ST =>
           -- Waiting for a connection termination request from the remote TCP, or an
@@ -221,12 +229,16 @@ begin
         when IDLE_ST =>
           if start_i = '1' then
             if unsigned(dst_port_i) = 0 then
-              report G_SIM_NAME & ": IDLE_ST: Listening on port " & to_hstring(src_port_i);
+              if G_DEBUG then
+                report G_SIM_NAME & ": IDLE_ST: Listening on port " & to_hstring(src_port_i);
+              end if;
               src_port <= src_port_i;
               state    <= LISTEN_ST;
             else
-              report G_SIM_NAME & ": IDLE_ST: Connecting to port " & to_hstring(dst_port_i) &
-                     " from port " & to_hstring(src_port_i);
+              if G_DEBUG then
+                report G_SIM_NAME & ": IDLE_ST: Connecting to port " & to_hstring(dst_port_i) &
+                       " from port " & to_hstring(src_port_i);
+              end if;
               src_port                <= src_port_i;
               dst_port                <= dst_port_i;
 

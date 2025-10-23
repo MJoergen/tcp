@@ -6,6 +6,7 @@ library ieee;
 
 entity data_logger is
   generic (
+    G_ENABLE    : boolean;
     G_LOG_NAME  : string(1 to 3);
     G_DATA_SIZE : natural
   );
@@ -52,7 +53,7 @@ begin
     variable num_rows_v   : natural range 1 to G_DATA_SIZE / 8 / C_BYTES_PER_ROW;
   begin
     if rising_edge(clk_i) then
-      if valid_i = '1' and ready_i = '1' then
+      if valid_i = '1' and ready_i = '1' and G_ENABLE then
         -- Total number of bytes in packet
         bytes_v := G_DATA_SIZE / 8;
         if bytes_i > 0 then
