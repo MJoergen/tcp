@@ -3,16 +3,63 @@ vunit axi_fifo_wide_inst(axi_fifo_wide(synthesis))
 -- set all declarations to run on clk_i
    default clock is rising_edge(clk_i);
 
+   signal f_old_m_bytes : natural range 0 to G_DATA_SIZE/8;
+   signal f_m_data      : std_logic_vector(G_DATA_SIZE - 1 downto 0);
+   signal f_old_m_data  : std_logic_vector(G_DATA_SIZE - 1 downto 0);
+
+   f_old_m_bytes_proc : process (clk_i)
+   begin
+     if rising_edge(clk_i) then
+       f_old_m_bytes <= m_bytes_o;
+       if rst_i = '1' then
+         f_old_m_bytes <= 0;
+       end if;
+     end if;
+   end process f_old_m_bytes_proc;
+
+   f_m_data_proc : process (all)
+   begin
+     f_m_data <= m_data_o;
+     -- Clear out unused bits
+     for b in G_DATA_SIZE / 8 - 1 downto 0 loop
+       if b >= f_old_m_bytes then
+         f_m_data(b*8+7 downto b*8) <= X"00";
+       end if;
+     end loop;
+   end process f_m_data_proc;
+
+   f_old_m_data_proc : process (clk_i)
+   begin
+     if rising_edge(clk_i) then
+       f_old_m_data <= m_data_o;
+       -- Clear out unused bits
+       for b in G_DATA_SIZE / 8 - 1 downto 0 loop
+         if b >= m_bytes_o then
+           f_old_m_data(b*8+7 downto b*8) <= X"00";
+         end if;
+       end loop;
+     end if;
+   end process f_old_m_data_proc;
+
+
+
 -----------------------------
 -- ASSERTIONS ABOUT OUTPUTS
 -----------------------------
 
 -- Master must be empty after reset
-   f_master_after_reset_empty : assert always {rst_i} |=> not (m_valid_o);
+   f_master_after_reset_empty : assert always {rst_i} |=> {not m_valid_o};
 
 -- Master valid and data must be stable until accepted
    f_master_stable : assert always {m_valid_o and not m_ready_i and not rst_i} |=>
-      {stable(m_valid_o) and stable(m_data_o)};
+      {stable(m_valid_o) and f_m_data = f_old_m_data};
+
+-- Master bytes must be non-decreasing until accepted
+   f_master_bytes : assert always {m_valid_o and not m_ready_i and not rst_i} |=>
+      {m_bytes_o >= f_old_m_bytes};
+
+-- Slave must be ready after reset
+   f_slave_after_reset_ready : assert always {rst_i} |=> {s_ready_o};
 
 
 -----------------------------
@@ -22,12 +69,16 @@ vunit axi_fifo_wide_inst(axi_fifo_wide(synthesis))
 -- Require reset at startup.
    f_reset : assume {rst_i};
 
-   f_bytes : assume always {m_bytes_i > 0};
+-- Input bytes must be a valid number.
+   f_s_bytes_valid : assume always {s_bytes_i <= G_DATA_SIZE / 8};
+   f_m_bytes_valid : assume always {m_bytes_i <= G_DATA_SIZE / 8};
 
 
 --------------------------------------------
 -- COVER STATEMENTS TO VERIFY REACHABILITY
 --------------------------------------------
+
+   f_master_full : cover {not s_ready_o and not rst_i};
 
 } -- vunit axi_fifo_wide_inst(axi_fifo_wide(synthesis))
 

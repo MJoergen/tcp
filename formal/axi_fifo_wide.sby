@@ -5,7 +5,7 @@ bmc
 [options]
 cover: mode cover
 cover: depth 10
-cover: append 3
+cover: append 1
 bmc: mode bmc
 bmc: depth 10
 
@@ -13,7 +13,7 @@ bmc: depth 10
 smtbmc
 
 [script]
-ghdl --std=08 -gG_DATA_SIZE=8 axi_fifo_wide.vhd axi_fifo_wide.psl -e axi_fifo_wide
+ghdl --std=08 -gG_DATA_SIZE=32 axi_fifo_wide.vhd axi_fifo_wide.psl -e axi_fifo_wide
 prep -top axi_fifo_wide
 
 [files]

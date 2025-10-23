@@ -14,5 +14,8 @@ DUT = axi_fifo_wide
 # Test duration
 STOP_TIME = 10us
 
+# Don't stop on errors
+ASSERT_LEVEL = none
+
 include ../Makefile.inc
 

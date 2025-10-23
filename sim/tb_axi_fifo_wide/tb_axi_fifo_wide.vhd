@@ -21,7 +21,7 @@ end entity tb_axi_fifo_wide;
 
 architecture simulation of tb_axi_fifo_wide is
 
-  constant C_DATA_SIZE : natural := 32;
+  constant C_DATA_SIZE : natural := 32; -- Number of bits
 
   signal   clk     : std_logic   := '1';
   signal   rst     : std_logic   := '1';
@@ -57,35 +57,72 @@ begin
     procedure send (
       arg : std_logic_vector
     ) is
+      variable arg_v : std_logic_vector(arg'high downto arg'low);
     begin
-      report "Sending: " & to_hstring(arg);
-      assert s_valid = '0' or s_ready = '1';
-      s_data(arg'high downto arg'low) <= arg;
-      s_bytes                         <= arg'length / 8;
-      s_valid                         <= '1';
+      -- This is a VHDL trick necessary to convert from a rising range to a falling range.
+      arg_v               := arg;
+      report "Sending: " & to_hstring(arg_v);
+      assert s_valid = '0' or s_ready = '1'
+        report "FAIL: Tx buffer full";
+
+      s_data(arg_v'range) <= arg_v;
+      s_bytes             <= arg_v'length / 8;
+      s_valid             <= '1';
       wait until rising_edge(clk);
-      while s_ready = '0' loop
-        wait until rising_edge(clk);
-      end loop;
-      s_data(arg'high downto arg'low) <= (others => '0');
-      s_bytes                         <= 0;
-      s_valid                         <= '0';
+
+      assert s_ready = '1'
+        report "FAIL: Tx buffer not ready";
+
+      s_data(arg_v'range) <= (others => '0');
+      s_bytes             <= 0;
+      s_valid             <= '0';
     end procedure send;
 
     procedure verify (
-      arg : std_logic_vector
+      arg  : std_logic_vector;
+      full : boolean := false -- Set to true to empty the output buffer
     ) is
+      variable exp_v : std_logic_vector(arg'high downto arg'low);
     begin
-      m_bytes_consume <= arg'length / 8;
-      m_ready         <= '1';
-      wait for 0 ns;
-      while m_valid = '0' loop
-        wait until rising_edge(clk);
-      end loop;
-      assert m_data(arg'high downto arg'low) = arg
-        report "Verify FAIL: " &
-               "Received " & to_hstring(m_data(arg'high downto arg'low)) &
-               ", expected " & to_hstring(arg);
+      -- This is a VHDL trick necessary to convert from a rising range to a falling range.
+      exp_v := arg;
+
+      if full then
+        -- Consume entire buffer
+        m_bytes_consume <= 0;
+      else
+        -- Consume only the specified number of bytes
+        m_bytes_consume <= arg'length / 8;
+      end if;
+
+      m_ready <= '1';
+
+      -- Simulation trick to allow combinatorial paths to update
+      wait for 1 ns;
+
+      assert m_valid = '1'
+        report "Verify FAIL: m_valid not set";
+
+      if full then
+        -- "Give me everything you've got".
+        assert m_bytes_avail = arg'length / 8
+          report "Verify FAIL (full): " &
+                 "Received " & to_string(m_bytes_avail) & " bytes." &
+                 " Expected " & to_string(arg'length / 8) & " bytes.";
+      else
+        -- "Give me what I want".
+        assert m_bytes_avail >= m_bytes_consume
+          report "Verify FAIL (partial): " &
+                 "Received " & to_string(m_bytes_avail) & " bytes." &
+                 " Expected " & to_string(m_bytes_consume) & " bytes.";
+      end if;
+
+      report "Verify received : " & to_hstring(m_data(arg'length/8 * 8 - 1 downto 0));
+
+      assert m_data(arg'length/8 * 8 - 1 downto 0) = exp_v(arg'length/8 * 8 - 1 downto 0)
+        report "Verify FAIL: Expected " & to_hstring(exp_v(arg'length/8 * 8 - 1 downto 0));
+
+      wait until rising_edge(clk);
       m_ready <= '0';
     end procedure verify;
 
@@ -101,8 +138,20 @@ begin
 
     send(X"11");
     send(X"22");
-    send(X"3344");
-    verify(X"33442211");
+    send(X"4433");
+    verify(X"11");               -- Partial
+    send(X"55");
+
+    s_bytes <= 1;
+    -- Simulation trick to allow combinatorial paths to update
+    wait for 1 ns;
+
+    assert s_ready = '0'
+      report "FAIL: Tx buffer still ready";
+
+    verify(X"443322");           -- Partial
+    send(X"66");
+    verify(X"6655", true);
 
     report "Test finished";
     wait until rising_edge(clk);

@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Wed Oct 22 12:37:16 2025
+[*] Thu Oct 23 08:36:16 2025
 [*]
-[dumpfile] "/home/mfj/git/Weibel/pcb1036/main/formal/axi_fifo_wide_bmc/engine_0/trace.vcd"
-[dumpfile_mtime] "Wed Oct 22 12:35:46 2025"
-[dumpfile_size] 1424
-[savefile] "/home/mfj/git/Weibel/pcb1036/main/formal/axi_fifo_wide.gtkw"
+[dumpfile] "/home/mfj/git/PRIVATE/MJoergen/tcp/formal/axi_fifo_wide_cover/engine_0/trace1.vcd"
+[dumpfile_mtime] "Thu Oct 23 08:36:07 2025"
+[dumpfile_size] 2152
+[savefile] "/home/mfj/git/PRIVATE/MJoergen/tcp/formal/axi_fifo_wide.gtkw"
 [timestart] 0
 [size] 1328 869
-[pos] -122 -135
-*-3.639464 11 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] -1 -1
+*-3.320170 26 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] axi_fifo_wide.
 [sst_width] 210
 [signals_width] 243
@@ -23,21 +23,27 @@ axi_fifo_wide.s_ready_o
 [color] 2
 axi_fifo_wide.s_valid_i
 @22
-axi_fifo_wide.s_data_i[7:0]
+axi_fifo_wide.s_data_i[31:0]
+@24
+axi_fifo_wide.s_bytes_i[2:0]
+@200
+-
 @28
-axi_fifo_wide.s_bytes_i
 [color] 7
 axi_fifo_wide.m_ready_i
-axi_fifo_wide.m_bytes_i
 [color] 2
 axi_fifo_wide.m_valid_o
 @22
-axi_fifo_wide.m_data_o[7:0]
-@28
-axi_fifo_wide.m_bytes_o
+axi_fifo_wide.m_data_o[31:0]
+@24
+axi_fifo_wide.m_bytes_o[2:0]
+axi_fifo_wide.m_bytes_i[2:0]
+@200
+-
+@24
+axi_fifo_wide.axi_fifo_wide_inst.f_old_m_bytes[2:0]
 @22
-axi_fifo_wide.data[7:0]
-@28
-axi_fifo_wide.bytes
+axi_fifo_wide.axi_fifo_wide_inst.f_m_data[31:0]
+axi_fifo_wide.axi_fifo_wide_inst.f_old_m_data[31:0]
 [pattern_trace] 1
 [pattern_trace] 0
