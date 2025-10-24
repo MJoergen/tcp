@@ -230,10 +230,29 @@ begin
     wait until rising_edge(clk);
 
     if G_SHOW_TESTS then
-      report "TB: Waiting for closure";
+      report "TB: Server waiting for closure from client";
     end if;
     timeout_v            := now + C_TIMEOUT;
-    while (client_session_established /= '0' or server_session_established /= '0') and
+    while (server_session_established /= '0') and
+      now < timeout_v
+    loop
+      wait until rising_edge(clk);
+    end loop;
+
+    assert now < timeout_v
+      report "TB: FAIL: Timeout waiting for closure";
+
+    if G_SHOW_TESTS then
+      report "TB: Closing down server";
+    end if;
+    server_session_start <= '0';
+    wait until rising_edge(clk);
+
+    if G_SHOW_TESTS then
+      report "TB: Client waiting for closure from server";
+    end if;
+    timeout_v            := now + C_TIMEOUT;
+    while (client_session_established /= '0') and
       now < timeout_v
     loop
       wait until rising_edge(clk);
@@ -243,6 +262,10 @@ begin
       report "TB: FAIL: Timeout waiting for closure";
 
     report "TB: Test stopped";
+    wait until rising_edge(clk);
+    wait until rising_edge(clk);
+    wait until rising_edge(clk);
+    wait until rising_edge(clk);
     wait until rising_edge(clk);
     running <= '0';
     wait;

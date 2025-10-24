@@ -135,7 +135,10 @@ begin
           -- Waiting for a matching connection request after having sent a connection
           -- request.
           if rx_valid_i = '1' and rx_ready_o = '1' then
-            if rx_flags_i(C_FLAGS_SYN) = '1' and rx_flags_i(C_FLAGS_ACK) = '1' and rx_dst_port_i = src_port then
+            if rx_flags_i(C_FLAGS_SYN) = '1' and
+               rx_flags_i(C_FLAGS_ACK) = '1' and
+               rx_dst_port_i = src_port and
+               rx_ack_number_i = std_logic_vector(unsigned(tx_seq_number) + 1) then
               if G_DEBUG then
                 report G_SIM_NAME & ": SYN_SENT_ST: SYN-ACK received";
               end if;
@@ -186,23 +189,73 @@ begin
         when ESTABLISHED_ST =>
           -- An open connection, data received can be delivered to the user. The normal
           -- state for the data transfer phase of the connection.
-          established_o           <= '1';
-          tx_flags_o(C_FLAGS_ACK) <= '1';
-          tx_valid_o              <= '1';
-          state                   <= ESTABLISHED_ST;
+          if start_i = '0' then
+            if G_DEBUG then
+              report G_SIM_NAME & ": ESTABLISHED_ST: Closing down";
+            end if;
+            established_o           <= '0';
+            -- Send FIN
+            tx_flags_o(C_FLAGS_FIN) <= '1';
+            tx_valid_o              <= '1';
+            state                   <= FIN_WAIT_1_ST;
+          else
+            established_o           <= '1';
+            tx_flags_o(C_FLAGS_ACK) <= '1';
+            tx_valid_o              <= '1';
+          end if;
+
+          if rx_valid_i = '1' and rx_ready_o = '1' then
+            if rx_flags_i(C_FLAGS_FIN) = '1' and rx_dst_port_i = src_port then
+              if G_DEBUG then
+                report G_SIM_NAME & ": ESTABLISHED_ST: FIN received";
+              end if;
+              established_o <= '0';
+              state         <= CLOSE_WAIT_ST;
+            end if;
+          end if;
 
         when FIN_WAIT_1_ST =>
           -- Waiting for a connection termination request from the remote TCP, or an
           -- acknowledgment of the connection termination request previously sent.
-          state <= CLOSED_ST;
+          if rx_valid_i = '1' and rx_ready_o = '1' then
+            if rx_flags_i(C_FLAGS_ACK) = '1' and rx_dst_port_i = src_port then
+              if G_DEBUG then
+                report G_SIM_NAME & ": FIN_WAIT_1_ST: ACK received";
+              end if;
+              state <= FIN_WAIT_2_ST;
+            else
+              if G_DEBUG then
+                report G_SIM_NAME & ": FIN_WAIT_1_ST: Sending RST";
+              end if;
+              -- Send RST
+              tx_flags_o(C_FLAGS_RST) <= '1';
+              tx_valid_o              <= '1';
+            end if;
+          end if;
 
         when FIN_WAIT_2_ST =>
           -- Waiting for a connection termination request from the remote TCP.
-          state <= CLOSED_ST;
+          if rx_valid_i = '1' and rx_ready_o = '1' then
+            if rx_flags_i(C_FLAGS_FIN) = '1' and rx_dst_port_i = src_port then
+              if G_DEBUG then
+                report G_SIM_NAME & ": FIN_WAIT_2_ST: FIN received";
+              end if;
+              state <= TIME_WAIT_ST;
+            end if;
+          end if;
 
         when CLOSE_WAIT_ST =>
           -- Waiting for a connection termination request from the local user.
-          state <= CLOSED_ST;
+          if start_i = '0' then
+            if G_DEBUG then
+              report G_SIM_NAME & ": CLOSE_WAIT_ST: Closing down";
+            end if;
+            established_o           <= '0';
+            -- Send FIN
+            tx_flags_o(C_FLAGS_FIN) <= '1';
+            tx_valid_o              <= '1';
+            state                   <= LAST_ACK_ST;
+          end if;
 
         when CLOSING_ST =>
           -- Waiting for a connection termination request acknowledgment from the remote
@@ -253,7 +306,7 @@ begin
 
       end case;
 
-      if rst_i = '1' or start_i = '0' then
+      if rst_i = '1' then
         tx_seq_number <= G_INITIAL_SEQUENCE_NUMBER;
         tx_ack_number <= (others => '0');
         tx_valid_o    <= '0';

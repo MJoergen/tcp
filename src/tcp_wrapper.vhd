@@ -107,11 +107,10 @@ architecture synthesis of tcp_wrapper is
     return res_v;
   end function byte_reverse;
 
-  signal   session_established_d : std_logic;
-
 begin
 
   assert G_IP_PAYLOAD_BYTES > C_TCP_HEADER;
+  assert G_SESSION_BYTES > 0;
 
   session_tx_ready_o <= session_established_o and tx_valid and
                         (ip_payload_tx_ready_i or not ip_payload_tx_valid_o);
@@ -119,8 +118,6 @@ begin
   tx_proc : process (clk_i)
   begin
     if rising_edge(clk_i) then
-      session_established_d <= session_established_o;
-
       if ip_payload_tx_ready_i = '1' then
         tx_ready              <= '1';
         ip_payload_tx_valid_o <= '0';
