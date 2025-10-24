@@ -2,6 +2,7 @@
 # and does Bounded Model Check on each of them.
 
 DUTS += axi_fifo_wide
+DUTS += axi_fifo_squash
 
 BMC        = $(patsubst %,%_bmc,$(DUTS))
 COVER      = $(patsubst %,%_cover,$(DUTS))

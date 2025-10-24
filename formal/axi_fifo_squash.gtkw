@@ -1,0 +1,56 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Fri Oct 24 11:55:28 2025
+[*]
+[dumpfile] "/home/mfj/git/PRIVATE/MJoergen/tcp/formal/axi_fifo_squash_bmc/engine_0/trace.vcd"
+[dumpfile_mtime] "Fri Oct 24 11:55:18 2025"
+[dumpfile_size] 2679
+[savefile] "/home/mfj/git/PRIVATE/MJoergen/tcp/formal/axi_fifo_squash.gtkw"
+[timestart] 0
+[size] 1298 896
+[pos] -1 -1
+*-3.639464 25 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 210
+[signals_width] 236
+[sst_expanded] 1
+[sst_vpaned_height] 246
+@28
+axi_fifo_squash.clk_i
+axi_fifo_squash.rst_i
+@200
+-
+@28
+[color] 7
+axi_fifo_squash.s_ready_o
+[color] 2
+axi_fifo_squash.s_valid_i
+@22
+axi_fifo_squash.s_data_i[31:0]
+@24
+axi_fifo_squash.s_start_i[2:0]
+axi_fifo_squash.s_end_i[2:0]
+@28
+axi_fifo_squash.s_push_i
+@200
+-
+@28
+[color] 7
+axi_fifo_squash.m_ready_i
+[color] 2
+axi_fifo_squash.m_valid_o
+@22
+axi_fifo_squash.m_data_o[31:0]
+@24
+axi_fifo_squash.m_bytes_o[2:0]
+@28
+axi_fifo_squash.m_empty_o
+@200
+-
+@28
+axi_fifo_squash.m_valid
+@22
+axi_fifo_squash.m_data[31:0]
+@24
+axi_fifo_squash.m_bytes[2:0]
+[pattern_trace] 1
+[pattern_trace] 0

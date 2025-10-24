@@ -45,7 +45,7 @@ show_coverage: html
 	xdg-open html/index.html
 
 # Compile the testbench
-$(WORK): $(SRC)
+$(WORK): $(SRC) Makefile
 	ghdl -i --std=08 $(SRC)
 	ghdl -m --std=08 $(TB)
 
