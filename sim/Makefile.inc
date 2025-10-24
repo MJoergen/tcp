@@ -26,7 +26,7 @@ RUN_OPTIONS += --assert-level=$(ASSERT_LEVEL)
 
 # Source file directories
 SRC_DIR = ../../src
-SIM_SRC_DIR = .
+SIM_SRC_DIR = ../src
 
 # Default target: Run the test
 PASS: $(WORK)
