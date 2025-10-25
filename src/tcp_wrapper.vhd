@@ -16,6 +16,7 @@ entity tcp_wrapper is
   port (
     clk_i                 : in    std_logic;
     rst_i                 : in    std_logic;
+    ppms_i                : in    std_logic;
 
     -- Session control interface
     session_start_i       : in    std_logic;
@@ -78,32 +79,43 @@ architecture synthesis of tcp_wrapper is
   signal   tx_urgent_ptr  : std_logic_vector(15 downto 0);
   signal   tx_options     : std_logic_vector(319 downto 0);
 
-  subtype  R_TCP_SRC_PORT    is natural range 8 * 2 - 1 downto 8 * 0;
-  subtype  R_TCP_DST_PORT   is natural range 8 * 4 - 1 downto 8 * 2;
-  subtype  R_TCP_SEQ_NUMBER  is natural range 8 * 8 - 1 downto 8 * 4;
-  subtype  R_TCP_ACK_NUMBER  is natural range 8 * 12 - 1 downto 8 * 8;
+  subtype  R_TCP_SRC_PORT is natural range 8 * 2 - 1 downto 8 * 0;
+
+  subtype  R_TCP_DST_PORT is natural range 8 * 4 - 1 downto 8 * 2;
+
+  subtype  R_TCP_SEQ_NUMBER is natural range 8 * 8 - 1 downto 8 * 4;
+
+  subtype  R_TCP_ACK_NUMBER is natural range 8 * 12 - 1 downto 8 * 8;
+
   subtype  R_TCP_DATA_OFFSET is natural range 8 * 13 - 1 downto 8 * 12 + 4;
-  subtype  R_TCP_RESERVED    is natural range 8 * 12 + 3 downto 8 * 12;
-  subtype  R_TCP_FLAGS       is natural range 8 * 14 - 1 downto 8 * 13;
-  subtype  R_TCP_WINDOW      is natural range 8 * 16 - 1 downto 8 * 14;
-  subtype  R_TCP_CHKSUM      is natural range 8 * 18 - 1 downto 8 * 16;
-  subtype  R_TCP_URGENT_PTR  is natural range 8 * 20 - 1 downto 8 * 18;
+
+  subtype  R_TCP_RESERVED is natural range 8 * 12 + 3 downto 8 * 12;
+
+  subtype  R_TCP_FLAGS is natural range 8 * 14 - 1 downto 8 * 13;
+
+  subtype  R_TCP_WINDOW is natural range 8 * 16 - 1 downto 8 * 14;
+
+  subtype  R_TCP_CHKSUM is natural range 8 * 18 - 1 downto 8 * 16;
+
+  subtype  R_TCP_URGENT_PTR is natural range 8 * 20 - 1 downto 8 * 18;
 
   constant C_TCP_HEADER : natural := 20;
 
   pure function byte_reverse (
     arg : std_logic_vector
   ) return std_logic_vector is
-    variable arg_v   : std_logic_vector(arg'length-1 downto 0);
-    variable res_v   : std_logic_vector(arg'length-1 downto 0);
+    variable arg_v   : std_logic_vector(arg'length - 1 downto 0);
+    variable res_v   : std_logic_vector(arg'length - 1 downto 0);
     variable bytes_v : natural;
   begin
     assert (arg'length mod 8) = 0;
     arg_v   := arg;
     bytes_v := arg_v'length / 8;
+
     for i in bytes_v - 1 downto 0 loop
       res_v(8 * i + 7 downto 8 * i) := arg_v(bytes_v * 8 - i * 8 - 1 downto bytes_v * 8 - i * 8 - 8);
     end loop;
+
     return res_v;
   end function byte_reverse;
 
@@ -174,10 +186,13 @@ begin
         rx_valid              <= '0';
         ip_payload_rx_ready_o <= '1';
       end if;
+      if session_rx_ready_i = '1' then
+        session_rx_valid_o <= '0';
+      end if;
 
       if ip_payload_rx_valid_i = '1' then
         assert ip_payload_rx_bytes_i = 0 or ip_payload_rx_bytes_i >= C_TCP_HEADER;
-        assert ip_payload_rx_last_i  = '1';
+        assert ip_payload_rx_last_i = '1';
 
         rx_src_port           <= byte_reverse(ip_payload_rx_data_i(R_TCP_SRC_PORT));
         rx_dst_port           <= byte_reverse(ip_payload_rx_data_i(R_TCP_DST_PORT));
@@ -206,6 +221,7 @@ begin
       end if;
 
       if rst_i = '1' then
+        session_rx_valid_o    <= '0';
         ip_payload_rx_ready_o <= '0';
         rx_valid              <= '0';
       end if;
@@ -221,6 +237,7 @@ begin
     port map (
       clk_i            => clk_i,
       rst_i            => rst_i,
+      ppms_i           => ppms_i,
       start_i          => session_start_i,
       src_port_i       => session_src_port_i,
       dst_port_i       => session_dst_port_i,

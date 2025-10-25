@@ -13,6 +13,7 @@ entity tcp_protocol is
   port (
     clk_i            : in    std_logic;
     rst_i            : in    std_logic;
+    ppms_i           : in    std_logic; -- 1 pulse per millisecond
 
     start_i          : in    std_logic;
     src_port_i       : in    std_logic_vector(15 downto 0);
@@ -58,6 +59,17 @@ architecture synthesis of tcp_protocol is
   constant C_FLAGS_SYN : natural                         := 1;
   constant C_FLAGS_FIN : natural                         := 0;
 
+  constant C_OPTION_END   : natural                      := 0;      -- End of options list
+  constant C_OPTION_NOP   : natural                      := 1;      -- No operation
+  constant C_OPTION_MSS   : natural                      := 2;      -- Maximum segment size (SYN only)
+  constant C_OPTION_WS    : natural                      := 3;      -- Window scale (SYN only)
+  constant C_OPTION_SA    : natural                      := 4;      -- Selectice Acknowledgement permitted (SYN only)
+  constant C_OPTION_SACK  : natural                      := 5;      -- Selectice ACKnowledgement (SACK)
+  constant C_OPTION_TIME  : natural                      := 8;      -- Timestamp and echo of previous timestamp
+  constant C_OPTION_USER  : natural                      := 28;     -- User Timeout Option
+  constant C_OPTION_AO    : natural                      := 29;     -- TCP Authentication Option (TCP-AO)
+  constant C_OPTION_MPTCP : natural                      := 30;     -- Multipath TCP (MPTCP)
+
   type     state_type is (
     LISTEN_ST, SYN_SENT_ST, SYN_RECEIVED_ST,
     ESTABLISHED_ST, FIN_WAIT_1_ST, FIN_WAIT_2_ST, CLOSE_WAIT_ST,
@@ -69,6 +81,9 @@ architecture synthesis of tcp_protocol is
   signal   dst_port      : std_logic_vector(15 downto 0) := (others => '0');
   signal   tx_seq_number : std_logic_vector(31 downto 0) := (others => '0');
   signal   tx_ack_number : std_logic_vector(31 downto 0) := (others => '0');
+
+  constant C_TIME_WAIT_MAX : natural                     := 60_000; -- 1 minute
+  signal   time_wait_cnt   : natural range 0 to C_TIME_WAIT_MAX;
 
 begin
 
@@ -82,13 +97,17 @@ begin
         tx_valid_o <= '0';
       end if;
 
+      if ppms_i = '1' and time_wait_cnt > 0 then
+        time_wait_cnt <= time_wait_cnt - 1;
+      end if;
+
       if tx_valid_o = '0' then
         -- Set default values
         tx_src_port_o    <= src_port;
         tx_dst_port_o    <= dst_port;
         tx_seq_number_o  <= tx_seq_number;
         tx_ack_number_o  <= tx_ack_number;
-        tx_data_offset_o <= X"5";
+        tx_data_offset_o <= x"5";
         tx_flags_o       <= (others => '0');
         tx_window_o      <= (others => '0');
         tx_chksum_o      <= (others => '0');
@@ -218,11 +237,16 @@ begin
           -- Waiting for a connection termination request from the remote TCP, or an
           -- acknowledgment of the connection termination request previously sent.
           if rx_valid_i = '1' and rx_ready_o = '1' then
-            if rx_flags_i(C_FLAGS_ACK) = '1' and rx_dst_port_i = src_port then
+            if rx_flags_i(C_FLAGS_ACK) = '1' and rx_flags_i(C_FLAGS_FIN) = '0' and rx_dst_port_i = src_port then
               if G_DEBUG then
                 report G_SIM_NAME & ": FIN_WAIT_1_ST: ACK received";
               end if;
               state <= FIN_WAIT_2_ST;
+            elsif rx_flags_i(C_FLAGS_ACK) = '1' and rx_flags_i(C_FLAGS_FIN) = '1' and rx_dst_port_i = src_port then
+              if G_DEBUG then
+                report G_SIM_NAME & ": FIN_WAIT_1_ST: FIN-ACK received";
+              end if;
+              state <= TIME_WAIT_ST;
             else
               if G_DEBUG then
                 report G_SIM_NAME & ": FIN_WAIT_1_ST: Sending RST";
@@ -240,7 +264,8 @@ begin
               if G_DEBUG then
                 report G_SIM_NAME & ": FIN_WAIT_2_ST: FIN received";
               end if;
-              state <= TIME_WAIT_ST;
+              time_wait_cnt <= C_TIME_WAIT_MAX;
+              state         <= TIME_WAIT_ST;
             end if;
           end if;
 
@@ -271,7 +296,9 @@ begin
         when TIME_WAIT_ST =>
           -- Waiting for enough time to pass to be sure that all remaining packets on the
           -- connection have expired.
-          state <= CLOSED_ST;
+          if time_wait_cnt = 0 then
+            state <= CLOSED_ST;
+          end if;
 
         when CLOSED_ST =>
           -- No connection state at all.
@@ -313,6 +340,7 @@ begin
         established_o <= '0';
         dst_port      <= (others => '0');
         state         <= IDLE_ST;
+        time_wait_cnt <= 0;
       end if;
     end if;
   end process state_proc;

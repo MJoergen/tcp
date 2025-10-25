@@ -23,6 +23,7 @@ architecture simulation of tb_tcp_wrapper is
 
   signal   clk     : std_logic                                := '1';
   signal   rst     : std_logic                                := '1';
+  signal   ppms    : std_logic                                := '0';
   signal   running : std_logic                                := '1';
 
   signal   client_session_start       : std_logic;
@@ -73,6 +74,17 @@ begin
 
   clk <= running and not clk after 5 ns;
   rst <= '1', '0' after 100 ns;
+  ppms_proc : process
+    variable next_v : time := 100 us;
+  begin
+    wait until now = next_v;
+    next_v := now + 100 us;
+    wait until rising_edge(clk);
+    ppms <= '1';
+    wait until rising_edge(clk);
+    ppms <= '0';
+    wait until rising_edge(clk);
+  end process ppms_proc;
 
 
   -------------------------------------
@@ -287,6 +299,7 @@ begin
     port map (
       clk_i                 => clk,
       rst_i                 => rst,
+      ppms_i                => ppms,
       session_start_i       => client_session_start,
       session_src_port_i    => client_session_src_port,
       session_dst_port_i    => client_session_dst_port,
@@ -327,6 +340,7 @@ begin
     port map (
       clk_i                 => clk,
       rst_i                 => rst,
+      ppms_i                => ppms,
       session_start_i       => server_session_start,
       session_src_port_i    => server_session_src_port,
       session_dst_port_i    => server_session_dst_port,

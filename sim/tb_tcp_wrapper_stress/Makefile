@@ -7,19 +7,24 @@ SRC += $(SRC_DIR)/tcp_protocol.vhd
 SRC += $(SRC_DIR)/tcp_wrapper.vhd
 
 # List of test specific simulation files
-SRC += tb_tcp_wrapper.vhd
+SRC += tb_tcp_wrapper_stress.vhd
 SRC += $(SIM_SRC_DIR)/data_logger.vhd
+SRC += $(SIM_SRC_DIR)/lfsr.vhd
+SRC += $(SIM_SRC_DIR)/random.vhd
+SRC += $(SIM_SRC_DIR)/axi_dropper.vhd
+SRC += $(SIM_SRC_DIR)/axi_fifo_sync.vhd
 
 # Top level entity
-DUT = tcp_wrapper
+DUT = tcp_wrapper_stress
 
 # Test duration
 STOP_TIME = 2us
 
 # Test specific generics
-#GENERIC += -gG_SHOW_TESTS=true
-#GENERIC += -gG_SHOW_PACKETS=true
-#GENERIC += -gG_SHOW_PROTOCOL=true
+GENERIC += -gG_RANDOM=false
+GENERIC += -gG_FAST=false
+GENERIC += -gG_SHOW_PACKETS=false
+GENERIC += -gG_SHOW_PROTOCOL=false
 
 # Don't stop on errors
 ASSERT_LEVEL = none

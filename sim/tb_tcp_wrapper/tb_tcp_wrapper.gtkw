@@ -1,15 +1,15 @@
 [*]
-[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Thu Oct 23 11:42:37 2025
+[*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
+[*] Sat Oct 25 18:19:04 2025
 [*]
-[dumpfile] "/home/mfj/git/PRIVATE/MJoergen/tcp/sim/tb_tcp_wrapper/tb_tcp_wrapper.ghw"
-[dumpfile_mtime] "Thu Oct 23 11:40:35 2025"
-[dumpfile_size] 25849
-[savefile] "/home/mfj/git/PRIVATE/MJoergen/tcp/sim/tb_tcp_wrapper/tb_tcp_wrapper.gtkw"
-[timestart] 194800000
-[size] 1786 1069
+[dumpfile] "/home/mike/git/MJoergen/tcp/sim/tb_tcp_wrapper/tb_tcp_wrapper.ghw"
+[dumpfile_mtime] "Sat Oct 25 18:17:01 2025"
+[dumpfile_size] 25854
+[savefile] "/home/mike/git/MJoergen/tcp/sim/tb_tcp_wrapper/tb_tcp_wrapper.gtkw"
+[timestart] 0
+[size] 1786 1033
 [pos] -1 -1
-*-26.200441 338900000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-26.874985 338900000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.tb_tcp_wrapper.
 [treeopen] top.tb_tcp_wrapper.tcp_wrapper_server_inst.
@@ -22,6 +22,7 @@
 @28
 top.tb_tcp_wrapper.tcp_wrapper_client_inst.clk_i
 top.tb_tcp_wrapper.tcp_wrapper_client_inst.rst_i
+top.tb_tcp_wrapper.tcp_wrapper_client_inst.ppms_i
 top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_start_i
 @22
 #{top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[15:0]} top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[15] top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[14] top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[13] top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[12] top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[11] top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[10] top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[9] top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[8] top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[7] top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[6] top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[5] top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[4] top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[3] top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[2] top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[1] top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_src_port_i[0]
@@ -87,14 +88,14 @@ top.tb_tcp_wrapper.tcp_wrapper_client_inst.rx_valid
 top.tb_tcp_wrapper.tcp_wrapper_client_inst.tx_ready
 [color] 2
 top.tb_tcp_wrapper.tcp_wrapper_client_inst.tx_valid
-top.tb_tcp_wrapper.tcp_wrapper_client_inst.session_established_d
 @1401200
 -tcp_wrapper_client
-@800200
+@c00200
 -tcp_wrapper_server
 @28
 top.tb_tcp_wrapper.tcp_wrapper_server_inst.clk_i
 top.tb_tcp_wrapper.tcp_wrapper_server_inst.rst_i
+top.tb_tcp_wrapper.tcp_wrapper_server_inst.ppms_i
 top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_start_i
 @22
 #{top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[15:0]} top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[15] top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[14] top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[13] top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[12] top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[11] top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[10] top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[9] top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[8] top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[7] top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[6] top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[5] top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[4] top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[3] top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[2] top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[1] top.tb_tcp_wrapper.tcp_wrapper_server_inst.session_src_port_i[0]
@@ -160,13 +161,14 @@ top.tb_tcp_wrapper.tcp_wrapper_server_inst.rx_valid
 top.tb_tcp_wrapper.tcp_wrapper_server_inst.tx_ready
 [color] 2
 top.tb_tcp_wrapper.tcp_wrapper_server_inst.tx_valid
-@1000200
+@1401200
 -tcp_wrapper_server
 @c00200
 -tcp_protocol_client
 @28
 top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.clk_i
 top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.rst_i
+top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.ppms_i
 top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.start_i
 @22
 #{top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[15:0]} top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[15] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[14] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[13] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[12] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[11] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[10] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[9] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[8] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[7] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[6] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[5] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[4] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[3] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[2] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[1] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.src_port_i[0]
@@ -212,11 +214,12 @@ top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.state
 #{top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[31:0]} top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[31] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[30] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[29] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[28] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[27] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[26] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[25] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[24] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[23] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[22] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[21] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[20] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[19] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[18] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[17] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[16] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[15] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[14] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[13] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[12] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[11] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[10] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[9] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[8] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[7] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[6] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[5] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[4] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[3] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[2] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[1] top.tb_tcp_wrapper.tcp_wrapper_client_inst.tcp_protocol_inst.tx_ack_number[0]
 @1401200
 -tcp_protocol_client
-@c00200
+@800200
 -tcp_protocol_server
 @28
 top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.clk_i
 top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.rst_i
+top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.ppms_i
 top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.start_i
 @22
 #{top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[15:0]} top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[15] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[14] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[13] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[12] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[11] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[10] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[9] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[8] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[7] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[6] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[5] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[4] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[3] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[2] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[1] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port_i[0]
@@ -260,7 +263,7 @@ top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.state
 #{top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[15:0]} top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[15] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[14] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[13] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[12] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[11] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[10] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[9] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[8] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[7] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[6] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[5] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[4] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[3] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[2] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[1] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.src_port[0]
 #{top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[31:0]} top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[31] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[30] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[29] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[28] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[27] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[26] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[25] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[24] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[23] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[22] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[21] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[20] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[19] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[18] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[17] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[16] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[15] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[14] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[13] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[12] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[11] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[10] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[9] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[8] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[7] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[6] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[5] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[4] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[3] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[2] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[1] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_seq_number[0]
 #{top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[31:0]} top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[31] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[30] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[29] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[28] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[27] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[26] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[25] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[24] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[23] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[22] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[21] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[20] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[19] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[18] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[17] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[16] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[15] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[14] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[13] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[12] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[11] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[10] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[9] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[8] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[7] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[6] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[5] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[4] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[3] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[2] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[1] top.tb_tcp_wrapper.tcp_wrapper_server_inst.tcp_protocol_inst.tx_ack_number[0]
-@1401200
+@1000200
 -tcp_protocol_server
 [pattern_trace] 1
 [pattern_trace] 0
