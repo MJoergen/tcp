@@ -7,6 +7,13 @@ vunit axi_fifo_squash_inst(axi_fifo_squash(synthesis))
    signal f_m_data      : std_logic_vector(8 * G_DATA_BYTES - 1 downto 0);
    signal f_old_m_data  : std_logic_vector(8 * G_DATA_BYTES - 1 downto 0);
 
+   signal f_data : std_logic_vector(7 downto 0);
+   attribute anyconst : boolean;
+   attribute anyconst of f_data : signal is true;
+
+   signal f_data_in  : boolean;
+   signal f_data_out : boolean;
+
    f_old_m_bytes_proc : process (clk_i)
    begin
      if rising_edge(clk_i) then
@@ -41,6 +48,35 @@ vunit axi_fifo_squash_inst(axi_fifo_squash(synthesis))
      end if;
    end process f_old_m_data_proc;
 
+   f_data_proc : process (clk_i)
+   begin
+     if rising_edge(clk_i) then
+       if s_valid_i = '1' and s_ready_o = '1' then
+         for i in 0 to G_DATA_BYTES - 1 loop
+           if i >= s_start_i and i < s_end_i then
+             if s_data_i(8*i+7 downto 8*i) = f_data then
+               f_data_in <= true;
+             end if;
+           end if;
+         end loop;
+       end if;
+
+       if m_valid_o = '1' and m_ready_i = '1' then
+         for i in 0 to G_DATA_BYTES - 1 loop
+           if i < m_bytes_o then
+             if m_data_o(8*i+7 downto 8*i) = f_data then
+               f_data_out <= true;
+             end if;
+           end if;
+         end loop;
+       end if;
+
+       if rst_i = '1' then
+         f_data_in  <= false;
+         f_data_out <= false;
+       end if;
+     end if;
+   end process f_data_proc;
 
 
 -----------------------------
@@ -58,13 +94,18 @@ vunit axi_fifo_squash_inst(axi_fifo_squash(synthesis))
    f_master_bytes : assert always {m_valid_o and not m_ready_i and not rst_i} |=>
       {m_bytes_o >= f_old_m_bytes};
 
--- Master bytes must be nonzero
+-- Master bytes must be nonzero when valid
    f_master_bytes_nonzero : assert always {m_valid_o and not rst_i} |->
       {m_bytes_o /= 0};
 
 -- Slave must be ready after reset
    f_slave_after_reset_ready : assert always {rst_i} |=> {s_ready_o};
 
+-- Data on master must have been from slave
+   f_master_data_seen : assert always {f_data_out and rst_i = '0'} |-> {f_data_in};
+
+-- Output buffer full always valid
+   f_master_buffer_full : assert always {not rst_i } |-> {m_bytes_o < G_DATA_BYTES or m_valid_o = '1'};
 
 -----------------------------
 -- ASSUMPTIONS ABOUT INPUTS

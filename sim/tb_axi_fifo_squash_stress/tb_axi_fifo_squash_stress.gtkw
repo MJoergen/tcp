@@ -1,20 +1,20 @@
 [*]
-[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Fri Oct 24 13:25:54 2025
+[*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
+[*] Sat Oct 25 14:08:33 2025
 [*]
-[dumpfile] "/home/mfj/git/PRIVATE/MJoergen/tcp/sim/tb_axi_fifo_squash_stress/tb_axi_fifo_squash_stress.ghw"
-[dumpfile_mtime] "Fri Oct 24 13:25:08 2025"
-[dumpfile_size] 352291
-[savefile] "/home/mfj/git/PRIVATE/MJoergen/tcp/sim/tb_axi_fifo_squash_stress/tb_axi_fifo_squash_stress.gtkw"
-[timestart] 0
-[size] 1242 837
-[pos] -1 -1
-*-30.234491 454000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[dumpfile] "/home/mike/git/MJoergen/tcp/sim/tb_axi_fifo_squash_stress/tb_axi_fifo_squash_stress.ghw"
+[dumpfile_mtime] "Sat Oct 25 14:07:43 2025"
+[dumpfile_size] 390216
+[savefile] "/home/mike/git/MJoergen/tcp/sim/tb_axi_fifo_squash_stress/tb_axi_fifo_squash_stress.gtkw"
+[timestart] 5685200000
+[size] 1494 837
+[pos] -1754 19
+*-25.781000 5770000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.tb_axi_fifo_squash_stress.
 [treeopen] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.
-[sst_width] 210
-[signals_width] 393
+[sst_width] 239
+[signals_width] 319
 [sst_expanded] 1
 [sst_vpaned_height] 226
 @800200
@@ -48,26 +48,16 @@ top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_bytes_o
 top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_empty_o
 @200
 -
-@28
-top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_valid
 @22
 #{top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[63:0]} top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[63] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[62] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[61] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[60] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[59] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[58] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[57] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[56] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[55] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[54] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[53] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[52] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[51] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[50] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[49] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[48] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[47] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[46] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[45] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[44] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[43] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[42] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[41] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[40] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[39] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[38] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[37] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[36] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[35] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[34] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[33] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[32] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[31] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[30] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[29] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[28] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[27] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[26] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[25] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[24] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[23] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[22] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[21] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[20] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[19] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[18] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[17] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[16] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[15] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[14] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[13] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[12] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[11] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[10] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[9] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[8] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[7] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[6] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[5] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[4] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[3] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[2] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[1] top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_data[0]
 @420
 top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.m_bytes
 @200
 -
-@420
-top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.s_bytes_v_o
-top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.new_shift_v_o
-@24
-top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.new_shift_bits_v_o
-top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.new_m_bytes_v_o
-top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.new_s_begin_v_o
-top.tb_axi_fifo_squash_stress.axi_fifo_squash_inst.new_s_begin_bits_v_o
 @1000200
 -axi_fifo_squash
 @22
-#{top.tb_axi_fifo_squash_stress.stim_cnt[7:0]} top.tb_axi_fifo_squash_stress.stim_cnt[7] top.tb_axi_fifo_squash_stress.stim_cnt[6] top.tb_axi_fifo_squash_stress.stim_cnt[5] top.tb_axi_fifo_squash_stress.stim_cnt[4] top.tb_axi_fifo_squash_stress.stim_cnt[3] top.tb_axi_fifo_squash_stress.stim_cnt[2] top.tb_axi_fifo_squash_stress.stim_cnt[1] top.tb_axi_fifo_squash_stress.stim_cnt[0]
-#{top.tb_axi_fifo_squash_stress.verify_cnt[7:0]} top.tb_axi_fifo_squash_stress.verify_cnt[7] top.tb_axi_fifo_squash_stress.verify_cnt[6] top.tb_axi_fifo_squash_stress.verify_cnt[5] top.tb_axi_fifo_squash_stress.verify_cnt[4] top.tb_axi_fifo_squash_stress.verify_cnt[3] top.tb_axi_fifo_squash_stress.verify_cnt[2] top.tb_axi_fifo_squash_stress.verify_cnt[1] top.tb_axi_fifo_squash_stress.verify_cnt[0]
+#{top.tb_axi_fifo_squash_stress.stim_cnt[9:0]} top.tb_axi_fifo_squash_stress.stim_cnt[9] top.tb_axi_fifo_squash_stress.stim_cnt[8] top.tb_axi_fifo_squash_stress.stim_cnt[7] top.tb_axi_fifo_squash_stress.stim_cnt[6] top.tb_axi_fifo_squash_stress.stim_cnt[5] top.tb_axi_fifo_squash_stress.stim_cnt[4] top.tb_axi_fifo_squash_stress.stim_cnt[3] top.tb_axi_fifo_squash_stress.stim_cnt[2] top.tb_axi_fifo_squash_stress.stim_cnt[1] top.tb_axi_fifo_squash_stress.stim_cnt[0]
+#{top.tb_axi_fifo_squash_stress.verify_cnt[9:0]} top.tb_axi_fifo_squash_stress.verify_cnt[9] top.tb_axi_fifo_squash_stress.verify_cnt[8] top.tb_axi_fifo_squash_stress.verify_cnt[7] top.tb_axi_fifo_squash_stress.verify_cnt[6] top.tb_axi_fifo_squash_stress.verify_cnt[5] top.tb_axi_fifo_squash_stress.verify_cnt[4] top.tb_axi_fifo_squash_stress.verify_cnt[3] top.tb_axi_fifo_squash_stress.verify_cnt[2] top.tb_axi_fifo_squash_stress.verify_cnt[1] top.tb_axi_fifo_squash_stress.verify_cnt[0]
 [pattern_trace] 1
 [pattern_trace] 0

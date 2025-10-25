@@ -1,6 +1,7 @@
 library ieee;
   use ieee.std_logic_1164.all;
   use ieee.numeric_std_unsigned.all;
+
 library std;
   use std.env.stop;
 
@@ -33,8 +34,11 @@ architecture simulation of tb_axi_fifo_squash_stress is
   signal   m_empty : std_logic;
 
   signal   rand       : std_logic_vector(63 downto 0);
-  signal   stim_cnt   : std_logic_vector(7 downto 0);
-  signal   verify_cnt : std_logic_vector(7 downto 0);
+  signal   stim_cnt   : std_logic_vector(9 downto 0);
+  signal   verify_cnt : std_logic_vector(9 downto 0);
+
+  signal   do_valid : std_logic;
+  signal   do_push  : std_logic;
 
 begin
 
@@ -47,7 +51,7 @@ begin
 
 
   -------------------------------------
-  -- Generate stimuli
+  -- Generate randomness
   -------------------------------------
 
   random_inst : entity work.random
@@ -61,6 +65,16 @@ begin
       output_o => rand
     ); -- random_inst : entity work.random
 
+
+  -------------------------------------
+  -- Generate stimuli
+  -------------------------------------
+
+  do_valid <= or(rand(42 downto 40)) when G_RANDOM else
+              '1';
+  do_push  <= and(rand(22 downto 20));
+
+
   stimuli_proc : process (clk)
     variable start_v : natural range 0 to C_DATA_BYTES;
     variable end_v   : natural range 0 to C_DATA_BYTES;
@@ -68,34 +82,33 @@ begin
     if rising_edge(clk) then
       if s_ready = '1' then
         s_valid <= '0';
+        s_data  <= (others => '0');
+        s_start <= 0;
+        s_end   <= 0;
+        s_push  <= '0';
       end if;
 
       if s_valid = '0' or (G_FAST and s_ready = '1') then
-        start_v := to_integer(rand(15 downto 0)) mod (C_DATA_BYTES + 1);
-        end_v   := to_integer(rand(15 downto 0)) mod (C_DATA_BYTES + 1 - start_v) + start_v;
+        if do_valid = '1' then
+          start_v  := to_integer(rand(15 downto 0)) mod (C_DATA_BYTES + 1);
+          end_v    := to_integer(rand(15 downto 0)) mod (C_DATA_BYTES + 1 - start_v) + start_v;
 
-        s_valid <= '1';
-        if G_RANDOM then
-          s_valid <= or(rand(42 downto 40));
+          stim_cnt <= stim_cnt + end_v - start_v;
+
+          for i in start_v to end_v - 1 loop
+            s_data(i * 8 + 7 downto i * 8) <= stim_cnt(7 downto 0) + i - start_v;
+          end loop;
+
+          s_valid <= '1';
+          s_start <= start_v;
+          s_end   <= end_v;
+          s_push  <= do_push;
         end if;
-
-        s_data  <= (others => '0');
-        for i in start_v to end_v - 1 loop
-          s_data(i * 8 + 7 downto i * 8) <= stim_cnt + i - start_v;
-        end loop;
-        s_start  <= start_v;
-        s_end    <= end_v;
-        s_push   <= '1';
-        if G_RANDOM then
-          s_push   <= and(rand(22 downto 20));
-        end if;
-
-        stim_cnt <= stim_cnt + end_v - start_v;
       end if;
 
       if rst = '1' then
         s_valid  <= '0';
-        stim_cnt <= X"00";
+        stim_cnt <= (others => '0');
       end if;
     end if;
   end process stimuli_proc;
@@ -105,18 +118,21 @@ begin
   -- Verify output
   -------------------------------------
 
-  m_ready <= or(rand(32 downto 30)) when G_RANDOM else '1';
+  m_ready  <= or(rand(32 downto 30)) when G_RANDOM else
+              '1';
 
   verify_proc : process (clk)
   begin
     if rising_edge(clk) then
       if m_valid = '1' and m_ready = '1' then
+
         for i in 0 to m_bytes - 1 loop
-          assert m_data(i * 8 + 7 downto i * 8) = verify_cnt + i
+          assert m_data(i * 8 + 7 downto i * 8) = verify_cnt(7 downto 0) + i
             report "Verify byte " & to_string(i) &
                    ". Received " & to_hstring(m_data(i * 8 + 7 downto i * 8)) &
-                   ", expected " & to_hstring(verify_cnt + i);
+                   ", expected " & to_hstring(verify_cnt(7 downto 0) + i);
         end loop;
+
         verify_cnt <= verify_cnt + m_bytes;
 
         -- Check for wrap-around
@@ -126,7 +142,7 @@ begin
       end if;
 
       if rst = '1' then
-        verify_cnt <= X"00";
+        verify_cnt <= (others => '0');
       end if;
     end if;
   end process verify_proc;

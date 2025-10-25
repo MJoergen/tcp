@@ -12,11 +12,11 @@ end entity tb_axi_fifo_squash;
 
 architecture simulation of tb_axi_fifo_squash is
 
-  constant C_DATA_BYTES : natural := 8;
+  constant C_DATA_BYTES : natural     := 8;
 
-  signal   clk     : std_logic    := '1';
-  signal   rst     : std_logic    := '1';
-  signal   running : std_logic    := '1';
+  signal   clk     : std_logic        := '1';
+  signal   rst     : std_logic        := '1';
+  signal   running : std_logic        := '1';
 
   signal   s_ready : std_logic;
   signal   s_valid : std_logic;
@@ -30,6 +30,55 @@ architecture simulation of tb_axi_fifo_squash is
   signal   m_data  : std_logic_vector(C_DATA_BYTES * 8 - 1 downto 0);
   signal   m_bytes : natural range 0 to C_DATA_BYTES;
   signal   m_empty : std_logic;
+
+  type     test_type is record
+    name   : string(1 to 24);
+    -- Stimuli
+    verify : boolean;
+    data   : std_logic_vector(C_DATA_BYTES * 8 - 1 downto 0);
+    dstart : natural;
+    dend   : natural;
+    push   : std_logic;
+    -- Response
+    empty  : std_logic;
+    valid  : std_logic;
+    ready  : std_logic;
+  end record test_type;
+
+  constant C_NONAME : string(1 to 24) := (others => ' ');
+
+  type     test_vector_type is array (natural range <>) of test_type;
+  constant C_TESTS : test_vector_type :=
+  (   --                             Stimuli                              Response
+      --                             V   D                    S  E   P     E    V    R
+    ( "PUSH first write        ", false, X"7766554433221100", 1, 3, '1',  '1', '1', '0'), -- Output buffer contains 2211
+    ( "                        ", true,  X"0000000000002211", 0, 2, '1',  '1', '0', '1'),
+
+    ( "Full word without PUSH  ", false, X"7766554433221100", 0, 8, '0',  '1', '1', '0'), -- Output buffer contains 7766554433221100
+    ( "                        ", true,  X"7766554433221100", 0, 8, '0',  '1', '0', '1'),
+
+    ( "PUSH on second write    ", false, X"7766554433221100", 1, 3, '0',  '1', '0', '1'), -- Internal buffer contains 2211
+    ( "                        ", false, X"7766554433221100", 2, 4, '1',  '1', '1', '0'), -- Output buffer contains 33222211
+    ( "                        ", true,  X"0000000033222211", 0, 4, '0',  '1', '0', '1'),
+
+    ( "Wrap around without PUSH", false, X"7766554433221100", 0, 6, '0',  '1', '0', '1'), -- Internal buffer contains 554433221100
+    ( "                        ", false, X"7766554433221100", 3, 6, '0',  '0', '1', '0'), -- Internal buffer contains 55
+    ( "                        ", true,  X"4433554433221100", 0, 8, '0',  '1', '0', '1'),
+    ( "                        ", false, X"7766554433221100", 0, 3, '1',  '1', '1', '0'), -- Output buffer contains 22110055
+    ( "                        ", true,  X"0000000022110055", 0, 4, '0',  '1', '0', '1'),
+
+    ( "Wrap around whole word  ", false, X"7766554433221100", 0, 5, '0',  '1', '0', '1'), -- Internal buffer contains 4433221100
+    ( "                        ", false, X"7766554433221100", 3, 6, '0',  '1', '1', '0'), -- Internal buffer is empty
+    ( "                        ", true,  X"5544334433221100", 0, 8, '0',  '1', '0', '1'),
+
+    ( "Wrap around backwards   ", false, X"8877665544332211", 0, 1, '0',  '1', '0', '1'), -- Internal buffer contains 11
+    ( "                        ", false, X"7766554433221100", 3, 6, '1',  '1', '1', '0'), -- Output buffer contains 55443311
+    ( "                        ", true,  X"0000000055443311", 0, 4, '0',  '1', '0', '1'),
+
+    ( "PUSH without data       ", false, X"7766554433221100", 1, 5, '0',  '1', '0', '1'), -- Internal buffer contains 44332211
+    ( "                        ", false, X"7766554433221100", 3, 3, '1',  '1', '1', '0'), -- Output buffer contains 44332211
+    ( "                        ", true,  X"0000000044332211", 0, 4, '0',  '1', '0', '1')
+  );
 
 begin
 
@@ -61,15 +110,15 @@ begin
       if G_SHOW_DATA then
         if tb_end = tb_start then
           if tb_push = '1' then
-            report "  Sending: PUSH";
+            report "--  Sending: PUSH";
           else
-            report "  Sending: no data";
+            report "--  Sending: no data";
           end if;
         else
           if tb_push = '1' then
-            report "  Sending: " & to_hstring(arg_v(tb_end * 8 - 1 downto tb_start * 8)) & " PUSH";
+            report "--  Sending: " & to_hstring(arg_v(tb_end * 8 - 1 downto tb_start * 8)) & " PUSH";
           else
-            report "  Sending: " & to_hstring(arg_v(tb_end * 8 - 1 downto tb_start * 8));
+            report "--  Sending: " & to_hstring(arg_v(tb_end * 8 - 1 downto tb_start * 8));
           end if;
         end if;
       end if;
@@ -120,7 +169,7 @@ begin
                ", expected " & to_hstring(arg);
 
       if G_SHOW_DATA then
-        report "  Received " & to_hstring(m_data(m_bytes * 8 - 1 downto 0));
+        report "--  Received " & to_hstring(m_data(m_bytes * 8 - 1 downto 0));
       end if;
 
       wait until rising_edge(clk);
@@ -155,337 +204,27 @@ begin
     assert m_valid = '0'
       report "m_valid not 0";
 
+    for i in C_TESTS'range loop
+      if not G_FAST then
+        wait until rising_edge(clk);
+      end if;
+      if G_SHOW_TESTS and C_TESTS(i).name /= C_NONAME then
+        report "** " & C_TESTS(i).name;
+      end if;
 
-    if not G_FAST then
-      wait until rising_edge(clk);
-    end if;
-    if G_SHOW_TESTS then
-      report "Test 1: PUSH first write";
-    end if;
-    send(X"554433221100", 1, 3, '1');
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer contains 2211
-    assert m_valid = '1'
-      report "m_valid not 1";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
+      if C_TESTS(i).verify then
+        verify(C_TESTS(i).data(C_TESTS(i).dend*8-1 downto 0));
+      else
+        send(C_TESTS(i).data, C_TESTS(i).dstart, C_TESTS(i).dend, C_TESTS(i).push);
+      end if;
 
-    verify(X"2211");
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer is empty
-    assert m_valid = '0'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-
-    if not G_FAST then
-      wait until rising_edge(clk);
-    end if;
-    if G_SHOW_TESTS then
-      report "Test 2: Full word without PUSH";
-    end if;
-    send(X"7766554433221100", 0, 8, '0');
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer contains 7766554433221100
-    assert m_valid = '1'
-      report "m_valid not 1";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-    verify(X"7766554433221100");
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer is empty
-    assert m_valid = '0'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-
-    if not G_FAST then
-      wait until rising_edge(clk);
-    end if;
-    if G_SHOW_TESTS then
-      report "Test 3: PUSH on second write";
-    end if;
-    send(X"554433221100", 1, 3, '0');
-    -- Internal buffer now contains 2211
-    assert m_empty = '0'
-      report "m_empty not 0";
-    -- Output buffer is empty
-    assert m_valid = '0'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-    send(X"554433221100", 2, 4, '1');
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer contains 33222211
-    assert m_valid = '1'
-      report "m_valid not 1";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-    verify(X"33222211");
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer is empty
-    assert m_valid = '0'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-
-    if not G_FAST then
-      wait until rising_edge(clk);
-    end if;
-    if G_SHOW_TESTS then
-      report "Test 4: Wrap around without PUSH";
-    end if;
-    send(X"554433221100", 0, 6, '0');
-    -- Internal buffer now contains 554433221100
-    assert m_empty = '0'
-      report "m_empty not 0";
-    -- Output buffer is empty
-    assert m_valid = '0'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-    send(X"554433221100", 3, 6, '0');
-    -- Internal buffer now contains 55
-    assert m_empty = '0'
-      report "m_empty not 0";
-    -- Output buffer contains 4433554433221100
-    assert m_valid = '1'
-      report "m_valid not 1";
-    -- Input buffer is blocked
-    assert s_ready = '0'
-      report "s_ready not 0";
-
-    verify(X"4433554433221100");
-    -- Internal buffer is empty
-    assert m_empty = '0'
-      report "m_empty not 0";
-    -- Output buffer contains 55
-    assert m_valid = '0'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-    send(X"221100", 0, 3, '1');
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer contains 22110055
-    assert m_valid = '1'
-      report "m_valid not 1";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-    verify(X"22110055");
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer is empty
-    assert m_valid = '0'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-
-    if not G_FAST then
-      wait until rising_edge(clk);
-    end if;
-    if G_SHOW_TESTS then
-      report "Test 5: Wrap around whole multiple of word";
-    end if;
-    send(X"554433221100", 0, 5, '0');
-    -- Internal buffer now contains 4433221100
-    assert m_empty = '0'
-      report "m_empty not 0";
-    -- Output buffer is empty
-    assert m_valid = '0'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-    send(X"554433221100", 3, 6, '0');
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer contains 5544334433221100
-    assert m_valid = '1'
-      report "m_valid not 1";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-    verify(X"5544334433221100");
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer is empty
-    assert m_valid = '0'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-
-    if not G_FAST then
-      wait until rising_edge(clk);
-    end if;
-    if G_SHOW_TESTS then
-      report "Test 6: Wrap around backwards";
-    end if;
-    send(X"5544332211", 0, 1, '0');
-    -- Internal buffer now contains 11
-    assert m_empty = '0'
-      report "m_empty not 0";
-    -- Output buffer is empty
-    assert m_valid = '0'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-    send(X"554433221100", 3, 6, '1');
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer contains 55443311
-    assert m_valid = '1'
-      report "m_valid not 1";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-    verify(X"55443311");
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer is empty
-    assert m_valid = '0'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-
-    if not G_FAST then
-      wait until rising_edge(clk);
-    end if;
-    if G_SHOW_TESTS then
-      report "Test 7: Wrap around whole multiple of word with PUSH first";
-    end if;
-    send(X"7766554433221100", 0, 8, '1');
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 0";
-    -- Output buffer contains 7766554433221100
-    assert m_valid = '1'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-    send(X"FFEEDDCCBBAA9988", 0, 8, '0');
-    -- Internal buffer contains FFEEDDCCBBAA9988
-    assert m_empty = '0'
-      report "m_empty not 1";
-    -- Output buffer contains 7766554433221100
-    assert m_valid = '1'
-      report "m_valid not 1";
-    -- Input buffer is ready
-    assert s_ready = '0'
-      report "s_ready not 0";
-
-    verify(X"7766554433221100");
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer is empty
-    assert m_valid = '1'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-    verify(X"FFEEDDCCBBAA9988");
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer is empty
-    assert m_valid = '0'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-
-    if not G_FAST then
-      wait until rising_edge(clk);
-    end if;
-    if G_SHOW_TESTS then
-      report "Test 8: PUSH without data";
-    end if;
-    send(X"554433221100", 1, 5, '0');
-    -- Internal buffer now contains 44332211
-    assert m_empty = '0'
-      report "m_empty not 0";
-    -- Output buffer is empty
-    assert m_valid = '0'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-    send(X"554433221100", 3, 3, '1');
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer contains 44332211
-    assert m_valid = '1'
-      report "m_valid not 1";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
-    verify(X"44332211");
-    -- Internal buffer is empty
-    assert m_empty = '1'
-      report "m_empty not 1";
-    -- Output buffer is empty
-    assert m_valid = '0'
-      report "m_valid not 0";
-    -- Input buffer is ready
-    assert s_ready = '1'
-      report "s_ready not 1";
-
+      assert m_empty = C_TESTS(i).empty
+        report "index "  & to_string(i) & ": m_empty not " & to_string(C_TESTS(i).empty);
+      assert m_valid = C_TESTS(i).valid
+        report "index "  & to_string(i) & ": m_valid not " & to_string(C_TESTS(i).valid);
+      assert s_ready = C_TESTS(i).ready
+        report "index "  & to_string(i) & ": s_ready not " & to_string(C_TESTS(i).ready);
+    end loop;
 
     report "Test finished";
     wait until rising_edge(clk);

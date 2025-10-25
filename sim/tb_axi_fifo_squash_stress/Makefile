@@ -14,10 +14,10 @@ SRC += tb_axi_fifo_squash_stress.vhd
 DUT = axi_fifo_squash_stress
 
 # Test duration
-STOP_TIME = 10us
+STOP_TIME = 20us
 
 # Test specific generics
-GENERIC += -gG_FAST=false
+GENERIC += -gG_FAST=true
 GENERIC += -gG_RANDOM=true
 
 # Don't stop on errors
