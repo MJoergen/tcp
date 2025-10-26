@@ -19,7 +19,7 @@ STOP_TIME = 100us
 # Test specific generics
 GENERIC += -gG_FAST=true
 GENERIC += -gG_RANDOM=true
-GENERIC += -gG_S_DATA_BYTES=8
+GENERIC += -gG_S_DATA_BYTES=10
 GENERIC += -gG_M_DATA_BYTES=4
 
 # Don't stop on errors

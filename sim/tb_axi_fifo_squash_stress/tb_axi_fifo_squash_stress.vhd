@@ -16,7 +16,7 @@ end entity tb_axi_fifo_squash_stress;
 
 architecture simulation of tb_axi_fifo_squash_stress is
 
-  constant C_CNT_BITS : natural := 12;
+  constant C_CNT_BITS : natural := 14;
 
   signal   clk     : std_logic  := '1';
   signal   rst     : std_logic  := '1';

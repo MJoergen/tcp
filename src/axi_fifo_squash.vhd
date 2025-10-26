@@ -12,6 +12,8 @@ library ieee;
 -- Synthesis report with G_S_DATA_BYTES = 4 and G_M_DATA_BYTES = 8:
 --   LUTs      : 246
 --   Registers : 104
+--
+-- Maximum frequency is 250 MHz.
 
 entity axi_fifo_squash is
   generic (
@@ -136,7 +138,7 @@ begin
           f_assert_7 : assert s_start <= s_end;
 
           -- Do we have data in input buffer?
-          if G_S_DATA_BYTES > G_M_DATA_BYTES and s_start < s_end then
+          if G_S_DATA_BYTES > G_M_DATA_BYTES + 1 and s_start < s_end then
             s_bytes_v := s_end - s_start;
             if C_DEBUG then
               report "READY: Input buffer contains " & to_string(s_bytes_v) & " bytes";

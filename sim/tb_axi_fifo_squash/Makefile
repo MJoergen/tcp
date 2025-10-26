@@ -18,6 +18,7 @@ STOP_TIME = 1us
 GENERIC += -gG_SHOW_TESTS=true
 GENERIC += -gG_SHOW_DATA=false
 GENERIC += -gG_FAST=true
+GENERIC += -gG_DATA_BYTES=8
 
 # Don't stop on errors
 ASSERT_LEVEL = none

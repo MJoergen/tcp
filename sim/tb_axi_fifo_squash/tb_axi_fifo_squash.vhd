@@ -4,6 +4,8 @@ library ieee;
 
 entity tb_axi_fifo_squash is
   generic (
+    G_DATA_BYTES : natural;
+
     G_FAST       : boolean;
     G_SHOW_TESTS : boolean;
     G_SHOW_DATA  : boolean
@@ -12,30 +14,28 @@ end entity tb_axi_fifo_squash;
 
 architecture simulation of tb_axi_fifo_squash is
 
-  constant C_DATA_BYTES : natural     := 8;
-
   signal   clk     : std_logic        := '1';
   signal   rst     : std_logic        := '1';
   signal   running : std_logic        := '1';
 
   signal   s_ready : std_logic;
   signal   s_valid : std_logic;
-  signal   s_data  : std_logic_vector(C_DATA_BYTES * 8 - 1 downto 0);
-  signal   s_start : natural range 0 to C_DATA_BYTES;
-  signal   s_end   : natural range 0 to C_DATA_BYTES;
+  signal   s_data  : std_logic_vector(G_DATA_BYTES * 8 - 1 downto 0);
+  signal   s_start : natural range 0 to G_DATA_BYTES-1;
+  signal   s_end   : natural range 0 to G_DATA_BYTES;
   signal   s_push  : std_logic;
 
   signal   m_ready : std_logic;
   signal   m_valid : std_logic;
-  signal   m_data  : std_logic_vector(C_DATA_BYTES * 8 - 1 downto 0);
-  signal   m_bytes : natural range 0 to C_DATA_BYTES;
+  signal   m_data  : std_logic_vector(G_DATA_BYTES * 8 - 1 downto 0);
+  signal   m_bytes : natural range 0 to G_DATA_BYTES;
   signal   m_empty : std_logic;
 
   type     test_type is record
     name   : string(1 to 24);
     -- Stimuli
     verify : boolean;
-    data   : std_logic_vector(C_DATA_BYTES * 8 - 1 downto 0);
+    data   : std_logic_vector(G_DATA_BYTES * 8 - 1 downto 0);
     dstart : natural;
     dend   : natural;
     push   : std_logic;
@@ -213,17 +213,17 @@ begin
       end if;
 
       if C_TESTS(i).verify then
-        verify(C_TESTS(i).data(C_TESTS(i).dend*8-1 downto 0));
+        verify(C_TESTS(i).data(C_TESTS(i).dend * 8 - 1 downto 0));
       else
         send(C_TESTS(i).data, C_TESTS(i).dstart, C_TESTS(i).dend, C_TESTS(i).push);
       end if;
 
       assert m_empty = C_TESTS(i).empty
-        report "index "  & to_string(i) & ": m_empty not " & to_string(C_TESTS(i).empty);
+        report "index " & to_string(i) & ": m_empty not " & to_string(C_TESTS(i).empty);
       assert m_valid = C_TESTS(i).valid
-        report "index "  & to_string(i) & ": m_valid not " & to_string(C_TESTS(i).valid);
+        report "index " & to_string(i) & ": m_valid not " & to_string(C_TESTS(i).valid);
       assert s_ready = C_TESTS(i).ready
-        report "index "  & to_string(i) & ": s_ready not " & to_string(C_TESTS(i).ready);
+        report "index " & to_string(i) & ": s_ready not " & to_string(C_TESTS(i).ready);
     end loop;
 
     report "Test finished";
@@ -239,7 +239,8 @@ begin
 
   axi_fifo_squash_inst : entity work.axi_fifo_squash
     generic map (
-      G_DATA_BYTES => C_DATA_BYTES
+      G_S_DATA_BYTES => G_DATA_BYTES,
+      G_M_DATA_BYTES => G_DATA_BYTES
     )
     port map (
       clk_i     => clk,
