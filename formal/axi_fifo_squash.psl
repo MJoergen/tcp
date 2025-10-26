@@ -3,9 +3,9 @@ vunit axi_fifo_squash_inst(axi_fifo_squash(synthesis))
 -- set all declarations to run on clk_i
    default clock is rising_edge(clk_i);
 
-   signal f_old_m_bytes : natural range 0 to G_DATA_BYTES;
-   signal f_m_data      : std_logic_vector(8 * G_DATA_BYTES - 1 downto 0);
-   signal f_old_m_data  : std_logic_vector(8 * G_DATA_BYTES - 1 downto 0);
+   signal f_old_m_bytes : natural range 0 to G_M_DATA_BYTES;
+   signal f_m_data      : std_logic_vector(8 * G_M_DATA_BYTES - 1 downto 0);
+   signal f_old_m_data  : std_logic_vector(8 * G_M_DATA_BYTES - 1 downto 0);
 
    signal f_data : std_logic_vector(7 downto 0);
    attribute anyconst : boolean;
@@ -28,7 +28,7 @@ vunit axi_fifo_squash_inst(axi_fifo_squash(synthesis))
    begin
      f_m_data <= m_data_o;
      -- Clear out unused bits
-     for b in G_DATA_BYTES - 1 downto 0 loop
+     for b in G_M_DATA_BYTES - 1 downto 0 loop
        if b >= f_old_m_bytes then
          f_m_data(b * 8 + 7 downto b * 8) <= X"00";
        end if;
@@ -40,7 +40,7 @@ vunit axi_fifo_squash_inst(axi_fifo_squash(synthesis))
      if rising_edge(clk_i) then
        f_old_m_data <= m_data_o;
        -- Clear out unused bits
-       for b in G_DATA_BYTES - 1 downto 0 loop
+       for b in G_M_DATA_BYTES - 1 downto 0 loop
          if b >= m_bytes_o then
            f_old_m_data(b * 8 + 7 downto b * 8) <= X"00";
          end if;
@@ -52,7 +52,7 @@ vunit axi_fifo_squash_inst(axi_fifo_squash(synthesis))
    begin
      if rising_edge(clk_i) then
        if s_valid_i = '1' and s_ready_o = '1' then
-         for i in 0 to G_DATA_BYTES - 1 loop
+         for i in 0 to G_S_DATA_BYTES - 1 loop
            if i >= s_start_i and i < s_end_i then
              if s_data_i(8*i+7 downto 8*i) = f_data then
                f_data_in <= true;
@@ -62,7 +62,7 @@ vunit axi_fifo_squash_inst(axi_fifo_squash(synthesis))
        end if;
 
        if m_valid_o = '1' and m_ready_i = '1' then
-         for i in 0 to G_DATA_BYTES - 1 loop
+         for i in 0 to G_M_DATA_BYTES - 1 loop
            if i < m_bytes_o then
              if m_data_o(8*i+7 downto 8*i) = f_data then
                f_data_out <= true;
@@ -105,7 +105,7 @@ vunit axi_fifo_squash_inst(axi_fifo_squash(synthesis))
    f_master_data_seen : assert always {f_data_out and rst_i = '0'} |-> {f_data_in};
 
 -- Output buffer full always valid
-   f_master_buffer_full : assert always {not rst_i } |-> {m_bytes_o < G_DATA_BYTES or m_valid_o = '1'};
+   f_master_buffer_full : assert always {not rst_i } |-> {m_bytes_o < G_M_DATA_BYTES or m_valid_o = '1'};
 
 -----------------------------
 -- ASSUMPTIONS ABOUT INPUTS
@@ -116,8 +116,8 @@ vunit axi_fifo_squash_inst(axi_fifo_squash(synthesis))
 
 -- Input bytes must be a valid number.
    f_slave_valid : assume always {s_start_i <= s_end_i and
-                                  s_start_i <= G_DATA_BYTES and
-                                  s_end_i <= G_DATA_BYTES};
+                                  s_start_i < G_S_DATA_BYTES and
+                                  s_end_i <= G_S_DATA_BYTES};
 
 
 --------------------------------------------

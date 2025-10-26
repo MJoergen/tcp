@@ -13,7 +13,7 @@ bmc: depth 7
 smtbmc
 
 [script]
-ghdl --std=08 -gG_DATA_BYTES=4 axi_fifo_squash.vhd axi_fifo_squash.psl -e axi_fifo_squash
+ghdl --std=08 -gG_S_DATA_BYTES=7 -gG_M_DATA_BYTES=3 axi_fifo_squash.vhd axi_fifo_squash.psl -e axi_fifo_squash
 prep -top axi_fifo_squash
 
 [files]

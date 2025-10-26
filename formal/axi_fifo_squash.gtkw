@@ -1,10 +1,10 @@
 [*]
 [*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
-[*] Sat Oct 25 14:16:17 2025
+[*] Sun Oct 26 11:07:01 2025
 [*]
 [dumpfile] "/home/mike/git/MJoergen/tcp/formal/axi_fifo_squash_bmc/engine_0/trace.vcd"
-[dumpfile_mtime] "Sat Oct 25 14:13:36 2025"
-[dumpfile_size] 2842
+[dumpfile_mtime] "Sun Oct 26 11:06:01 2025"
+[dumpfile_size] 1938
 [savefile] "/home/mike/git/MJoergen/tcp/formal/axi_fifo_squash.gtkw"
 [timestart] 0
 [size] 1687 896
@@ -48,9 +48,14 @@ axi_fifo_squash.m_empty_o
 @200
 -
 @22
+axi_fifo_squash.s_data[31:0]
+@24
+axi_fifo_squash.s_start[2:0]
+axi_fifo_squash.s_end[2:0]
+@22
 axi_fifo_squash.m_data[31:0]
 @24
-axi_fifo_squash.m_bytes[1:0]
+axi_fifo_squash.m_bytes[2:0]
 @200
 -
 @22

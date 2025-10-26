@@ -7,35 +7,36 @@ library std;
 
 entity tb_axi_fifo_squash_stress is
   generic (
-    G_FAST   : boolean;
-    G_RANDOM : boolean
+    G_FAST         : boolean;
+    G_RANDOM       : boolean;
+    G_S_DATA_BYTES : natural;
+    G_M_DATA_BYTES : natural
   );
 end entity tb_axi_fifo_squash_stress;
 
 architecture simulation of tb_axi_fifo_squash_stress is
 
-  constant C_DATA_BYTES : natural := 8;
+  constant C_CNT_BITS : natural := 12;
 
-  signal   clk     : std_logic    := '1';
-  signal   rst     : std_logic    := '1';
-  signal   running : std_logic    := '1';
+  signal   clk     : std_logic  := '1';
+  signal   rst     : std_logic  := '1';
+  signal   running : std_logic  := '1';
 
   signal   s_ready : std_logic;
   signal   s_valid : std_logic;
-  signal   s_data  : std_logic_vector(C_DATA_BYTES * 8 - 1 downto 0);
-  signal   s_start : natural range 0 to C_DATA_BYTES;
-  signal   s_end   : natural range 0 to C_DATA_BYTES;
+  signal   s_data  : std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
+  signal   s_start : natural range 0 to G_S_DATA_BYTES - 1;
+  signal   s_end   : natural range 0 to G_S_DATA_BYTES;
   signal   s_push  : std_logic;
 
   signal   m_ready : std_logic;
   signal   m_valid : std_logic;
-  signal   m_data  : std_logic_vector(C_DATA_BYTES * 8 - 1 downto 0);
-  signal   m_bytes : natural range 0 to C_DATA_BYTES;
-  signal   m_empty : std_logic;
+  signal   m_data  : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
+  signal   m_bytes : natural range 0 to G_M_DATA_BYTES;
 
   signal   rand       : std_logic_vector(63 downto 0);
-  signal   stim_cnt   : std_logic_vector(9 downto 0);
-  signal   verify_cnt : std_logic_vector(9 downto 0);
+  signal   stim_cnt   : std_logic_vector(C_CNT_BITS - 1 downto 0);
+  signal   verify_cnt : std_logic_vector(C_CNT_BITS - 1 downto 0);
 
   signal   do_valid : std_logic;
   signal   do_push  : std_logic;
@@ -76,8 +77,9 @@ begin
 
 
   stimuli_proc : process (clk)
-    variable start_v : natural range 0 to C_DATA_BYTES;
-    variable end_v   : natural range 0 to C_DATA_BYTES;
+    variable start_v : natural range 0 to G_S_DATA_BYTES - 1;
+    variable end_v   : natural range 0 to G_S_DATA_BYTES;
+    variable first_v : boolean := true;
   begin
     if rising_edge(clk) then
       if s_ready = '1' then
@@ -88,10 +90,15 @@ begin
         s_push  <= '0';
       end if;
 
+      if rst = '0' and first_v then
+        report "Test started";
+        first_v := false;
+      end if;
+
       if s_valid = '0' or (G_FAST and s_ready = '1') then
         if do_valid = '1' then
-          start_v  := to_integer(rand(15 downto 0)) mod (C_DATA_BYTES + 1);
-          end_v    := to_integer(rand(15 downto 0)) mod (C_DATA_BYTES + 1 - start_v) + start_v;
+          start_v  := to_integer(rand(15 downto 0)) mod G_S_DATA_BYTES;
+          end_v    := to_integer(rand(15 downto 0)) mod (G_S_DATA_BYTES + 1 - start_v) + start_v;
 
           stim_cnt <= stim_cnt + end_v - start_v;
 
@@ -137,6 +144,7 @@ begin
 
         -- Check for wrap-around
         if verify_cnt > verify_cnt + m_bytes then
+          report "Test finished";
           stop;
         end if;
       end if;
@@ -154,7 +162,8 @@ begin
 
   axi_fifo_squash_inst : entity work.axi_fifo_squash
     generic map (
-      G_DATA_BYTES => C_DATA_BYTES
+      G_S_DATA_BYTES => G_S_DATA_BYTES,
+      G_M_DATA_BYTES => G_M_DATA_BYTES
     )
     port map (
       clk_i     => clk,
@@ -169,7 +178,7 @@ begin
       m_valid_o => m_valid,
       m_data_o  => m_data,
       m_bytes_o => m_bytes,
-      m_empty_o => m_empty
+      m_empty_o => open
     ); -- axi_fifo_squash_inst : entity work.axi_fifo_squash
 
 end architecture simulation;
