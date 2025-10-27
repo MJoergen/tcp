@@ -7,6 +7,7 @@ library std;
 
 entity tb_axi_fifo_squash_stress is
   generic (
+    G_CNT_BITS     : natural;
     G_FAST         : boolean;
     G_RANDOM       : boolean;
     G_S_DATA_BYTES : natural;
@@ -16,30 +17,29 @@ end entity tb_axi_fifo_squash_stress;
 
 architecture simulation of tb_axi_fifo_squash_stress is
 
-  constant C_CNT_BITS : natural := 14;
+  signal clk     : std_logic := '1';
+  signal rst     : std_logic := '1';
+  signal running : std_logic := '1';
 
-  signal   clk     : std_logic  := '1';
-  signal   rst     : std_logic  := '1';
-  signal   running : std_logic  := '1';
+  signal s_ready : std_logic;
+  signal s_valid : std_logic;
+  signal s_data  : std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
+  signal s_start : natural range 0 to G_S_DATA_BYTES - 1;
+  signal s_end   : natural range 0 to G_S_DATA_BYTES;
+  signal s_last  : std_logic;
 
-  signal   s_ready : std_logic;
-  signal   s_valid : std_logic;
-  signal   s_data  : std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
-  signal   s_start : natural range 0 to G_S_DATA_BYTES - 1;
-  signal   s_end   : natural range 0 to G_S_DATA_BYTES;
-  signal   s_push  : std_logic;
+  signal m_ready : std_logic;
+  signal m_valid : std_logic;
+  signal m_data  : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
+  signal m_bytes : natural range 0 to G_M_DATA_BYTES;
+  signal m_last  : std_logic;
 
-  signal   m_ready : std_logic;
-  signal   m_valid : std_logic;
-  signal   m_data  : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
-  signal   m_bytes : natural range 0 to G_M_DATA_BYTES;
+  signal rand       : std_logic_vector(63 downto 0);
+  signal stim_cnt   : std_logic_vector(G_CNT_BITS - 1 downto 0);
+  signal verify_cnt : std_logic_vector(G_CNT_BITS - 1 downto 0);
 
-  signal   rand       : std_logic_vector(63 downto 0);
-  signal   stim_cnt   : std_logic_vector(C_CNT_BITS - 1 downto 0);
-  signal   verify_cnt : std_logic_vector(C_CNT_BITS - 1 downto 0);
-
-  signal   do_valid : std_logic;
-  signal   do_push  : std_logic;
+  signal do_valid : std_logic;
+  signal do_last  : std_logic;
 
 begin
 
@@ -73,7 +73,7 @@ begin
 
   do_valid <= or(rand(42 downto 40)) when G_RANDOM else
               '1';
-  do_push  <= and(rand(22 downto 20));
+  do_last  <= and(rand(22 downto 20));
 
 
   stimuli_proc : process (clk)
@@ -87,7 +87,7 @@ begin
         s_data  <= (others => '0');
         s_start <= 0;
         s_end   <= 0;
-        s_push  <= '0';
+        s_last  <= '0';
       end if;
 
       if rst = '0' and first_v then
@@ -109,7 +109,7 @@ begin
           s_valid <= '1';
           s_start <= start_v;
           s_end   <= end_v;
-          s_push  <= do_push;
+          s_last  <= do_last;
         end if;
       end if;
 
@@ -173,11 +173,12 @@ begin
       s_data_i  => s_data,
       s_start_i => s_start,
       s_end_i   => s_end,
-      s_push_i  => s_push,
+      s_last_i  => s_last,
       m_ready_i => m_ready,
       m_valid_o => m_valid,
       m_data_o  => m_data,
       m_bytes_o => m_bytes,
+      m_last_o  => m_last,
       m_empty_o => open
     ); -- axi_fifo_squash_inst : entity work.axi_fifo_squash
 

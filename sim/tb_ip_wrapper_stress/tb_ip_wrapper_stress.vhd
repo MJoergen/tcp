@@ -39,10 +39,12 @@ architecture simulation of tb_ip_wrapper_stress is
   signal   client_user_rx_valid    : std_logic;
   signal   client_user_rx_data     : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
   signal   client_user_rx_bytes    : natural range 0 to C_USER_BYTES;
+  signal   client_user_rx_last     : std_logic;
   signal   client_user_tx_ready    : std_logic;
   signal   client_user_tx_valid    : std_logic;
   signal   client_user_tx_data     : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
   signal   client_user_tx_bytes    : natural range 0 to C_USER_BYTES;
+  signal   client_user_tx_last     : std_logic;
 
   -- Client to Server
   signal   tb_mac_payload_c2s_ready      : std_logic;
@@ -80,11 +82,13 @@ architecture simulation of tb_ip_wrapper_stress is
   signal   server_user_rx_data      : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
   signal   server_user_rx_bytes     : natural range 0 to C_USER_BYTES;
   signal   server_user_rx_bytes_slv : std_logic_vector(7 downto 0);
+  signal   server_user_rx_last      : std_logic;
   signal   server_user_tx_ready     : std_logic;
   signal   server_user_tx_valid     : std_logic;
   signal   server_user_tx_data      : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
   signal   server_user_tx_bytes     : natural range 0 to C_USER_BYTES;
   signal   server_user_tx_bytes_slv : std_logic_vector(7 downto 0);
+  signal   server_user_tx_last      : std_logic;
 
   signal   do_drop_c2s             : std_logic;
   signal   do_drop_s2c             : std_logic;
@@ -95,11 +99,12 @@ architecture simulation of tb_ip_wrapper_stress is
   subtype  R_BYTES is natural range C_MAC_PAYLOAD_BYTES * 8 + 7 downto C_MAC_PAYLOAD_BYTES * 8;
 
 
-  signal   stim_cnt   : std_logic_vector(G_CNT_SIZE-1 downto 0);
-  signal   verify_cnt : std_logic_vector(G_CNT_SIZE-1 downto 0);
+  signal   stim_cnt   : std_logic_vector(G_CNT_SIZE - 1 downto 0);
+  signal   verify_cnt : std_logic_vector(G_CNT_SIZE - 1 downto 0);
 
   subtype  R_AXI_FIFO_DATA  is natural range C_USER_BYTES * 8 - 1 downto 0;
   subtype  R_AXI_FIFO_BYTES is natural range C_USER_BYTES * 8 + 7 downto C_USER_BYTES * 8;
+  constant C_AXI_FIFO_LAST  : natural := C_USER_BYTES * 8 + 8;
 
 begin
 
@@ -148,6 +153,7 @@ begin
         client_user_tx_valid <= '0';
         client_user_tx_data  <= (others => '0');
         client_user_tx_bytes <= 0;
+        client_user_tx_last  <= '0';
       end if;
 
       if rst = '0' and first_v then
@@ -167,6 +173,7 @@ begin
 
           client_user_tx_valid <= '1';
           client_user_tx_bytes <= bytes_v;
+          client_user_tx_last  <= '1';
         end if;
       end if;
 
@@ -236,10 +243,12 @@ begin
       user_rx_valid_o        => client_user_rx_valid,
       user_rx_data_o         => client_user_rx_data,
       user_rx_bytes_o        => client_user_rx_bytes,
+      user_rx_last_o         => client_user_rx_last,
       user_tx_ready_o        => client_user_tx_ready,
       user_tx_valid_i        => client_user_tx_valid,
       user_tx_data_i         => client_user_tx_data,
       user_tx_bytes_i        => client_user_tx_bytes,
+      user_tx_last_i         => client_user_tx_last,
       mac_payload_rx_ready_o => tb_mac_payload_s2c_dropped_ready,
       mac_payload_rx_valid_i => tb_mac_payload_s2c_dropped_valid,
       mac_payload_rx_data_i  => tb_mac_payload_s2c_dropped_data,
@@ -305,10 +314,12 @@ begin
       user_rx_valid_o        => server_user_rx_valid,
       user_rx_data_o         => server_user_rx_data,
       user_rx_bytes_o        => server_user_rx_bytes,
+      user_rx_last_o         => server_user_rx_last,
       user_tx_ready_o        => server_user_tx_ready,
       user_tx_valid_i        => server_user_tx_valid,
       user_tx_data_i         => server_user_tx_data,
       user_tx_bytes_i        => server_user_tx_bytes,
+      user_tx_last_i         => server_user_tx_last,
       mac_payload_rx_ready_o => tb_mac_payload_c2s_dropped_ready,
       mac_payload_rx_valid_i => tb_mac_payload_c2s_dropped_valid,
       mac_payload_rx_data_i  => tb_mac_payload_c2s_dropped_data,
@@ -327,7 +338,7 @@ begin
   axi_fifo_sync_inst : entity work.axi_fifo_sync
     generic map (
       G_RAM_STYLE => "auto",
-      G_DATA_SIZE => C_USER_BYTES * 8 + 8,
+      G_DATA_SIZE => C_USER_BYTES * 8 + 9,
       G_RAM_DEPTH => 4
     )
     port map (
@@ -337,10 +348,12 @@ begin
       s_valid_i                  => server_user_rx_valid,
       s_data_i(R_AXI_FIFO_DATA)  => server_user_rx_data,
       s_data_i(R_AXI_FIFO_BYTES) => server_user_rx_bytes_slv,
+      s_data_i(C_AXI_FIFO_LAST)  => server_user_rx_last,
       m_ready_i                  => server_user_tx_ready,
       m_valid_o                  => server_user_tx_valid,
       m_data_o(R_AXI_FIFO_DATA)  => server_user_tx_data,
-      m_data_o(R_AXI_FIFO_BYTES) => server_user_tx_bytes_slv
+      m_data_o(R_AXI_FIFO_BYTES) => server_user_tx_bytes_slv,
+      m_data_o(C_AXI_FIFO_LAST)  => server_user_tx_last
     ); -- axi_fifo_sync_inst : entity work.axi_fifo_sync
 
   server_user_rx_bytes_slv <= to_stdlogicvector(server_user_rx_bytes, 8);

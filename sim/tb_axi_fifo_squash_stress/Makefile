@@ -17,6 +17,7 @@ DUT = axi_fifo_squash_stress
 STOP_TIME = 100us
 
 # Test specific generics
+GENERIC += -gG_CNT_BITS=12
 GENERIC += -gG_FAST=true
 GENERIC += -gG_RANDOM=true
 GENERIC += -gG_S_DATA_BYTES=10

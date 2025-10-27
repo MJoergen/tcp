@@ -26,11 +26,13 @@ entity ip_wrapper is
     user_rx_valid_o        : out   std_logic;
     user_rx_data_o         : out   std_logic_vector(G_USER_BYTES * 8 - 1 downto 0);
     user_rx_bytes_o        : out   natural range 0 to G_USER_BYTES;
+    user_rx_last_o         : out   std_logic;
     --
     user_tx_ready_o        : out   std_logic;
     user_tx_valid_i        : in    std_logic;
     user_tx_data_i         : in    std_logic_vector(G_USER_BYTES * 8 - 1 downto 0);
     user_tx_bytes_i        : in    natural range 0 to G_USER_BYTES;
+    user_tx_last_i         : in    std_logic;
 
     -- Interface to MAC handler (packet oriented)
     -- bits 7-0 is the first byte transferred.
@@ -190,11 +192,12 @@ begin
       s_data_i  => squash_s_data,
       s_start_i => squash_s_start,
       s_end_i   => squash_s_end,
-      s_push_i  => squash_s_push,
+      s_last_i  => squash_s_push,
       m_ready_i => user_rx_ready_i,
       m_valid_o => user_rx_valid_o,
       m_data_o  => user_rx_data_o,
       m_bytes_o => user_rx_bytes_o,
+      m_last_o  => user_rx_last_o,
       m_empty_o => open
     ); -- axi_fifo_squash_inst : entity work.axi_fifo_squash
 

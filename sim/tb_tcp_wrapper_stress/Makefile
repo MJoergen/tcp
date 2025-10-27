@@ -21,6 +21,7 @@ DUT = tcp_wrapper_stress
 STOP_TIME = 2us
 
 # Test specific generics
+GENERIC += -gG_CNT_SIZE=10
 GENERIC += -gG_RANDOM=false
 GENERIC += -gG_FAST=false
 GENERIC += -gG_SHOW_PACKETS=false

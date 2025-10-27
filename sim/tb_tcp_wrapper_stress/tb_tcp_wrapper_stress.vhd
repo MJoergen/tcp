@@ -6,6 +6,7 @@ library std;
 
 entity tb_tcp_wrapper_stress is
   generic (
+    G_CNT_SIZE      : natural;
     G_RANDOM        : boolean;
     G_FAST          : boolean;
     G_SHOW_PACKETS  : boolean;
@@ -89,8 +90,8 @@ architecture simulation of tb_tcp_wrapper_stress is
 
   subtype  R_BYTES is natural range C_IP_PAYLOAD_BYTES * 8 + 7 downto C_IP_PAYLOAD_BYTES * 8;
 
-  signal   stim_cnt   : std_logic_vector(7 downto 0);
-  signal   verify_cnt : std_logic_vector(7 downto 0);
+  signal   stim_cnt   : std_logic_vector(G_CNT_SIZE-1 downto 0);
+  signal   verify_cnt : std_logic_vector(G_CNT_SIZE-1 downto 0);
 
 begin
 
@@ -157,7 +158,7 @@ begin
           stim_cnt <= stim_cnt + bytes_v;
 
           for i in 0 to bytes_v - 1 loop
-            client_session_tx_data(i * 8 + 7 downto i * 8) <= stim_cnt + i;
+            client_session_tx_data(i * 8 + 7 downto i * 8) <= stim_cnt(7 downto 0) + i;
           end loop;
 
           client_session_tx_valid <= '1';

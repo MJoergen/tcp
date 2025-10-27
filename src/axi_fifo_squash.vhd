@@ -5,11 +5,11 @@ library ieee;
 -- This is an "elastic" FIFO. It can accept a variable number of bytes in each clock
 -- cycle, and will gather together and align the bytes.
 --
--- Synthesis report with G_S_DATA_BYTES = 8 and G_M_DATA_BYTES = 4:
+-- Synth report with G_S_DATA_BYTES = 8 and G_M_DATA_BYTES = 4:
 --   LUTs      : 348
 --   Registers : 132
 --
--- Synthesis report with G_S_DATA_BYTES = 4 and G_M_DATA_BYTES = 8:
+-- Synth report with G_S_DATA_BYTES = 4 and G_M_DATA_BYTES = 8:
 --   LUTs      : 246
 --   Registers : 104
 --
@@ -29,12 +29,13 @@ entity axi_fifo_squash is
     s_data_i  : in    std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
     s_start_i : in    natural range 0 to G_S_DATA_BYTES - 1;
     s_end_i   : in    natural range 0 to G_S_DATA_BYTES;
-    s_push_i  : in    std_logic;  -- Force empty of internal buffer
+    s_last_i  : in    std_logic;
 
     m_ready_i : in    std_logic;
     m_valid_o : out   std_logic;
     m_data_o  : out   std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
     m_bytes_o : out   natural range 0 to G_M_DATA_BYTES := 0;
+    m_last_o  : out   std_logic;
     m_empty_o : out   std_logic
   );
 end entity axi_fifo_squash;
@@ -117,6 +118,7 @@ begin
     variable bytes_consumed_v : natural range 0 to G_M_DATA_BYTES;
   begin
     if rising_edge(clk_i) then
+      m_last_o <= '0';
       if m_ready_i = '1' then
         -- Output buffer is consumed.
         m_valid_o <= '0';
@@ -228,10 +230,10 @@ begin
           s_start          <= s_start_i + bytes_consumed_v;
 
           -- Copy remaining data to internal buffer
-          m_data        <= copy_data(m_data, s_data_i, 0, s_start_i + bytes_consumed_v);
+          m_data           <= copy_data(m_data, s_data_i, 0, s_start_i + bytes_consumed_v);
 
           -- Proposed new byte pointer in internal buffer
-          new_m_bytes_v := s_bytes_v - bytes_consumed_v;
+          new_m_bytes_v    := s_bytes_v - bytes_consumed_v;
 
           -- Can all data fit in internal buffer?
           if new_m_bytes_v <= G_M_DATA_BYTES then
@@ -251,9 +253,9 @@ begin
           end if;
         end if;
 
-        if s_push_i = '1' and new_m_bytes_v /= 0 then
-          -- Force output, but only if non-empty
+        if s_last_i = '1' then
           m_valid_o <= '1';
+          m_last_o  <= '1';
         end if;
       end if;
 
@@ -261,6 +263,7 @@ begin
         m_bytes_o <= 0;
         m_data_o  <= (others => '0');
         m_valid_o <= '0';
+        m_last_o  <= '0';
         m_bytes   <= 0;
         m_data    <= (others => '0');
         s_start   <= 0;

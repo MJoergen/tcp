@@ -94,10 +94,6 @@ vunit axi_fifo_squash_inst(axi_fifo_squash(synthesis))
    f_master_bytes : assert always {m_valid_o and not m_ready_i and not rst_i} |=>
       {m_bytes_o >= f_old_m_bytes};
 
--- Master bytes must be nonzero when valid
-   f_master_bytes_nonzero : assert always {m_valid_o and not rst_i} |->
-      {m_bytes_o /= 0};
-
 -- Slave must be ready after reset
    f_slave_after_reset_ready : assert always {rst_i} |=> {s_ready_o};
 
