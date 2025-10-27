@@ -12,7 +12,6 @@ SRC += tb_ip_wrapper_stress.vhd
 SRC += $(SIM_SRC_DIR)/data_logger.vhd
 SRC += $(SIM_SRC_DIR)/lfsr.vhd
 SRC += $(SIM_SRC_DIR)/random.vhd
-SRC += $(SIM_SRC_DIR)/axi_dropper.vhd
 SRC += $(SIM_SRC_DIR)/axi_fifo_sync.vhd
 
 # Top level entity
@@ -23,7 +22,6 @@ STOP_TIME = 20us
 
 # Test specific generics
 GENERIC += -gG_CNT_SIZE=12
-GENERIC += -gG_DROP=false
 GENERIC += -gG_RANDOM=false
 GENERIC += -gG_FAST=false
 GENERIC += -gG_SHOW_PACKETS=false

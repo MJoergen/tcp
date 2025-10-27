@@ -4,6 +4,8 @@ library ieee;
 
 -- This is a top level TCP handler.
 -- If dst_port_i is 0 then it opens a LISTENING session.
+--
+-- This interface is byte based.
 
 entity tcp_wrapper is
   generic (

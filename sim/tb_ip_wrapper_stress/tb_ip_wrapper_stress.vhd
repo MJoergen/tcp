@@ -8,7 +8,6 @@ library std;
 entity tb_ip_wrapper_stress is
   generic (
     G_CNT_SIZE      : natural;
-    G_DROP          : boolean;
     G_RANDOM        : boolean;
     G_FAST          : boolean;
     G_SHOW_PACKETS  : boolean;
@@ -54,13 +53,6 @@ architecture simulation of tb_ip_wrapper_stress is
   signal   tb_mac_payload_c2s_last       : std_logic;
   signal   tb_mac_payload_c2s_data_bytes : std_logic_vector(C_MAC_PAYLOAD_BYTES * 8 + 7 downto 0);
 
-  signal   tb_mac_payload_c2s_dropped_ready      : std_logic;
-  signal   tb_mac_payload_c2s_dropped_valid      : std_logic;
-  signal   tb_mac_payload_c2s_dropped_data       : std_logic_vector(C_MAC_PAYLOAD_BYTES * 8 - 1 downto 0);
-  signal   tb_mac_payload_c2s_dropped_bytes      : natural range 0 to C_MAC_PAYLOAD_BYTES - 1;
-  signal   tb_mac_payload_c2s_dropped_last       : std_logic;
-  signal   tb_mac_payload_c2s_dropped_data_bytes : std_logic_vector(C_MAC_PAYLOAD_BYTES * 8 + 7 downto 0);
-
   -- Server to Client
   signal   tb_mac_payload_s2c_ready      : std_logic;
   signal   tb_mac_payload_s2c_valid      : std_logic;
@@ -68,13 +60,6 @@ architecture simulation of tb_ip_wrapper_stress is
   signal   tb_mac_payload_s2c_bytes      : natural range 0 to C_MAC_PAYLOAD_BYTES - 1;
   signal   tb_mac_payload_s2c_last       : std_logic;
   signal   tb_mac_payload_s2c_data_bytes : std_logic_vector(C_MAC_PAYLOAD_BYTES * 8 + 7 downto 0);
-
-  signal   tb_mac_payload_s2c_dropped_ready      : std_logic;
-  signal   tb_mac_payload_s2c_dropped_valid      : std_logic;
-  signal   tb_mac_payload_s2c_dropped_data       : std_logic_vector(C_MAC_PAYLOAD_BYTES * 8 - 1 downto 0);
-  signal   tb_mac_payload_s2c_dropped_bytes      : natural range 0 to C_MAC_PAYLOAD_BYTES - 1;
-  signal   tb_mac_payload_s2c_dropped_last       : std_logic;
-  signal   tb_mac_payload_s2c_dropped_data_bytes : std_logic_vector(C_MAC_PAYLOAD_BYTES * 8 + 7 downto 0);
 
   signal   server_user_established  : std_logic;
   signal   server_user_rx_ready     : std_logic;
@@ -90,8 +75,6 @@ architecture simulation of tb_ip_wrapper_stress is
   signal   server_user_tx_bytes_slv : std_logic_vector(7 downto 0);
   signal   server_user_tx_last      : std_logic;
 
-  signal   do_drop_c2s             : std_logic;
-  signal   do_drop_s2c             : std_logic;
   signal   client_user_tx_do_valid : std_logic;
 
   subtype  R_DATA is natural range C_MAC_PAYLOAD_BYTES * 8 - 1 downto 0;
@@ -130,11 +113,6 @@ begin
       update_i => '1',
       output_o => rand
     ); -- random_inst : entity work.random
-
-  do_drop_c2s             <= and(rand(15 downto 12)) when G_DROP else
-                             '0';
-  do_drop_s2c             <= and(rand(25 downto 22)) when G_DROP else
-                             '0';
 
 
   -------------------------------------
@@ -249,47 +227,17 @@ begin
       user_tx_data_i         => client_user_tx_data,
       user_tx_bytes_i        => client_user_tx_bytes,
       user_tx_last_i         => client_user_tx_last,
-      mac_payload_rx_ready_o => tb_mac_payload_s2c_dropped_ready,
-      mac_payload_rx_valid_i => tb_mac_payload_s2c_dropped_valid,
-      mac_payload_rx_data_i  => tb_mac_payload_s2c_dropped_data,
-      mac_payload_rx_bytes_i => tb_mac_payload_s2c_dropped_bytes,
-      mac_payload_rx_last_i  => tb_mac_payload_s2c_dropped_last,
+      mac_payload_rx_ready_o => tb_mac_payload_s2c_ready,
+      mac_payload_rx_valid_i => tb_mac_payload_s2c_valid,
+      mac_payload_rx_data_i  => tb_mac_payload_s2c_data,
+      mac_payload_rx_bytes_i => tb_mac_payload_s2c_bytes,
+      mac_payload_rx_last_i  => tb_mac_payload_s2c_last,
       mac_payload_tx_ready_i => tb_mac_payload_c2s_ready,
       mac_payload_tx_valid_o => tb_mac_payload_c2s_valid,
       mac_payload_tx_data_o  => tb_mac_payload_c2s_data,
       mac_payload_tx_bytes_o => tb_mac_payload_c2s_bytes,
       mac_payload_tx_last_o  => tb_mac_payload_c2s_last
     ); -- ip_wrapper_client_inst : entity work.ip_wrapper
-
-  -------------------------------------
-  -- Drop random packets from client to server
-  -------------------------------------
-
-  axi_dropper_c2s_inst : entity work.axi_dropper
-    generic map (
-      G_DATA_SIZE => C_MAC_PAYLOAD_BYTES * 8 + 8,
-      G_ADDR_SIZE => 6,
-      G_RAM_DEPTH => 64
-    )
-    port map (
-      clk_i     => clk,
-      rst_i     => rst,
-      s_ready_o => tb_mac_payload_c2s_ready,
-      s_valid_i => tb_mac_payload_c2s_valid,
-      s_data_i  => tb_mac_payload_c2s_data_bytes,
-      s_last_i  => tb_mac_payload_c2s_last,
-      s_drop_i  => do_drop_c2s,
-      m_ready_i => tb_mac_payload_c2s_dropped_ready,
-      m_valid_o => tb_mac_payload_c2s_dropped_valid,
-      m_data_o  => tb_mac_payload_c2s_dropped_data_bytes,
-      m_last_o  => tb_mac_payload_c2s_dropped_last
-    ); -- axi_dropper_c2s_inst : entity work.axi_dropper
-
-  tb_mac_payload_c2s_data_bytes(R_DATA)  <= tb_mac_payload_c2s_data;
-  tb_mac_payload_c2s_data_bytes(R_BYTES) <= to_stdlogicvector(tb_mac_payload_c2s_bytes, 8);
-
-  tb_mac_payload_c2s_dropped_data        <= tb_mac_payload_c2s_dropped_data_bytes(R_DATA);
-  tb_mac_payload_c2s_dropped_bytes       <= to_integer(tb_mac_payload_c2s_dropped_data_bytes(R_BYTES));
 
 
   -------------------------------------
@@ -320,11 +268,11 @@ begin
       user_tx_data_i         => server_user_tx_data,
       user_tx_bytes_i        => server_user_tx_bytes,
       user_tx_last_i         => server_user_tx_last,
-      mac_payload_rx_ready_o => tb_mac_payload_c2s_dropped_ready,
-      mac_payload_rx_valid_i => tb_mac_payload_c2s_dropped_valid,
-      mac_payload_rx_data_i  => tb_mac_payload_c2s_dropped_data,
-      mac_payload_rx_bytes_i => tb_mac_payload_c2s_dropped_bytes,
-      mac_payload_rx_last_i  => tb_mac_payload_c2s_dropped_last,
+      mac_payload_rx_ready_o => tb_mac_payload_c2s_ready,
+      mac_payload_rx_valid_i => tb_mac_payload_c2s_valid,
+      mac_payload_rx_data_i  => tb_mac_payload_c2s_data,
+      mac_payload_rx_bytes_i => tb_mac_payload_c2s_bytes,
+      mac_payload_rx_last_i  => tb_mac_payload_c2s_last,
       mac_payload_tx_ready_i => tb_mac_payload_s2c_ready,
       mac_payload_tx_valid_o => tb_mac_payload_s2c_valid,
       mac_payload_tx_data_o  => tb_mac_payload_s2c_data,
@@ -358,37 +306,6 @@ begin
 
   server_user_rx_bytes_slv <= to_stdlogicvector(server_user_rx_bytes, 8);
   server_user_tx_bytes     <= to_integer(server_user_tx_bytes_slv);
-
-  -------------------------------------
-  -- Drop random packets from server to client
-  -------------------------------------
-
-  axi_dropper_s2c_inst : entity work.axi_dropper
-    generic map (
-      G_DATA_SIZE => C_MAC_PAYLOAD_BYTES * 8 + 8,
-      G_ADDR_SIZE => 6,
-      G_RAM_DEPTH => 64
-    )
-    port map (
-      clk_i     => clk,
-      rst_i     => rst,
-      s_ready_o => tb_mac_payload_s2c_ready,
-      s_valid_i => tb_mac_payload_s2c_valid,
-      s_data_i  => tb_mac_payload_s2c_data_bytes,
-      s_last_i  => tb_mac_payload_s2c_last,
-      s_drop_i  => do_drop_s2c,
-      m_ready_i => tb_mac_payload_s2c_dropped_ready,
-      m_valid_o => tb_mac_payload_s2c_dropped_valid,
-      m_data_o  => tb_mac_payload_s2c_dropped_data_bytes,
-      m_last_o  => tb_mac_payload_s2c_dropped_last
-    ); -- axi_dropper_s2c_inst : entity work.axi_dropper
-
-
-  tb_mac_payload_s2c_data_bytes(R_DATA)  <= tb_mac_payload_s2c_data;
-  tb_mac_payload_s2c_data_bytes(R_BYTES) <= to_stdlogicvector(tb_mac_payload_s2c_bytes, 8);
-
-  tb_mac_payload_s2c_dropped_data        <= tb_mac_payload_s2c_dropped_data_bytes(R_DATA);
-  tb_mac_payload_s2c_dropped_bytes       <= to_integer(tb_mac_payload_s2c_dropped_data_bytes(R_BYTES));
 
 
   data_logger_c2s_inst : entity work.data_logger
