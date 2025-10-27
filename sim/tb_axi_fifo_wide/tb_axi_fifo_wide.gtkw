@@ -1,22 +1,24 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Thu Oct 23 07:57:10 2025
+[*] Mon Oct 27 10:17:51 2025
 [*]
 [dumpfile] "/home/mfj/git/PRIVATE/MJoergen/tcp/sim/tb_axi_fifo_wide/tb_axi_fifo_wide.ghw"
-[dumpfile_mtime] "Thu Oct 23 07:56:57 2025"
-[dumpfile_size] 1859
+[dumpfile_mtime] "Mon Oct 27 10:17:48 2025"
+[dumpfile_size] 1936
 [savefile] "/home/mfj/git/PRIVATE/MJoergen/tcp/sim/tb_axi_fifo_wide/tb_axi_fifo_wide.gtkw"
-[timestart] 164100000
+[timestart] 149400000
 [size] 1257 815
 [pos] -1 -1
-*-25.320705 264700000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-25.320705 227100000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.tb_axi_fifo_wide.
 [treeopen] top.tb_axi_fifo_wide.axi_fifo_wide_inst.
 [sst_width] 210
-[signals_width] 301
+[signals_width] 256
 [sst_expanded] 1
 [sst_vpaned_height] 218
+@800200
+-axi_fifo_wide
 @28
 top.tb_axi_fifo_wide.axi_fifo_wide_inst.clk_i
 top.tb_axi_fifo_wide.axi_fifo_wide_inst.rst_i
@@ -42,43 +44,18 @@ top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_valid_o
 #{top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[31:0]} top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[31] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[30] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[29] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[28] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[27] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[26] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[25] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[24] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[23] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[22] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[21] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[20] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[19] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[18] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[17] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[16] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[15] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[14] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[13] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[12] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[11] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[10] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[9] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[8] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[7] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[6] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[5] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[4] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[3] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[2] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[1] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data_o[0]
 @420
 top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_bytes_o
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.bytes
-@c00023
-#{top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[31:0]} top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[31] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[30] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[29] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[28] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[27] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[26] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[25] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[24] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[23] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[22] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[21] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[20] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[19] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[18] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[17] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[16] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[15] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[14] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[13] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[12] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[11] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[10] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[9] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[8] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[7] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[6] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[5] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[4] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[3] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[2] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[1] top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[0]
-@29
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[31]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[30]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[29]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[28]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[27]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[26]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[25]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[24]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[23]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[22]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[21]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[20]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[19]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[18]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[17]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[16]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[15]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[14]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[13]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[12]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[11]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[10]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[9]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[8]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[7]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[6]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[5]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[4]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[3]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[2]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[1]
-top.tb_axi_fifo_wide.axi_fifo_wide_inst.data[0]
-@1401201
--group_end
+@200
+-
+@22
+#{top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[31:0]} top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[31] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[30] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[29] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[28] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[27] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[26] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[25] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[24] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[23] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[22] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[21] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[20] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[19] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[18] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[17] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[16] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[15] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[14] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[13] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[12] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[11] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[10] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[9] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[8] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[7] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[6] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[5] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[4] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[3] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[2] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[1] top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_data[0]
+@420
+top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_start
+top.tb_axi_fifo_wide.axi_fifo_wide_inst.s_end
+@22
+#{top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[31:0]} top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[31] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[30] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[29] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[28] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[27] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[26] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[25] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[24] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[23] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[22] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[21] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[20] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[19] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[18] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[17] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[16] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[15] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[14] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[13] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[12] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[11] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[10] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[9] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[8] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[7] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[6] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[5] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[4] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[3] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[2] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[1] top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_data[0]
+@420
+top.tb_axi_fifo_wide.axi_fifo_wide_inst.m_bytes
+@1000200
+-axi_fifo_wide
 [pattern_trace] 1
 [pattern_trace] 0

@@ -21,21 +21,23 @@ end entity tb_axi_fifo_wide;
 
 architecture simulation of tb_axi_fifo_wide is
 
-  constant C_DATA_SIZE : natural := 32; -- Number of bits
+  constant C_S_DATA_BYTES : natural := 4;
+  constant C_M_DATA_BYTES : natural := 4;
 
-  signal   clk     : std_logic   := '1';
-  signal   rst     : std_logic   := '1';
-  signal   running : std_logic   := '1';
+  signal   clk     : std_logic      := '1';
+  signal   rst     : std_logic      := '1';
+  signal   running : std_logic      := '1';
 
-  signal   s_ready         : std_logic;
-  signal   s_valid         : std_logic;
-  signal   s_data          : std_logic_vector(C_DATA_SIZE - 1 downto 0);
-  signal   s_bytes         : natural range 0 to C_DATA_SIZE / 8;
+  signal   s_ready : std_logic;
+  signal   s_valid : std_logic;
+  signal   s_data  : std_logic_vector(C_S_DATA_BYTES * 8 - 1 downto 0);
+  signal   s_bytes : natural range 0 to C_S_DATA_BYTES;
+
   signal   m_ready         : std_logic;
-  signal   m_bytes_consume : natural range 0 to C_DATA_SIZE / 8;
+  signal   m_bytes_consume : natural range 0 to C_M_DATA_BYTES;
   signal   m_valid         : std_logic;
-  signal   m_data          : std_logic_vector(C_DATA_SIZE - 1 downto 0);
-  signal   m_bytes_avail   : natural range 0 to C_DATA_SIZE / 8;
+  signal   m_data          : std_logic_vector(C_M_DATA_BYTES * 8 - 1 downto 0);
+  signal   m_bytes_avail   : natural range 0 to C_M_DATA_BYTES;
 
 begin
 
@@ -117,10 +119,10 @@ begin
                  " Expected " & to_string(m_bytes_consume) & " bytes.";
       end if;
 
-      report "Verify received : " & to_hstring(m_data(arg'length/8 * 8 - 1 downto 0));
+      report "Verify received : " & to_hstring(m_data(arg'length / 8 * 8 - 1 downto 0));
 
-      assert m_data(arg'length/8 * 8 - 1 downto 0) = exp_v(arg'length/8 * 8 - 1 downto 0)
-        report "Verify FAIL: Expected " & to_hstring(exp_v(arg'length/8 * 8 - 1 downto 0));
+      assert m_data(arg'length / 8 * 8 - 1 downto 0) = exp_v(arg'length / 8 * 8 - 1 downto 0)
+        report "Verify FAIL: Expected " & to_hstring(exp_v(arg'length / 8 * 8 - 1 downto 0));
 
       wait until rising_edge(clk);
       m_ready <= '0';
@@ -128,6 +130,7 @@ begin
 
   begin
     s_valid         <= '0';
+    s_data          <= (others => '0');
     m_ready         <= '0';
     m_bytes_consume <= 0;
     wait until rst = '0';
@@ -139,17 +142,17 @@ begin
     send(X"11");
     send(X"22");
     send(X"4433");
-    verify(X"11");               -- Partial
+    verify(X"11");                          -- Partial
     send(X"55");
 
-    s_bytes <= 1;
+    s_bytes         <= 1;
     -- Simulation trick to allow combinatorial paths to update
     wait for 1 ns;
 
     assert s_ready = '0'
       report "FAIL: Tx buffer still ready";
 
-    verify(X"443322");           -- Partial
+    verify(X"443322");                      -- Partial
     send(X"66");
     verify(X"6655", true);
 
@@ -166,7 +169,8 @@ begin
 
   axi_fifo_wide_inst : entity work.axi_fifo_wide
     generic map (
-      G_DATA_SIZE => C_DATA_SIZE
+      G_S_DATA_BYTES => C_S_DATA_BYTES,
+      G_M_DATA_BYTES => C_M_DATA_BYTES
     )
     port map (
       clk_i     => clk,
