@@ -81,7 +81,7 @@ begin
       if s_valid_i = '1' and s_ready_o = '1' then
         -- Store word in frame buffer
         rx_buf(wrptr) <= s_data_i;
-        wrptr         <= wrptr + 1;
+        wrptr         <= (wrptr + 1) mod (2 ** G_ADDR_SIZE);
 
         if s_last_i = '1' then
           if s_drop_i = '1' then
@@ -93,7 +93,7 @@ begin
             fifo_wr_data  <= std_logic_vector(to_unsigned(wrptr, G_ADDR_SIZE));
             fifo_wr_valid <= '1';
             -- Prepare for next frame
-            first_ptr     <= wrptr + 1;
+            first_ptr     <= (wrptr + 1) mod (2 ** G_ADDR_SIZE);
           end if;
         end if;
       end if;
@@ -151,7 +151,7 @@ begin
             m_valid_o <= '1';
             m_last_o  <= '0';
             m_data_o  <= rx_buf(rdptr);
-            rdptr     <= rdptr + 1;
+            rdptr     <= (rdptr + 1) mod (2 ** G_ADDR_SIZE);
             if rdptr = to_integer(unsigned(fifo_rd_data)) then
               m_last_o  <= '1';
               fsm_state <= IDLE_ST;
@@ -165,7 +165,7 @@ begin
             m_valid_o <= '1';
             m_last_o  <= '0';
             m_data_o  <= rx_buf(rdptr);
-            rdptr     <= rdptr + 1;
+            rdptr     <= (rdptr + 1) mod (2 ** G_ADDR_SIZE);
             if rdptr = last_ptr then
               m_last_o  <= '1';
               fsm_state <= IDLE_ST;

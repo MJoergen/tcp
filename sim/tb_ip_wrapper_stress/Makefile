@@ -5,6 +5,7 @@
 # List of source files
 SRC += $(SRC_DIR)/ip_wrapper.vhd
 SRC += $(SRC_DIR)/axi_fifo_squash.vhd
+SRC += $(SRC_DIR)/axi_fifo_wide.vhd
 
 # List of test specific simulation files
 SRC += tb_ip_wrapper_stress.vhd
@@ -18,9 +19,11 @@ SRC += $(SIM_SRC_DIR)/axi_fifo_sync.vhd
 DUT = ip_wrapper_stress
 
 # Test duration
-STOP_TIME = 2us
+STOP_TIME = 20us
 
 # Test specific generics
+GENERIC += -gG_CNT_SIZE=12
+GENERIC += -gG_DROP=false
 GENERIC += -gG_RANDOM=false
 GENERIC += -gG_FAST=false
 GENERIC += -gG_SHOW_PACKETS=false

@@ -7,6 +7,8 @@ library std;
 
 entity tb_ip_wrapper_stress is
   generic (
+    G_CNT_SIZE      : natural;
+    G_DROP          : boolean;
     G_RANDOM        : boolean;
     G_FAST          : boolean;
     G_SHOW_PACKETS  : boolean;
@@ -20,8 +22,8 @@ architecture simulation of tb_ip_wrapper_stress is
 
   constant C_MAC_PAYLOAD_BYTES : natural                       := 30;
   constant C_USER_BYTES        : natural                       := 20;
-  constant C_ADDRESS_CLIENT    : std_logic_vector(31 downto 0) := x"1234C713";
-  constant C_ADDRESS_SERVER    : std_logic_vector(31 downto 0) := x"56780053";
+  constant C_ADDRESS_CLIENT    : std_logic_vector(31 downto 0) := x"C713C713";
+  constant C_ADDRESS_SERVER    : std_logic_vector(31 downto 0) := x"53535353";
   constant C_PROTOCOL          : std_logic_vector(7 downto 0)  := x"06";
 
   constant C_TIMEOUT : time                                    := 200 ns;
@@ -72,15 +74,17 @@ architecture simulation of tb_ip_wrapper_stress is
   signal   tb_mac_payload_s2c_dropped_last       : std_logic;
   signal   tb_mac_payload_s2c_dropped_data_bytes : std_logic_vector(C_MAC_PAYLOAD_BYTES * 8 + 7 downto 0);
 
-  signal   server_user_established : std_logic;
-  signal   server_user_rx_ready    : std_logic;
-  signal   server_user_rx_valid    : std_logic;
-  signal   server_user_rx_data     : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
-  signal   server_user_rx_bytes    : natural range 0 to C_USER_BYTES;
-  signal   server_user_tx_ready    : std_logic;
-  signal   server_user_tx_valid    : std_logic;
-  signal   server_user_tx_data     : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
-  signal   server_user_tx_bytes    : natural range 0 to C_USER_BYTES;
+  signal   server_user_established  : std_logic;
+  signal   server_user_rx_ready     : std_logic;
+  signal   server_user_rx_valid     : std_logic;
+  signal   server_user_rx_data      : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
+  signal   server_user_rx_bytes     : natural range 0 to C_USER_BYTES;
+  signal   server_user_rx_bytes_slv : std_logic_vector(7 downto 0);
+  signal   server_user_tx_ready     : std_logic;
+  signal   server_user_tx_valid     : std_logic;
+  signal   server_user_tx_data      : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
+  signal   server_user_tx_bytes     : natural range 0 to C_USER_BYTES;
+  signal   server_user_tx_bytes_slv : std_logic_vector(7 downto 0);
 
   signal   do_drop_c2s             : std_logic;
   signal   do_drop_s2c             : std_logic;
@@ -90,8 +94,12 @@ architecture simulation of tb_ip_wrapper_stress is
 
   subtype  R_BYTES is natural range C_MAC_PAYLOAD_BYTES * 8 + 7 downto C_MAC_PAYLOAD_BYTES * 8;
 
-  signal   stim_cnt   : std_logic_vector(7 downto 0);
-  signal   verify_cnt : std_logic_vector(7 downto 0);
+
+  signal   stim_cnt   : std_logic_vector(G_CNT_SIZE-1 downto 0);
+  signal   verify_cnt : std_logic_vector(G_CNT_SIZE-1 downto 0);
+
+  subtype  R_AXI_FIFO_DATA  is natural range C_USER_BYTES * 8 - 1 downto 0;
+  subtype  R_AXI_FIFO_BYTES is natural range C_USER_BYTES * 8 + 7 downto C_USER_BYTES * 8;
 
 begin
 
@@ -118,8 +126,10 @@ begin
       output_o => rand
     ); -- random_inst : entity work.random
 
-  do_drop_c2s             <= and(rand(15 downto 12));
-  do_drop_s2c             <= and(rand(25 downto 22));
+  do_drop_c2s             <= and(rand(15 downto 12)) when G_DROP else
+                             '0';
+  do_drop_s2c             <= and(rand(25 downto 22)) when G_DROP else
+                             '0';
 
 
   -------------------------------------
@@ -131,12 +141,18 @@ begin
 
   stimuli_proc : process (clk)
     variable bytes_v : natural range 1 to C_USER_BYTES;
+    variable first_v : boolean := true;
   begin
     if rising_edge(clk) then
       if client_user_tx_ready = '1' then
         client_user_tx_valid <= '0';
         client_user_tx_data  <= (others => '0');
         client_user_tx_bytes <= 0;
+      end if;
+
+      if rst = '0' and first_v then
+        report "Test started";
+        first_v := false;
       end if;
 
       if client_user_tx_valid = '0' or (G_FAST and client_user_tx_ready = '1') then
@@ -146,7 +162,7 @@ begin
           stim_cnt <= stim_cnt + bytes_v;
 
           for i in 0 to bytes_v - 1 loop
-            client_user_tx_data(i * 8 + 7 downto i * 8) <= stim_cnt + i;
+            client_user_tx_data(i * 8 + 7 downto i * 8) <= stim_cnt(7 downto 0) + i;
           end loop;
 
           client_user_tx_valid <= '1';
@@ -186,6 +202,7 @@ begin
 
         -- Check for wrap-around
         if verify_cnt > verify_cnt + client_user_rx_bytes then
+          report "Test finished";
           stop;
         end if;
       end if;
@@ -233,7 +250,7 @@ begin
       mac_payload_tx_data_o  => tb_mac_payload_c2s_data,
       mac_payload_tx_bytes_o => tb_mac_payload_c2s_bytes,
       mac_payload_tx_last_o  => tb_mac_payload_c2s_last
-    ); -- tcp_wrapper_client_inst : entity work.tcp_wrapper
+    ); -- ip_wrapper_client_inst : entity work.ip_wrapper
 
   -------------------------------------
   -- Drop random packets from client to server
@@ -281,7 +298,7 @@ begin
       rst_i                  => rst,
       user_start_i           => '1',
       user_src_address_i     => C_ADDRESS_SERVER,
-      user_dst_address_i     => C_ADDRESS_CLIENT,
+      user_dst_address_i     => X"00000000",
       user_protocol_i        => C_PROTOCOL,
       user_established_o     => server_user_established,
       user_rx_ready_i        => server_user_rx_ready,
@@ -303,6 +320,31 @@ begin
       mac_payload_tx_bytes_o => tb_mac_payload_s2c_bytes,
       mac_payload_tx_last_o  => tb_mac_payload_s2c_last
     ); -- tcp_wrapper_server_inst : entity work.tcp_wrapper
+
+
+  -- Loopback data from server to client
+
+  axi_fifo_sync_inst : entity work.axi_fifo_sync
+    generic map (
+      G_RAM_STYLE => "auto",
+      G_DATA_SIZE => C_USER_BYTES * 8 + 8,
+      G_RAM_DEPTH => 4
+    )
+    port map (
+      clk_i                      => clk,
+      rst_i                      => rst,
+      s_ready_o                  => server_user_rx_ready,
+      s_valid_i                  => server_user_rx_valid,
+      s_data_i(R_AXI_FIFO_DATA)  => server_user_rx_data,
+      s_data_i(R_AXI_FIFO_BYTES) => server_user_rx_bytes_slv,
+      m_ready_i                  => server_user_tx_ready,
+      m_valid_o                  => server_user_tx_valid,
+      m_data_o(R_AXI_FIFO_DATA)  => server_user_tx_data,
+      m_data_o(R_AXI_FIFO_BYTES) => server_user_tx_bytes_slv
+    ); -- axi_fifo_sync_inst : entity work.axi_fifo_sync
+
+  server_user_rx_bytes_slv <= to_stdlogicvector(server_user_rx_bytes, 8);
+  server_user_tx_bytes     <= to_integer(server_user_tx_bytes_slv);
 
   -------------------------------------
   -- Drop random packets from server to client
