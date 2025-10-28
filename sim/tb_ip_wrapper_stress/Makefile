@@ -13,6 +13,7 @@ SRC += $(SIM_SRC_DIR)/data_logger.vhd
 SRC += $(SIM_SRC_DIR)/lfsr.vhd
 SRC += $(SIM_SRC_DIR)/random.vhd
 SRC += $(SIM_SRC_DIR)/axi_fifo_sync.vhd
+SRC += $(SIM_SRC_DIR)/stim_verf.vhd
 
 # Top level entity
 DUT = ip_wrapper_stress
@@ -25,7 +26,7 @@ GENERIC += -gG_MAX_LENGTH=100
 GENERIC += -gG_CNT_SIZE=12
 GENERIC += -gG_RANDOM=false
 GENERIC += -gG_FAST=false
-GENERIC += -gG_SHOW_PACKETS=false
+GENERIC += -gG_SHOW_PACKETS=true
 GENERIC += -gG_SHOW_PROTOCOL=false
 
 # Don't stop on errors

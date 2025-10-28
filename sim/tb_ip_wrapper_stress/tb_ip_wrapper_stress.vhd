@@ -38,28 +38,6 @@ architecture simulation of tb_ip_wrapper_stress is
   signal   client_user_established : std_logic;
   signal   server_user_established : std_logic;
 
-  -- TB stimuli
-  signal   rand                    : std_logic_vector(63 downto 0);
-  signal   stim_cnt                : std_logic_vector(G_CNT_SIZE - 1 downto 0);
-  signal   client_user_tx_do_valid : std_logic;
-
-  constant C_LENGTH_SIZE  : natural                            := 8;
-  signal   length_s_ready : std_logic;
-  signal   length_s_valid : std_logic;
-  signal   length_s_data  : std_logic_vector(C_LENGTH_SIZE - 1 downto 0);
-  signal   length_m_ready : std_logic;
-  signal   length_m_valid : std_logic;
-  signal   length_m_data  : std_logic_vector(C_LENGTH_SIZE - 1 downto 0);
-
-  type     stim_state_type is (STIM_IDLE_ST, STIM_DATA_ST);
-  signal   stim_state  : stim_state_type                       := STIM_IDLE_ST;
-  signal   stim_length : natural range 1 to G_MAX_LENGTH;
-
-  type     verf_state_type is (VERF_IDLE_ST, VERF_DATA_ST);
-  signal   verf_state  : verf_state_type                       := VERF_IDLE_ST;
-  signal   verf_length : natural range 1 to G_MAX_LENGTH;
-
-
   -- TB to Client
   signal   client_user_tx_ready : std_logic;
   signal   client_user_tx_valid : std_logic;
@@ -71,7 +49,7 @@ architecture simulation of tb_ip_wrapper_stress is
   signal   tb_mac_payload_c2s_ready : std_logic;
   signal   tb_mac_payload_c2s_valid : std_logic;
   signal   tb_mac_payload_c2s_data  : std_logic_vector(C_MAC_PAYLOAD_BYTES * 8 - 1 downto 0);
-  signal   tb_mac_payload_c2s_bytes : natural range 0 to C_MAC_PAYLOAD_BYTES - 1;
+  signal   tb_mac_payload_c2s_bytes : natural range 0 to C_MAC_PAYLOAD_BYTES;
   signal   tb_mac_payload_c2s_last  : std_logic;
 
   -- Server to User
@@ -102,7 +80,7 @@ architecture simulation of tb_ip_wrapper_stress is
   signal   tb_mac_payload_s2c_ready : std_logic;
   signal   tb_mac_payload_s2c_valid : std_logic;
   signal   tb_mac_payload_s2c_data  : std_logic_vector(C_MAC_PAYLOAD_BYTES * 8 - 1 downto 0);
-  signal   tb_mac_payload_s2c_bytes : natural range 0 to C_MAC_PAYLOAD_BYTES - 1;
+  signal   tb_mac_payload_s2c_bytes : natural range 0 to C_MAC_PAYLOAD_BYTES;
   signal   tb_mac_payload_s2c_last  : std_logic;
 
   -- Client to TB
@@ -111,9 +89,6 @@ architecture simulation of tb_ip_wrapper_stress is
   signal   client_user_rx_data  : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
   signal   client_user_rx_bytes : natural range 0 to C_USER_BYTES;
   signal   client_user_rx_last  : std_logic;
-
-  -- TB verification
-  signal   verify_cnt : std_logic_vector(G_CNT_SIZE - 1 downto 0);
 
 begin
 
@@ -126,170 +101,32 @@ begin
 
 
   ----------------------------------------------------------
-  -- Generate randomness
+  -- Generate stimuli and verify response
   ----------------------------------------------------------
 
-  random_inst : entity work.random
+  stim_verf_inst : entity work.stim_verf
     generic map (
-      G_SEED => X"DEADBEAFC007BABE"
-    )
-    port map (
-      clk_i    => clk,
-      rst_i    => rst,
-      update_i => '1',
-      output_o => rand
-    ); -- random_inst : entity work.random
-
-
-  ----------------------------------------------------------
-  -- TB stimuli
-  ----------------------------------------------------------
-
-  client_user_tx_do_valid <= or(rand(42 downto 40)) when G_RANDOM else
-                             '1';
-
-  stimuli_proc : process (clk)
-    variable length_v : natural range 1 to G_MAX_LENGTH;
-    variable bytes_v  : natural range 1 to C_USER_BYTES;
-    variable first_v  : boolean := true;
-  begin
-    if rising_edge(clk) then
-      if rst = '0' and first_v then
-        report "Test started";
-        first_v := false;
-      end if;
-
-      if client_user_tx_ready = '1' then
-        client_user_tx_valid <= '0';
-        client_user_tx_data  <= (others => '0');
-        client_user_tx_bytes <= 0;
-        client_user_tx_last  <= '0';
-      end if;
-
-      if length_s_ready = '1' then
-        length_s_valid <= '0';
-      end if;
-
-      case stim_state is
-
-        when STIM_IDLE_ST =>
-          if length_s_valid = '0' then
-            length_v := (to_integer(rand(20 downto 5)) mod G_MAX_LENGTH) + 1;
-
-            if rst = '0' then
-              report "STIM length " & to_string(length_v);
-            end if;
-
-            -- Store length in FIFO
-            length_s_data  <= to_stdlogicvector(length_v, C_LENGTH_SIZE);
-            length_s_valid <= '1';
-
-            stim_length    <= length_v;
-            stim_state     <= STIM_DATA_ST;
-          end if;
-
-        when STIM_DATA_ST =>
-          if client_user_tx_valid = '0' or (G_FAST and client_user_tx_ready = '1') then
-            if client_user_tx_do_valid = '1' then
-              bytes_v := (to_integer(rand(15 downto 0)) mod C_USER_BYTES) + 1;
-              if bytes_v > stim_length then
-                bytes_v := stim_length;
-              end if;
-
-              stim_cnt    <= stim_cnt + bytes_v;
-              stim_length <= stim_length - bytes_v;
-
-              for i in 0 to bytes_v - 1 loop
-                client_user_tx_data(i * 8 + 7 downto i * 8) <= stim_cnt(7 downto 0) + i;
-              end loop;
-
-              client_user_tx_valid <= '1';
-              client_user_tx_bytes <= bytes_v;
-              client_user_tx_last  <= '1';
-            end if;
-          end if;
-          stim_state <= STIM_IDLE_ST;
-
-      end case;
-
-      if rst = '1' then
-        length_s_valid       <= '0';
-        client_user_tx_valid <= '0';
-        client_user_tx_data  <= (others => '0');
-        stim_cnt             <= (others => '0');
-        stim_state           <= STIM_IDLE_ST;
-      end if;
-    end if;
-  end process stimuli_proc;
-
-  axi_fifo_sync_length_inst : entity work.axi_fifo_sync
-    generic map (
-      G_RAM_STYLE => "auto",
-      G_DATA_SIZE => C_LENGTH_SIZE,
-      G_RAM_DEPTH => 4
+      G_DEBUG      => true,
+      G_RANDOM     => G_RANDOM,
+      G_FAST       => G_FAST,
+      G_MAX_LENGTH => G_MAX_LENGTH,
+      G_CNT_SIZE   => G_CNT_SIZE,
+      G_DATA_BYTES => C_USER_BYTES
     )
     port map (
       clk_i     => clk,
       rst_i     => rst,
-      s_ready_o => length_s_ready,
-      s_valid_i => length_s_valid,
-      s_data_i  => length_s_data,
-      m_ready_i => length_m_ready,
-      m_valid_o => length_m_valid,
-      m_data_o  => length_m_data
-    ); -- axi_fifo_sync_length_inst : entity work.axi_fifo_sync
-
-
-  ----------------------------------------------------------
-  -- Verify output
-  ----------------------------------------------------------
-
-  client_user_rx_ready <= or(rand(32 downto 30)) when G_RANDOM else
-                          '1';
-
-  length_m_ready       <= '1' when verf_state = VERF_IDLE_ST else
-                          '0';
-
-  verify_proc : process (clk)
-  begin
-    if rising_edge(clk) then
-
-      case verf_state is
-
-        when VERF_IDLE_ST =>
-          if length_m_valid = '1' and length_m_ready = '1' then
-            verf_length <= to_integer(length_m_data);
-            verf_state  <= VERF_IDLE_ST;
-          end if;
-
-        when VERF_DATA_ST =>
-          if client_user_rx_valid = '1' and client_user_rx_ready = '1' then
-
-            for i in 0 to client_user_rx_bytes - 1 loop
-              assert client_user_rx_data(i * 8 + 7 downto i * 8) = verify_cnt(7 downto 0) + i
-                report "Verify byte " & to_string(i) &
-                       ". Received " & to_hstring(client_user_rx_data(i * 8 + 7 downto i * 8)) &
-                       ", expected " & to_hstring(verify_cnt(7 downto 0) + i);
-            end loop;
-
-            verify_cnt <= verify_cnt + client_user_rx_bytes;
-
-            -- Check for wrap-around
-            if verify_cnt > verify_cnt + client_user_rx_bytes then
-              report "Test finished";
-              stop;
-            end if;
-          end if;
-          verf_state <= VERF_IDLE_ST;
-
-      end case;
-
-      if rst = '1' then
-        verify_cnt <= (others => '0');
-        verf_state <= VERF_IDLE_ST;
-      end if;
-    end if;
-  end process verify_proc;
+      m_ready_i => client_user_tx_ready,
+      m_valid_o => client_user_tx_valid,
+      m_data_o  => client_user_tx_data,
+      m_bytes_o => client_user_tx_bytes,
+      m_last_o  => client_user_tx_last,
+      s_ready_o => client_user_rx_ready,
+      s_valid_i => client_user_rx_valid,
+      s_data_i  => client_user_rx_data,
+      s_bytes_i => client_user_rx_bytes,
+      s_last_i  => client_user_rx_last
+    ); -- stim_verf_inst : entity work.stim_verf
 
 
   ----------------------------------------------------------

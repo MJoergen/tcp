@@ -16,7 +16,7 @@ entity data_logger is
     ready_i : in    std_logic;
     valid_i : in    std_logic;
     data_i  : in    std_logic_vector(G_DATA_SIZE - 1  downto 0);
-    bytes_i : in    natural range 0 to G_DATA_SIZE / 8 - 1;
+    bytes_i : in    natural range 0 to G_DATA_SIZE / 8;
     last_i  : in    std_logic
   );
 end entity data_logger;

@@ -38,17 +38,16 @@ entity ip_wrapper is
 
     -- Interface to MAC handler (packet oriented)
     -- bits 7-0 is the first byte transferred.
-    -- bytes = 0 means G_MAC_PAYLOAD_BYTES.
     mac_payload_rx_ready_o : out   std_logic;
     mac_payload_rx_valid_i : in    std_logic;
     mac_payload_rx_data_i  : in    std_logic_vector(G_MAC_PAYLOAD_BYTES * 8 - 1 downto 0);
-    mac_payload_rx_bytes_i : in    natural range 0 to G_MAC_PAYLOAD_BYTES - 1;
+    mac_payload_rx_bytes_i : in    natural range 0 to G_MAC_PAYLOAD_BYTES;
     mac_payload_rx_last_i  : in    std_logic;
     --
     mac_payload_tx_ready_i : in    std_logic;
     mac_payload_tx_valid_o : out   std_logic;
     mac_payload_tx_data_o  : out   std_logic_vector(G_MAC_PAYLOAD_BYTES * 8 - 1 downto 0);
-    mac_payload_tx_bytes_o : out   natural range 0 to G_MAC_PAYLOAD_BYTES - 1;
+    mac_payload_tx_bytes_o : out   natural range 0 to G_MAC_PAYLOAD_BYTES;
     mac_payload_tx_last_o  : out   std_logic
   );
 end entity ip_wrapper;
