@@ -8,17 +8,19 @@ library ieee;
 -- The output m_bytes_o shows the number of bytes actually available.
 --
 -- Specifically, set m_bytes_i to the number of bytes you wish to read. Sampled when
--- m_ready_i is 1. The output m_valid_o is 1 if the m_bytes_o >= m_bytes_i.
+-- m_ready_i is 1.
 --
--- If m_bytes_i > m_bytes_o then only m_bytes_o bytes are actually read.
+-- The actual number of bytes transferred is the minimum of m_bytes_i and m_bytes_o.
 --
--- Synthesis report with G_S_DATA_BYTES = 8 and G_M_DATA_BYTES = 4:
---   LUTs      : 210
---   Registers : 107
+-- Synth report with G_S_DATA_BYTES = 8 and G_M_DATA_BYTES = 4:
+--   LUTs      : 216
+--   Registers : 109
 --
--- Synthesis report with G_S_DATA_BYTES = 4 and G_M_DATA_BYTES = 8:
---   LUTs      : 203
---   Registers :  68
+-- Synth report with G_S_DATA_BYTES = 4 and G_M_DATA_BYTES = 8:
+--   LUTs      : 174
+--   Registers :  69
+--
+-- A frequency of 250 MHz closes timing.
 
 entity axi_fifo_wide is
   generic (
@@ -33,25 +35,27 @@ entity axi_fifo_wide is
     s_valid_i : in    std_logic;
     s_data_i  : in    std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
     s_bytes_i : in    natural range 0 to G_S_DATA_BYTES;
+    s_last_i  : in    std_logic;
 
     m_ready_i : in    std_logic;
     m_bytes_i : in    natural range 0 to G_M_DATA_BYTES;
     m_valid_o : out   std_logic;
     m_data_o  : out   std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
-    m_bytes_o : out   natural range 0 to G_M_DATA_BYTES
+    m_bytes_o : out   natural range 0 to G_M_DATA_BYTES;
+    m_last_o  : out   std_logic
   );
 end entity axi_fifo_wide;
 
 architecture synthesis of axi_fifo_wide is
 
-  constant C_DEBUG : boolean := false;
+  signal s_data  : std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
+  signal s_start : natural range 0 to G_S_DATA_BYTES;
+  signal s_end   : natural range 0 to G_S_DATA_BYTES;
+  signal s_last  : std_logic;
 
-  signal   s_data  : std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
-  signal   s_start : natural range 0 to G_S_DATA_BYTES;
-  signal   s_end   : natural range 0 to G_S_DATA_BYTES;
-
-  signal   m_data  : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
-  signal   m_bytes : natural range 0 to G_M_DATA_BYTES;
+  signal m_data  : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
+  signal m_bytes : natural range 0 to G_M_DATA_BYTES;
+  signal m_last  : std_logic;
 
   pure function copy_data (
     dst_data : std_logic_vector;
@@ -62,10 +66,6 @@ architecture synthesis of axi_fifo_wide is
     variable res_v   : std_logic_vector(dst_data'range);
     variable shift_v : natural range 0 to maximum(G_S_DATA_BYTES, G_M_DATA_BYTES);
   begin
-    if C_DEBUG then
-      report "copy_data: dst_ptr=" & to_string(dst_ptr) &
-             ", src_ptr=" & to_string(src_ptr);
-    end if;
     res_v := dst_data;
     if src_ptr >= dst_ptr then
       -- Shift right
@@ -93,30 +93,30 @@ architecture synthesis of axi_fifo_wide is
 begin
 
   s_ready_o <= '1' when m_bytes + s_bytes_i <= maximum(G_S_DATA_BYTES, G_M_DATA_BYTES) and
-                        (m_valid_o = '0' or (m_ready_i = '0' and s_start = s_end)) else
+                        (m_valid_o = '0' or (m_ready_i = '0' and s_start = s_end)) and
+                        m_last = '0' else
                '0';
 
   m_valid_o <= '1' when m_bytes > 0 else
                '0';
   m_bytes_o <= m_bytes;
   m_data_o  <= m_data;
+  m_last_o  <= m_last when m_bytes_o <= m_bytes_i else
+               '0';
 
   fsm_proc : process (clk_i)
   begin
     if rising_edge(clk_i) then
       if m_valid_o = '1' and m_ready_i = '1' then
-        -- M : |.|.|.|M|M|M|1|0|
-        -- M : |.|.|.|.|.|M|M|M|
-        --
-        -- Shift right
         if m_bytes_i >= m_bytes then
           m_bytes <= 0;
+          m_last  <= '0';
 
           if s_start < s_end and G_S_DATA_BYTES > G_M_DATA_BYTES then
-            -- S : |.|.|.|4|3|2|1|0|
-            -- M :         |.|.|.|M|
-
-            -- Shift left
+            -- S : |.|.|.|2|1|0|.|.|
+            -- M : |.|.|.|.|.|.|.|.|
+            --
+            -- Shift right
             m_data <= copy_data(m_data, s_data, 0, s_start);
             if s_end - s_start >= G_M_DATA_BYTES then
               m_bytes <= G_M_DATA_BYTES;
@@ -124,6 +124,10 @@ begin
             else
               m_bytes <= s_end - s_start;
               s_start <= s_end;
+            end if;
+
+            if s_end - s_start <= G_M_DATA_BYTES then
+              m_last <= s_last;
             end if;
           end if;
         else
@@ -139,6 +143,7 @@ begin
             -- Shift left
             m_data  <= copy_data(m_data, s_data_i, m_bytes, 0);
             m_bytes <= m_bytes + s_bytes_i;
+            m_last  <= s_last_i;
           else
             -- S : |.|.|.|4|3|2|1|0|
             -- M :         |.|.|.|M|
@@ -146,6 +151,7 @@ begin
             s_data  <= s_data_i;
             s_start <= G_M_DATA_BYTES - m_bytes;
             s_end   <= s_bytes_i;
+            s_last  <= s_last_i;
 
             -- Shift left
             m_data  <= copy_data(m_data, s_data_i, m_bytes, 0);
@@ -158,14 +164,17 @@ begin
           -- Shift left
           m_data  <= copy_data(m_data, s_data_i, m_bytes, 0);
           m_bytes <= m_bytes + s_bytes_i;
+          m_last  <= s_last_i;
         end if;
       end if;
 
       if rst_i = '1' then
         s_start <= 0;
         s_end   <= 0;
+        s_last  <= '0';
         m_bytes <= 0;
         m_data  <= (others => '0');
+        m_last  <= '0';
       end if;
     end if;
   end process fsm_proc;

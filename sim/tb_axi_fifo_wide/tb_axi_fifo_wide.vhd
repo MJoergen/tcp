@@ -32,12 +32,14 @@ architecture simulation of tb_axi_fifo_wide is
   signal   s_valid : std_logic;
   signal   s_data  : std_logic_vector(C_S_DATA_BYTES * 8 - 1 downto 0);
   signal   s_bytes : natural range 0 to C_S_DATA_BYTES;
+  signal   s_last  : std_logic;
 
   signal   m_ready         : std_logic;
   signal   m_bytes_consume : natural range 0 to C_M_DATA_BYTES;
   signal   m_valid         : std_logic;
   signal   m_data          : std_logic_vector(C_M_DATA_BYTES * 8 - 1 downto 0);
   signal   m_bytes_avail   : natural range 0 to C_M_DATA_BYTES;
+  signal   m_last          : std_logic;
 
 begin
 
@@ -57,19 +59,26 @@ begin
     --
 
     procedure send (
-      arg : std_logic_vector
+      arg : std_logic_vector;
+      last : std_logic
     ) is
       variable arg_v : std_logic_vector(arg'high downto arg'low);
     begin
       -- This is a VHDL trick necessary to convert from a rising range to a falling range.
       arg_v               := arg;
+
       report "Sending: " & to_hstring(arg_v);
-      assert s_valid = '0' or s_ready = '1'
+
+      -- Simulation trick to allow combinatorial paths to update
+      wait for 1 ns;
+
+      assert s_ready = '1'
         report "FAIL: Tx buffer full";
 
       s_data(arg_v'range) <= arg_v;
       s_bytes             <= arg_v'length / 8;
       s_valid             <= '1';
+      s_last              <= last;
       wait until rising_edge(clk);
 
       assert s_ready = '1'
@@ -78,24 +87,21 @@ begin
       s_data(arg_v'range) <= (others => '0');
       s_bytes             <= 0;
       s_valid             <= '0';
+      s_last              <= '0';
     end procedure send;
 
     procedure verify (
       arg  : std_logic_vector;
-      full : boolean := false -- Set to true to empty the output buffer
+      last : std_logic
     ) is
+      variable bytes_v : natural;
       variable exp_v : std_logic_vector(arg'high downto arg'low);
     begin
       -- This is a VHDL trick necessary to convert from a rising range to a falling range.
       exp_v := arg;
 
-      if full then
-        -- Consume entire buffer
-        m_bytes_consume <= 0;
-      else
-        -- Consume only the specified number of bytes
-        m_bytes_consume <= arg'length / 8;
-      end if;
+      -- Consume only the specified number of bytes
+      m_bytes_consume <= arg'length / 8;
 
       m_ready <= '1';
 
@@ -105,24 +111,16 @@ begin
       assert m_valid = '1'
         report "Verify FAIL: m_valid not set";
 
-      if full then
-        -- "Give me everything you've got".
-        assert m_bytes_avail = arg'length / 8
-          report "Verify FAIL (full): " &
-                 "Received " & to_string(m_bytes_avail) & " bytes." &
-                 " Expected " & to_string(arg'length / 8) & " bytes.";
-      else
-        -- "Give me what I want".
-        assert m_bytes_avail >= m_bytes_consume
-          report "Verify FAIL (partial): " &
-                 "Received " & to_string(m_bytes_avail) & " bytes." &
-                 " Expected " & to_string(m_bytes_consume) & " bytes.";
-      end if;
+      bytes_v := minimum(m_bytes_consume, m_bytes_avail);
 
-      report "Verify received : " & to_hstring(m_data(arg'length / 8 * 8 - 1 downto 0));
+      report "Verify received : " & to_hstring(m_data(bytes_v * 8 - 1 downto 0));
 
-      assert m_data(arg'length / 8 * 8 - 1 downto 0) = exp_v(arg'length / 8 * 8 - 1 downto 0)
-        report "Verify FAIL: Expected " & to_hstring(exp_v(arg'length / 8 * 8 - 1 downto 0));
+      assert m_data(bytes_v * 8 - 1 downto 0) = exp_v(bytes_v * 8 - 1 downto 0)
+        report "Verify FAIL: Expected " & to_hstring(exp_v(bytes_v * 8 - 1 downto 0));
+
+      assert m_last = last
+        report "Verify last FAIL: Received " & to_string(last) &
+               ", expected " & to_string(last);
 
       wait until rising_edge(clk);
       m_ready <= '0';
@@ -139,22 +137,14 @@ begin
 
     report "Test started";
 
-    send(X"11");
-    send(X"22");
-    send(X"4433");
-    verify(X"11");                          -- Partial
-    send(X"55");
-
-    s_bytes         <= 1;
-    -- Simulation trick to allow combinatorial paths to update
-    wait for 1 ns;
-
-    assert s_ready = '0'
-      report "FAIL: Tx buffer still ready";
-
-    verify(X"443322");                      -- Partial
-    send(X"66");
-    verify(X"6655", true);
+    send(  X"11",   '0');
+    send(  X"22",   '1');
+    verify(X"11",   '0');
+    verify(X"22",   '1');
+    send(  X"4433", '0');
+    send(  X"55",   '1');
+    verify(X"33",   '0');
+    verify(X"5544", '1');
 
     report "Test finished";
     wait until rising_edge(clk);
@@ -179,11 +169,13 @@ begin
       s_valid_i => s_valid,
       s_data_i  => s_data,
       s_bytes_i => s_bytes,
+      s_last_i  => s_last,
       m_ready_i => m_ready,
       m_bytes_i => m_bytes_consume,
       m_valid_o => m_valid,
       m_data_o  => m_data,
-      m_bytes_o => m_bytes_avail
+      m_bytes_o => m_bytes_avail,
+      m_last_o  => m_last
     ); -- axi_fifo_wide_inst : entity work.axi_fifo_wide
 
 end architecture simulation;

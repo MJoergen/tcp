@@ -4,8 +4,15 @@ vunit axi_fifo_wide_inst(axi_fifo_wide(synthesis))
    default clock is rising_edge(clk_i);
 
    signal f_old_m_bytes : natural range 0 to G_M_DATA_BYTES;
-   signal f_m_data      : std_logic_vector(G_M_DATA_BYTES*8 - 1 downto 0);
-   signal f_old_m_data  : std_logic_vector(G_M_DATA_BYTES*8 - 1 downto 0);
+   signal f_m_data      : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
+   signal f_old_m_data  : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
+
+   signal f_s_bytes      : natural range 0 to 1000;
+   signal f_m_bytes      : natural range 0 to 1000;
+   signal f_s_length     : natural range 0 to 1000;
+   signal f_m_length     : natural range 0 to 1000;
+   signal f_s_length_cnt : natural range 0 to 9;
+   signal f_m_length_cnt : natural range 0 to 9;
 
    signal f_data : std_logic_vector(7 downto 0);
    attribute anyconst : boolean;
@@ -30,7 +37,7 @@ vunit axi_fifo_wide_inst(axi_fifo_wide(synthesis))
      -- Clear out unused bits
      for b in G_M_DATA_BYTES - 1 downto 0 loop
        if b >= f_old_m_bytes then
-         f_m_data(b*8+7 downto b*8) <= X"00";
+         f_m_data(b * 8 + 7 downto b * 8) <= X"00";
        end if;
      end loop;
    end process f_m_data_proc;
@@ -42,7 +49,7 @@ vunit axi_fifo_wide_inst(axi_fifo_wide(synthesis))
        -- Clear out unused bits
        for b in G_M_DATA_BYTES - 1 downto 0 loop
          if b >= m_bytes_o then
-           f_old_m_data(b*8+7 downto b*8) <= X"00";
+           f_old_m_data(b * 8 + 7 downto b * 8) <= X"00";
          end if;
        end loop;
      end if;
@@ -54,7 +61,7 @@ vunit axi_fifo_wide_inst(axi_fifo_wide(synthesis))
        if s_valid_i = '1' and s_ready_o = '1' then
          for i in 0 to G_S_DATA_BYTES - 1 loop
            if i < s_bytes_i then
-             if s_data_i(8*i+7 downto 8*i) = f_data then
+             if s_data_i(8 * i + 7 downto 8 * i) = f_data then
                f_data_in <= true;
              end if;
            end if;
@@ -64,7 +71,7 @@ vunit axi_fifo_wide_inst(axi_fifo_wide(synthesis))
        if m_valid_o = '1' and m_ready_i = '1' then
          for i in 0 to G_M_DATA_BYTES - 1 loop
            if i < m_bytes_o then
-             if m_data_o(8*i+7 downto 8*i) = f_data then
+             if m_data_o(8 * i + 7 downto 8 * i) = f_data then
                f_data_out <= true;
              end if;
            end if;
@@ -77,6 +84,41 @@ vunit axi_fifo_wide_inst(axi_fifo_wide(synthesis))
        end if;
      end if;
    end process f_data_proc;
+
+   f_bytes_proc : process (clk_i)
+   begin
+     if rising_edge(clk_i) then
+       if s_valid_i = '1' and s_ready_o = '1' then
+         if s_last_i = '1' then
+           f_s_length <= f_s_bytes + s_bytes_i;
+           f_s_length_cnt <= f_s_length_cnt + 1;
+           f_s_bytes <= 0;
+         else
+           f_s_bytes <= f_s_bytes + s_bytes_i;
+         end if;
+       end if;
+
+       if m_valid_o = '1' and m_ready_i = '1' then
+         if m_last_o = '1' then
+           f_m_length <= f_m_bytes + minimum(m_bytes_o, m_bytes_i);
+           f_m_length_cnt <= f_m_length_cnt + 1;
+           f_m_bytes <= 0;
+         else
+           f_m_bytes <= f_m_bytes + minimum(m_bytes_o, m_bytes_i);
+         end if;
+       end if;
+
+       if rst_i = '1' then
+         f_s_bytes <= 0;
+         f_m_bytes <= 0;
+         f_s_length <= 0;
+         f_m_length <= 0;
+         f_s_length_cnt <= 0;
+         f_m_length_cnt <= 0;
+       end if;
+
+     end if;
+   end process f_bytes_proc;
 
 
 -----------------------------
@@ -100,6 +142,9 @@ vunit axi_fifo_wide_inst(axi_fifo_wide(synthesis))
 -- Data on master must have been from slave
    f_master_data_seen : assert always {f_data_out and rst_i = '0'} |-> {f_data_in};
 
+-- Packet length must match
+   f_master_length : assert always {f_s_length_cnt = f_m_length_cnt and rst_i = '0'} |->
+     {f_s_length = f_m_length};
 
 -----------------------------
 -- ASSUMPTIONS ABOUT INPUTS

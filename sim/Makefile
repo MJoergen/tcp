@@ -5,8 +5,9 @@
 TESTS += tb_stim_verf
 TESTS += tb_axi_fifo_squash
 TESTS += tb_axi_fifo_squash_stress
-#TESTS += tb_axi_fifo_wide
-#TESTS += tb_axi_fifo_wide_stress
+TESTS += tb_axi_fifo_wide
+TESTS += tb_axi_fifo_wide_stress
+TESTS += tb_axi_fifo_wide_packet
 #TESTS += tb_ip_wrapper_stress
 #TESTS += tb_tcp_wrapper
 #TESTS += tb_tcp_wrapper_stress

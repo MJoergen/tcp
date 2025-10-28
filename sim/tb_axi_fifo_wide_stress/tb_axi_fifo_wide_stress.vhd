@@ -26,12 +26,14 @@ architecture simulation of tb_axi_fifo_wide_stress is
   signal   s_valid : std_logic;
   signal   s_data  : std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
   signal   s_bytes : natural range 0 to G_S_DATA_BYTES;
+  signal   s_last  : std_logic;
 
   signal   m_ready         : std_logic;
   signal   m_bytes_consume : natural range 0 to G_M_DATA_BYTES;
   signal   m_valid         : std_logic;
   signal   m_data          : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
   signal   m_bytes_avail   : natural range 0 to G_M_DATA_BYTES;
+  signal   m_last          : std_logic;
 
   signal   rand       : std_logic_vector(63 downto 0);
   signal   stim_cnt   : std_logic_vector(C_CNT_BITS - 1 downto 0);
@@ -84,6 +86,7 @@ begin
         s_valid <= '0';
         s_data  <= (others => '0');
         s_bytes <= 0;
+        s_last  <= '0';
       end if;
 
       if rst = '0' and first_v then
@@ -108,6 +111,7 @@ begin
 
       if rst = '1' then
         s_valid  <= '0';
+        s_last   <= '0';
         stim_cnt <= (others => '0');
       end if;
     end if;
@@ -168,11 +172,13 @@ begin
       s_valid_i => s_valid,
       s_data_i  => s_data,
       s_bytes_i => s_bytes,
+      s_last_i  => s_last,
       m_ready_i => m_ready,
       m_bytes_i => m_bytes_consume,
       m_valid_o => m_valid,
       m_data_o  => m_data,
-      m_bytes_o => m_bytes_avail
+      m_bytes_o => m_bytes_avail,
+      m_last_o  => m_last
     ); -- axi_fifo_wide_inst : entity work.axi_fifo_wide
 
 end architecture simulation;
