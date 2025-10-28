@@ -11,12 +11,13 @@ library std;
 
 entity stim_verf is
   generic (
-    G_DEBUG      : boolean;
-    G_RANDOM     : boolean;
-    G_FAST       : boolean;
-    G_MAX_LENGTH : natural;
-    G_CNT_SIZE   : natural;
-    G_DATA_BYTES : natural
+    G_DEBUG        : boolean;
+    G_RANDOM       : boolean;
+    G_FAST         : boolean;
+    G_MAX_LENGTH   : natural;
+    G_CNT_SIZE     : natural;
+    G_M_DATA_BYTES : natural;
+    G_S_DATA_BYTES : natural
   );
   port (
     clk_i     : in    std_logic;
@@ -25,15 +26,15 @@ entity stim_verf is
     -- Output interface
     m_ready_i : in    std_logic;
     m_valid_o : out   std_logic;
-    m_data_o  : out   std_logic_vector(G_DATA_BYTES * 8 - 1 downto 0);
-    m_bytes_o : out   natural range 0 to G_DATA_BYTES;
+    m_data_o  : out   std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
+    m_bytes_o : out   natural range 0 to G_M_DATA_BYTES;
     m_last_o  : out   std_logic;
 
     -- Input interface
     s_ready_o : out   std_logic;
     s_valid_i : in    std_logic;
-    s_data_i  : in    std_logic_vector(G_DATA_BYTES * 8 - 1 downto 0);
-    s_bytes_i : in    natural range 0 to G_DATA_BYTES;
+    s_data_i  : in    std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
+    s_bytes_i : in    natural range 0 to G_S_DATA_BYTES;
     s_last_i  : in    std_logic
   );
 end entity stim_verf;
@@ -93,7 +94,7 @@ begin
 
   stimuli_proc : process (clk_i)
     variable length_v : natural range 1 to G_MAX_LENGTH;
-    variable bytes_v  : natural range 1 to G_DATA_BYTES;
+    variable bytes_v  : natural range 1 to G_M_DATA_BYTES;
     variable first_v  : boolean := true;
   begin
     if rising_edge(clk_i) then
@@ -134,7 +135,7 @@ begin
         when STIM_DATA_ST =>
           if m_valid_o = '0' or (G_FAST and m_ready_i = '1') then
             if m_do_valid = '1' then
-              bytes_v := (to_integer(rand(15 downto 0)) mod G_DATA_BYTES) + 1;
+              bytes_v := (to_integer(rand(15 downto 0)) mod G_M_DATA_BYTES) + 1;
               if bytes_v > stim_length then
                 bytes_v := stim_length;
               end if;
@@ -226,7 +227,7 @@ begin
 
         when VERF_IDLE_ST =>
           if length_m_valid = '1' and length_m_ready = '1' then
-            length_v    := to_integer(length_m_data);
+            length_v := to_integer(length_m_data);
             if G_DEBUG then
               report "VERF length " & to_string(length_v);
             end if;

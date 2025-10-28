@@ -2,15 +2,26 @@
 #
 # Description: Makefile for simulating the entire project
 
-all:
-	make -C tb_axi_fifo_squash
-	make -C tb_axi_fifo_squash_stress
-	make -C tb_axi_fifo_wide
-	make -C tb_tcp_wrapper
+TESTS += tb_stim_verf
+#TESTS += tb_axi_fifo_wide
+#TESTS += tb_axi_fifo_wide_stress
+#TESTS += tb_axi_fifo_squash
+#TESTS += tb_axi_fifo_squash_stress
+#TESTS += tb_ip_wrapper_stress
+#TESTS += tb_tcp_wrapper
+#TESTS += tb_tcp_wrapper_stress
 
-clean:
-	make -C tb_axi_fifo_squash clean
-	make -C tb_axi_fifo_squash_stress clean
-	make -C tb_axi_fifo_wide clean
-	make -C tb_tcp_wrapper clean
+.PHONY: run
+run: $(patsubst %,%/PASS,$(TESTS))
+
+%/PASS: TEST=$(patsubst %/PASS,%,$@)
+%/PASS:
+	make -C $(TEST)
+
+clean: $(patsubst %,%/CLEAN,$(TESTS))
+
+.PHONY: %/CLEAN
+%/CLEAN: TEST=$(patsubst %/CLEAN,%,$@)
+%/CLEAN:
+	make -C $(TEST) clean
 
