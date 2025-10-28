@@ -6,14 +6,14 @@ library ieee;
 -- cycle, and will gather together and align the bytes.
 --
 -- Synth report with G_S_DATA_BYTES = 8 and G_M_DATA_BYTES = 4:
---   LUTs      : 348
---   Registers : 132
+--   LUTs      : 352
+--   Registers : 144
 --
 -- Synth report with G_S_DATA_BYTES = 4 and G_M_DATA_BYTES = 8:
---   LUTs      : 246
---   Registers : 104
+--   LUTs      : 237
+--   Registers : 105
 --
--- Maximum frequency is 250 MHz.
+-- A frequency of 250 MHz closes timing.
 
 entity axi_fifo_squash is
   generic (
@@ -34,7 +34,7 @@ entity axi_fifo_squash is
     m_ready_i : in    std_logic;
     m_valid_o : out   std_logic;
     m_data_o  : out   std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
-    m_bytes_o : out   natural range 0 to G_M_DATA_BYTES := 0;
+    m_bytes_o : out   natural range 0 to G_M_DATA_BYTES;
     m_last_o  : out   std_logic;
     m_empty_o : out   std_logic
   );
@@ -52,6 +52,7 @@ architecture synthesis of axi_fifo_squash is
   -- Internal buffer
   signal   m_data  : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
   signal   m_bytes : natural range 0 to G_M_DATA_BYTES := 0;
+  signal   m_last  : std_logic;
 
   pure function copy_data (
     dst_data : std_logic_vector;
@@ -109,6 +110,9 @@ begin
   s_ready_o <= '1' when m_bytes = 0 and m_valid_o = '0' and s_start = s_end else
                '0';
 
+  m_last_o  <= m_last when m_bytes = 0 else
+               '0';
+
   m_empty_o <= '1' when m_bytes = 0 else
                '0';
 
@@ -118,11 +122,7 @@ begin
     variable bytes_consumed_v : natural range 0 to G_M_DATA_BYTES;
   begin
     if rising_edge(clk_i) then
-      m_last_o <= '0';
       if m_ready_i = '1' then
-        -- Output buffer is consumed.
-        m_valid_o <= '0';
-
         -- Do we have data in internal buffer?
         if m_bytes > 0 then
           if C_DEBUG then
@@ -133,6 +133,8 @@ begin
           m_data_o  <= m_data;
           if m_bytes = G_M_DATA_BYTES then
             m_valid_o <= '1';
+          elsif m_last = '0' then
+            m_valid_o <= '0';
           end if;
           m_bytes <= 0;
           m_data  <= (others => '0');
@@ -169,8 +171,10 @@ begin
           end if;
         elsif m_valid_o = '1' then
           -- Empty output buffer
+          m_valid_o <= '0';
           m_bytes_o <= 0;
           m_data_o  <= (others => '0');
+          m_last    <= '0';
         end if;
       end if;
 
@@ -255,7 +259,7 @@ begin
 
         if s_last_i = '1' then
           m_valid_o <= '1';
-          m_last_o  <= '1';
+          m_last    <= '1';
         end if;
       end if;
 
@@ -263,7 +267,7 @@ begin
         m_bytes_o <= 0;
         m_data_o  <= (others => '0');
         m_valid_o <= '0';
-        m_last_o  <= '0';
+        m_last    <= '0';
         m_bytes   <= 0;
         m_data    <= (others => '0');
         s_start   <= 0;

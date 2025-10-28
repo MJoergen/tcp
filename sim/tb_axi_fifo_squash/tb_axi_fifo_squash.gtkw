@@ -1,15 +1,15 @@
 [*]
-[*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
-[*] Sat Oct 25 08:35:28 2025
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Tue Oct 28 12:13:10 2025
 [*]
-[dumpfile] "/home/mike/git/MJoergen/tcp/sim/tb_axi_fifo_squash/tb_axi_fifo_squash.ghw"
-[dumpfile_mtime] "Sat Oct 25 08:34:18 2025"
-[dumpfile_size] 6041
-[savefile] "/home/mike/git/MJoergen/tcp/sim/tb_axi_fifo_squash/tb_axi_fifo_squash.gtkw"
-[timestart] 177000000
+[dumpfile] "/home/mfj/git/PRIVATE/MJoergen/tcp/sim/tb_axi_fifo_squash/tb_axi_fifo_squash.ghw"
+[dumpfile_mtime] "Tue Oct 28 12:12:57 2025"
+[dumpfile_size] 6604
+[savefile] "/home/mfj/git/PRIVATE/MJoergen/tcp/sim/tb_axi_fifo_squash/tb_axi_fifo_squash.gtkw"
+[timestart] 306500000
 [size] 1353 874
 [pos] -1 -1
-*-25.007536 215900000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-25.007536 364500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.tb_axi_fifo_squash.
 [treeopen] top.tb_axi_fifo_squash.axi_fifo_squash_inst.
@@ -32,7 +32,7 @@ top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_valid_i
 top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_start_i
 top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_end_i
 @28
-top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_push_i
+top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_last_i
 @200
 -
 @28
@@ -46,23 +46,22 @@ top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_valid_o
 top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_bytes_o
 @28
 top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_empty_o
+top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_last_o
 @200
 -
-@28
-top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_valid
+@22
+#{top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[63:0]} top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[63] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[62] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[61] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[60] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[59] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[58] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[57] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[56] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[55] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[54] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[53] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[52] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[51] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[50] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[49] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[48] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[47] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[46] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[45] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[44] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[43] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[42] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[41] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[40] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[39] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[38] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[37] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[36] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[35] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[34] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[33] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[32] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[31] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[30] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[29] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[28] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[27] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[26] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[25] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[24] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[23] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[22] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[21] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[20] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[19] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[18] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[17] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[16] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[15] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[14] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[13] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[12] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[11] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[10] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[9] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[8] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[7] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[6] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[5] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[4] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[3] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[2] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[1] top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_data[0]
+@420
+top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_start
+top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_end
 @22
 #{top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[63:0]} top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[63] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[62] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[61] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[60] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[59] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[58] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[57] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[56] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[55] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[54] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[53] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[52] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[51] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[50] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[49] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[48] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[47] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[46] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[45] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[44] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[43] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[42] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[41] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[40] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[39] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[38] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[37] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[36] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[35] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[34] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[33] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[32] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[31] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[30] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[29] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[28] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[27] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[26] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[25] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[24] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[23] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[22] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[21] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[20] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[19] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[18] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[17] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[16] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[15] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[14] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[13] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[12] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[11] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[10] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[9] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[8] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[7] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[6] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[5] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[4] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[3] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[2] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[1] top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_data[0]
 @420
 top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_bytes
+@28
+top.tb_axi_fifo_squash.axi_fifo_squash_inst.m_last
 @200
 -
-@420
-top.tb_axi_fifo_squash.axi_fifo_squash_inst.s_bytes_v_o
-top.tb_axi_fifo_squash.axi_fifo_squash_inst.new_shift_v_o
-top.tb_axi_fifo_squash.axi_fifo_squash_inst.new_shift_bits_v_o
-top.tb_axi_fifo_squash.axi_fifo_squash_inst.new_m_bytes_v_o
-top.tb_axi_fifo_squash.axi_fifo_squash_inst.new_s_begin_v_o
-top.tb_axi_fifo_squash.axi_fifo_squash_inst.new_s_begin_bits_v_o
 @1000200
 -axi_fifo_squash
 [pattern_trace] 1

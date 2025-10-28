@@ -53,37 +53,42 @@ architecture simulation of tb_axi_fifo_squash is
   constant C_TESTS : test_vector_type :=
   (                                                                                           --                             Stimuli                              Response
     --                              V   D                    S  E   L     E    V    R    L
-    ("PUSH first write        ", false, X"7766554433221100", 1, 3, '1',  '1', '1', '0', '1'), -- Output buffer contains 2211
-    ("                        ", true,  X"0000000000002211", 0, 2, '1',  '1', '0', '1', '0'),
+    ("LAST first write        ", false, X"7766554433221100", 1, 3, '1',  '1', '1', '0', '0'), -- Output buffer contains 2211
+    ("                        ", true,  X"0000000000002211", 0, 2, '1',  '1', '0', '1', '1'),
 
-    ("Full word without PUSH  ", false, X"7766554433221100", 0, 8, '0',  '1', '1', '0', '0'), -- Output buffer contains 7766554433221100
+    ("Full word without LAST  ", false, X"7766554433221100", 0, 8, '0',  '1', '1', '0', '0'), -- Output buffer contains 7766554433221100
     ("                        ", true,  X"7766554433221100", 0, 8, '0',  '1', '0', '1', '0'),
-    ("                        ", false, X"7766554433221100", 0, 0, '1',  '1', '1', '0', '1'),
-    ("                        ", true,  X"7766554433221100", 0, 0, '0',  '1', '0', '1', '0'),
+    ("                        ", false, X"7766554433221100", 0, 0, '1',  '1', '1', '0', '0'),
+    ("                        ", true,  X"7766554433221100", 0, 0, '0',  '1', '0', '1', '1'),
 
-    ("PUSH on second write    ", false, X"7766554433221100", 1, 3, '0',  '1', '0', '1', '0'), -- Internal buffer contains 2211
-    ("                        ", false, X"7766554433221100", 2, 4, '1',  '1', '1', '0', '1'), -- Output buffer contains 33222211
-    ("                        ", true,  X"0000000033222211", 0, 4, '0',  '1', '0', '1', '0'),
+    ("LAST on second write    ", false, X"7766554433221100", 1, 3, '0',  '1', '0', '1', '0'), -- Internal buffer contains 2211
+    ("                        ", false, X"7766554433221100", 2, 4, '1',  '1', '1', '0', '0'), -- Output buffer contains 33222211
+    ("                        ", true,  X"0000000033222211", 0, 4, '0',  '1', '0', '1', '1'),
 
-    ("Wrap around without PUSH", false, X"7766554433221100", 0, 6, '0',  '1', '0', '1', '0'), -- Internal buffer contains 554433221100
+    ("Wrap around without LAST", false, X"7766554433221100", 0, 6, '0',  '1', '0', '1', '0'), -- Internal buffer contains 554433221100
     ("                        ", false, X"7766554433221100", 3, 6, '0',  '0', '1', '0', '0'), -- Internal buffer contains 55
     ("                        ", true,  X"4433554433221100", 0, 8, '0',  '1', '0', '1', '0'),
-    ("                        ", false, X"7766554433221100", 0, 3, '1',  '1', '1', '0', '1'), -- Output buffer contains 22110055
-    ("                        ", true,  X"0000000022110055", 0, 4, '0',  '1', '0', '1', '0'),
+    ("                        ", false, X"7766554433221100", 0, 3, '1',  '1', '1', '0', '0'), -- Output buffer contains 22110055
+    ("                        ", true,  X"0000000022110055", 0, 4, '0',  '1', '0', '1', '1'),
+
+    ("Wrap around with LAST   ", false, X"7766554433221100", 0, 6, '0',  '1', '0', '1', '0'), -- Internal buffer contains 554433221100
+    ("                        ", false, X"7766554433221100", 3, 6, '1',  '0', '1', '0', '0'), -- Internal buffer contains 55
+    ("                        ", true,  X"4433554433221100", 0, 8, '0',  '1', '1', '0', '0'),
+    ("                        ", true,  X"0000000000000055", 0, 1, '0',  '1', '0', '1', '1'),
 
     ("Wrap around whole word  ", false, X"7766554433221100", 0, 5, '0',  '1', '0', '1', '0'), -- Internal buffer contains 4433221100
     ("                        ", false, X"7766554433221100", 3, 6, '0',  '1', '1', '0', '0'), -- Internal buffer is empty
     ("                        ", true,  X"5544334433221100", 0, 8, '0',  '1', '0', '1', '0'),
-    ("                        ", false, X"7766554433221100", 0, 0, '1',  '1', '1', '0', '1'),
-    ("                        ", true,  X"7766554433221100", 0, 0, '0',  '1', '0', '1', '0'),
+    ("                        ", false, X"7766554433221100", 0, 0, '1',  '1', '1', '0', '0'),
+    ("                        ", true,  X"7766554433221100", 0, 0, '0',  '1', '0', '1', '1'),
 
     ("Wrap around backwards   ", false, X"8877665544332211", 0, 1, '0',  '1', '0', '1', '0'), -- Internal buffer contains 11
-    ("                        ", false, X"7766554433221100", 3, 6, '1',  '1', '1', '0', '1'), -- Output buffer contains 55443311
-    ("                        ", true,  X"0000000055443311", 0, 4, '0',  '1', '0', '1', '0'),
+    ("                        ", false, X"7766554433221100", 3, 6, '1',  '1', '1', '0', '0'), -- Output buffer contains 55443311
+    ("                        ", true,  X"0000000055443311", 0, 4, '0',  '1', '0', '1', '1'),
 
-    ("PUSH without data       ", false, X"7766554433221100", 1, 5, '0',  '1', '0', '1', '0'), -- Internal buffer contains 44332211
-    ("                        ", false, X"7766554433221100", 3, 3, '1',  '1', '1', '0', '1'), -- Output buffer contains 44332211
-    ("                        ", true,  X"0000000044332211", 0, 4, '0',  '1', '0', '1', '0')
+    ("LAST without data       ", false, X"7766554433221100", 1, 5, '0',  '1', '0', '1', '0'), -- Internal buffer contains 44332211
+    ("                        ", false, X"7766554433221100", 3, 3, '1',  '1', '1', '0', '0'), -- Output buffer contains 44332211
+    ("                        ", true,  X"0000000044332211", 0, 4, '0',  '1', '0', '1', '1')
   );
 
 begin
@@ -152,7 +157,8 @@ begin
     end procedure send;
 
     procedure verify (
-      arg : std_logic_vector
+      arg  : std_logic_vector;
+      last : std_logic
     ) is
       variable exp_v : std_logic_vector(arg'high downto arg'low);
     begin
@@ -173,6 +179,11 @@ begin
         report "Verify FAIL data: " &
                "Received " & to_hstring(m_data(exp_v'range)) &
                ", expected " & to_hstring(arg);
+
+      assert m_last = last
+        report "Verify FAIL last: " &
+               "Received " & to_string(m_last) &
+               ", expected " & to_string(last);
 
       if G_SHOW_DATA then
         report "--  Received " & to_hstring(m_data(m_bytes * 8 - 1 downto 0));
@@ -219,7 +230,7 @@ begin
       end if;
 
       if C_TESTS(i).verify then
-        verify(C_TESTS(i).data(C_TESTS(i).dend * 8 - 1 downto 0));
+        verify(C_TESTS(i).data(C_TESTS(i).dend * 8 - 1 downto 0), C_TESTS(i).m_last);
       else
         send(C_TESTS(i).data, C_TESTS(i).dstart, C_TESTS(i).dend, C_TESTS(i).s_last);
       end if;
@@ -230,8 +241,6 @@ begin
         report "index " & to_string(i) & ": m_valid not " & to_string(C_TESTS(i).valid);
       assert s_ready = C_TESTS(i).ready
         report "index " & to_string(i) & ": s_ready not " & to_string(C_TESTS(i).ready);
-      assert m_last  = C_TESTS(i).m_last
-        report "index " & to_string(i) & ": m_last not " & to_string(C_TESTS(i).m_last);
     end loop;
 
     report "Test finished";
