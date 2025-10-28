@@ -85,7 +85,7 @@ architecture synthesis of ip_wrapper is
   signal   squash_s_data  : std_logic_vector(G_MAC_PAYLOAD_BYTES * 8 - 1 downto 0);
   signal   squash_s_start : natural range 0 to G_MAC_PAYLOAD_BYTES - 1;
   signal   squash_s_end   : natural range 0 to G_MAC_PAYLOAD_BYTES;
-  signal   squash_s_push  : std_logic;  -- Force empty of internal buffer
+  signal   squash_s_last  : std_logic;
 
   signal   user_tx_ready : std_logic;
   signal   user_tx_valid : std_logic;
@@ -94,6 +94,7 @@ architecture synthesis of ip_wrapper is
   signal   wide_m_valid : std_logic;
   signal   wide_m_data  : std_logic_vector(G_MAC_PAYLOAD_BYTES * 8 - 1 downto 0);
   signal   wide_m_bytes : natural range 0 to G_MAC_PAYLOAD_BYTES;
+  signal   wide_m_last  : std_logic;
 
 begin
 
@@ -153,7 +154,7 @@ begin
               squash_s_data  <= mac_payload_rx_data_i;
               squash_s_start <= C_IP_HEADER_LENGTH;                             -- TBD: Add options
               squash_s_end   <= mac_payload_rx_bytes_i;                         -- TBD: Correct for IP packet length
-              squash_s_push  <= '0';
+              squash_s_last  <= '0';
             end if;
             rx_state <= RX_DATA_ST;
           end if;
@@ -164,10 +165,10 @@ begin
             squash_s_data  <= mac_payload_rx_data_i;
             squash_s_start <= 0;
             squash_s_end   <= mac_payload_rx_bytes_i;
-            squash_s_push  <= '0';
+            squash_s_last  <= '0';
             if mac_payload_rx_last_i = '1' then
-              squash_s_push  <= '1';
-              rx_state       <= RX_IDLE_ST;
+              squash_s_last <= '1';
+              rx_state      <= RX_IDLE_ST;
             end if;
           end if;
 
@@ -193,7 +194,7 @@ begin
       s_data_i  => squash_s_data,
       s_start_i => squash_s_start,
       s_end_i   => squash_s_end,
-      s_last_i  => squash_s_push,
+      s_last_i  => squash_s_last,
       m_ready_i => user_rx_ready_i,
       m_valid_o => user_rx_valid_o,
       m_data_o  => user_rx_data_o,
@@ -215,11 +216,13 @@ begin
       s_valid_i => user_tx_valid,
       s_data_i  => user_tx_data_i,
       s_bytes_i => user_tx_bytes_i,
+      s_last_i  => user_tx_last_i,
       m_ready_i => wide_m_ready,
       m_bytes_i => G_MAC_PAYLOAD_BYTES,
       m_valid_o => wide_m_valid,
       m_data_o  => wide_m_data,
-      m_bytes_o => wide_m_bytes
+      m_bytes_o => wide_m_bytes,
+      m_last_o  => wide_m_last
     ); -- axi_fifo_wide_inst : entity work.axi_fifo_wide
 
 
@@ -255,9 +258,11 @@ begin
           if wide_m_valid = '1' and wide_m_ready = '1' then
             mac_payload_tx_data_o  <= wide_m_data;
             mac_payload_tx_bytes_o <= wide_m_bytes;
-            mac_payload_tx_last_o  <= '1';
+            mac_payload_tx_last_o  <= wide_m_last;
             mac_payload_tx_valid_o <= '1';
-            tx_state               <= TX_IDLE_ST;
+            if wide_m_last = '1' then
+              tx_state <= TX_IDLE_ST;
+            end if;
           end if;
 
       end case;

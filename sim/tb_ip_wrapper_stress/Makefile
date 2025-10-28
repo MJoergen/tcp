@@ -19,14 +19,14 @@ SRC += $(SIM_SRC_DIR)/stim_verf.vhd
 DUT = ip_wrapper_stress
 
 # Test duration
-STOP_TIME = 500ns
+STOP_TIME = 50us
 
 # Test specific generics
 GENERIC += -gG_MAX_LENGTH=100
 GENERIC += -gG_CNT_SIZE=12
-GENERIC += -gG_RANDOM=false
-GENERIC += -gG_FAST=false
-GENERIC += -gG_SHOW_PACKETS=true
+GENERIC += -gG_RANDOM=true
+GENERIC += -gG_FAST=true
+GENERIC += -gG_SHOW_PACKETS=false
 GENERIC += -gG_SHOW_PROTOCOL=false
 
 # Don't stop on errors

@@ -106,12 +106,13 @@ begin
 
   stim_verf_inst : entity work.stim_verf
     generic map (
-      G_DEBUG      => true,
-      G_RANDOM     => G_RANDOM,
-      G_FAST       => G_FAST,
-      G_MAX_LENGTH => G_MAX_LENGTH,
-      G_CNT_SIZE   => G_CNT_SIZE,
-      G_DATA_BYTES => C_USER_BYTES
+      G_DEBUG        => false,
+      G_RANDOM       => G_RANDOM,
+      G_FAST         => G_FAST,
+      G_MAX_LENGTH   => G_MAX_LENGTH,
+      G_CNT_SIZE     => G_CNT_SIZE,
+      G_M_DATA_BYTES => C_USER_BYTES,
+      G_S_DATA_BYTES => C_USER_BYTES
     )
     port map (
       clk_i     => clk,
