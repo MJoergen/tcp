@@ -18,7 +18,7 @@ end entity tb_tcp_wrapper_stress;
 
 architecture simulation of tb_tcp_wrapper_stress is
 
-  constant C_IP_PAYLOAD_BYTES : natural                       := 30;
+  constant C_IP_PAYLOAD_BYTES : natural                       := 50;
   constant C_SESSION_BYTES    : natural                       := 20;
   constant C_PORT_CLIENT      : std_logic_vector(15 downto 0) := x"C713";
   constant C_PORT_SERVER      : std_logic_vector(15 downto 0) := x"0053";
@@ -36,24 +36,24 @@ architecture simulation of tb_tcp_wrapper_stress is
   signal   client_session_rx_ready    : std_logic;
   signal   client_session_rx_valid    : std_logic;
   signal   client_session_rx_data     : std_logic_vector(C_SESSION_BYTES * 8 - 1 downto 0);
-  signal   client_session_rx_bytes    : natural range 0 to C_SESSION_BYTES - 1;
+  signal   client_session_rx_bytes    : natural range 0 to C_SESSION_BYTES;
   signal   client_session_tx_ready    : std_logic;
   signal   client_session_tx_valid    : std_logic;
   signal   client_session_tx_data     : std_logic_vector(C_SESSION_BYTES * 8 - 1 downto 0);
-  signal   client_session_tx_bytes    : natural range 0 to C_SESSION_BYTES - 1;
+  signal   client_session_tx_bytes    : natural range 0 to C_SESSION_BYTES;
 
   -- Client to Server
   signal   tb_ip_payload_c2s_ready      : std_logic;
   signal   tb_ip_payload_c2s_valid      : std_logic;
   signal   tb_ip_payload_c2s_data       : std_logic_vector(C_IP_PAYLOAD_BYTES * 8 - 1 downto 0);
-  signal   tb_ip_payload_c2s_bytes      : natural range 0 to C_IP_PAYLOAD_BYTES - 1;
+  signal   tb_ip_payload_c2s_bytes      : natural range 0 to C_IP_PAYLOAD_BYTES;
   signal   tb_ip_payload_c2s_last       : std_logic;
   signal   tb_ip_payload_c2s_data_bytes : std_logic_vector(C_IP_PAYLOAD_BYTES * 8 + 7 downto 0);
 
   signal   tb_ip_payload_c2s_dropped_ready      : std_logic;
   signal   tb_ip_payload_c2s_dropped_valid      : std_logic;
   signal   tb_ip_payload_c2s_dropped_data       : std_logic_vector(C_IP_PAYLOAD_BYTES * 8 - 1 downto 0);
-  signal   tb_ip_payload_c2s_dropped_bytes      : natural range 0 to C_IP_PAYLOAD_BYTES - 1;
+  signal   tb_ip_payload_c2s_dropped_bytes      : natural range 0 to C_IP_PAYLOAD_BYTES;
   signal   tb_ip_payload_c2s_dropped_last       : std_logic;
   signal   tb_ip_payload_c2s_dropped_data_bytes : std_logic_vector(C_IP_PAYLOAD_BYTES * 8 + 7 downto 0);
 
@@ -61,14 +61,14 @@ architecture simulation of tb_tcp_wrapper_stress is
   signal   tb_ip_payload_s2c_ready      : std_logic;
   signal   tb_ip_payload_s2c_valid      : std_logic;
   signal   tb_ip_payload_s2c_data       : std_logic_vector(C_IP_PAYLOAD_BYTES * 8 - 1 downto 0);
-  signal   tb_ip_payload_s2c_bytes      : natural range 0 to C_IP_PAYLOAD_BYTES - 1;
+  signal   tb_ip_payload_s2c_bytes      : natural range 0 to C_IP_PAYLOAD_BYTES;
   signal   tb_ip_payload_s2c_last       : std_logic;
   signal   tb_ip_payload_s2c_data_bytes : std_logic_vector(C_IP_PAYLOAD_BYTES * 8 + 7 downto 0);
 
   signal   tb_ip_payload_s2c_dropped_ready      : std_logic;
   signal   tb_ip_payload_s2c_dropped_valid      : std_logic;
   signal   tb_ip_payload_s2c_dropped_data       : std_logic_vector(C_IP_PAYLOAD_BYTES * 8 - 1 downto 0);
-  signal   tb_ip_payload_s2c_dropped_bytes      : natural range 0 to C_IP_PAYLOAD_BYTES - 1;
+  signal   tb_ip_payload_s2c_dropped_bytes      : natural range 0 to C_IP_PAYLOAD_BYTES;
   signal   tb_ip_payload_s2c_dropped_last       : std_logic;
   signal   tb_ip_payload_s2c_dropped_data_bytes : std_logic_vector(C_IP_PAYLOAD_BYTES * 8 + 7 downto 0);
 
@@ -76,11 +76,11 @@ architecture simulation of tb_tcp_wrapper_stress is
   signal   server_session_rx_ready    : std_logic;
   signal   server_session_rx_valid    : std_logic;
   signal   server_session_rx_data     : std_logic_vector(C_SESSION_BYTES * 8 - 1 downto 0);
-  signal   server_session_rx_bytes    : natural range 0 to C_SESSION_BYTES - 1;
+  signal   server_session_rx_bytes    : natural range 0 to C_SESSION_BYTES;
   signal   server_session_tx_ready    : std_logic;
   signal   server_session_tx_valid    : std_logic;
   signal   server_session_tx_data     : std_logic_vector(C_SESSION_BYTES * 8 - 1 downto 0);
-  signal   server_session_tx_bytes    : natural range 0 to C_SESSION_BYTES - 1;
+  signal   server_session_tx_bytes    : natural range 0 to C_SESSION_BYTES;
 
   signal   do_drop_c2s                : std_logic;
   signal   do_drop_s2c                : std_logic;

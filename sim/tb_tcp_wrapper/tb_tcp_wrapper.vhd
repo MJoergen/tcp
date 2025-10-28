@@ -33,24 +33,24 @@ architecture simulation of tb_tcp_wrapper is
   signal   client_session_rx_ready    : std_logic;
   signal   client_session_rx_valid    : std_logic;
   signal   client_session_rx_data     : std_logic_vector(C_SESSION_BYTES * 8 - 1 downto 0);
-  signal   client_session_rx_bytes    : natural range 0 to C_SESSION_BYTES - 1;
+  signal   client_session_rx_bytes    : natural range 0 to C_SESSION_BYTES;
   signal   client_session_tx_ready    : std_logic;
   signal   client_session_tx_valid    : std_logic;
   signal   client_session_tx_data     : std_logic_vector(C_SESSION_BYTES * 8 - 1 downto 0);
-  signal   client_session_tx_bytes    : natural range 0 to C_SESSION_BYTES - 1;
+  signal   client_session_tx_bytes    : natural range 0 to C_SESSION_BYTES;
 
   -- Client to Server
   signal   tb_ip_payload_c2s_ready : std_logic;
   signal   tb_ip_payload_c2s_valid : std_logic;
   signal   tb_ip_payload_c2s_data  : std_logic_vector(C_IP_PAYLOAD_BYTES * 8 - 1 downto 0);
-  signal   tb_ip_payload_c2s_bytes : natural range 0 to C_IP_PAYLOAD_BYTES - 1;
+  signal   tb_ip_payload_c2s_bytes : natural range 0 to C_IP_PAYLOAD_BYTES;
   signal   tb_ip_payload_c2s_last  : std_logic;
 
   -- Server to Client
   signal   tb_ip_payload_s2c_ready : std_logic;
   signal   tb_ip_payload_s2c_valid : std_logic;
   signal   tb_ip_payload_s2c_data  : std_logic_vector(C_IP_PAYLOAD_BYTES * 8 - 1 downto 0);
-  signal   tb_ip_payload_s2c_bytes : natural range 0 to C_IP_PAYLOAD_BYTES - 1;
+  signal   tb_ip_payload_s2c_bytes : natural range 0 to C_IP_PAYLOAD_BYTES;
   signal   tb_ip_payload_s2c_last  : std_logic;
 
   signal   server_session_start       : std_logic;
@@ -60,11 +60,11 @@ architecture simulation of tb_tcp_wrapper is
   signal   server_session_rx_ready    : std_logic;
   signal   server_session_rx_valid    : std_logic;
   signal   server_session_rx_data     : std_logic_vector(C_SESSION_BYTES * 8 - 1 downto 0);
-  signal   server_session_rx_bytes    : natural range 0 to C_SESSION_BYTES - 1;
+  signal   server_session_rx_bytes    : natural range 0 to C_SESSION_BYTES;
   signal   server_session_tx_ready    : std_logic;
   signal   server_session_tx_valid    : std_logic;
   signal   server_session_tx_data     : std_logic_vector(C_SESSION_BYTES * 8 - 1 downto 0);
-  signal   server_session_tx_bytes    : natural range 0 to C_SESSION_BYTES - 1;
+  signal   server_session_tx_bytes    : natural range 0 to C_SESSION_BYTES;
 
 begin
 
@@ -74,15 +74,16 @@ begin
 
   clk <= running and not clk after 5 ns;
   rst <= '1', '0' after 100 ns;
+
   ppms_proc : process
     variable next_v : time := 100 us;
   begin
     wait until now = next_v;
     next_v := now + 100 us;
     wait until rising_edge(clk);
-    ppms <= '1';
+    ppms   <= '1';
     wait until rising_edge(clk);
-    ppms <= '0';
+    ppms   <= '0';
     wait until rising_edge(clk);
   end process ppms_proc;
 
@@ -214,7 +215,7 @@ begin
     if G_SHOW_TESTS then
       report "TB: Waiting for connection";
     end if;
-    timeout_v               := now + C_TIMEOUT;
+    timeout_v := now + C_TIMEOUT;
     while (client_session_established /= '1' or server_session_established /= '1') and
       now < timeout_v
     loop
@@ -244,7 +245,7 @@ begin
     if G_SHOW_TESTS then
       report "TB: Server waiting for closure from client";
     end if;
-    timeout_v            := now + C_TIMEOUT;
+    timeout_v := now + C_TIMEOUT;
     while (server_session_established /= '0') and
       now < timeout_v
     loop
@@ -263,7 +264,7 @@ begin
     if G_SHOW_TESTS then
       report "TB: Client waiting for closure from server";
     end if;
-    timeout_v            := now + C_TIMEOUT;
+    timeout_v := now + C_TIMEOUT;
     while (client_session_established /= '0') and
       now < timeout_v
     loop

@@ -29,26 +29,25 @@ entity tcp_wrapper is
     session_rx_ready_i    : in    std_logic;
     session_rx_valid_o    : out   std_logic;
     session_rx_data_o     : out   std_logic_vector(G_SESSION_BYTES * 8 - 1 downto 0);
-    session_rx_bytes_o    : out   natural range 0 to G_SESSION_BYTES - 1;
+    session_rx_bytes_o    : out   natural range 0 to G_SESSION_BYTES;
     --
     session_tx_ready_o    : out   std_logic;
     session_tx_valid_i    : in    std_logic;
     session_tx_data_i     : in    std_logic_vector(G_SESSION_BYTES * 8 - 1 downto 0);
-    session_tx_bytes_i    : in    natural range 0 to G_SESSION_BYTES - 1;
+    session_tx_bytes_i    : in    natural range 0 to G_SESSION_BYTES;
 
     -- Interface to IP handler (packet oriented)
     -- bits 7-0 is the first byte transferred.
-    -- bytes = 0 means G_IP_PAYLOAD_BYTES.
     ip_payload_rx_ready_o : out   std_logic;
     ip_payload_rx_valid_i : in    std_logic;
     ip_payload_rx_data_i  : in    std_logic_vector(G_IP_PAYLOAD_BYTES * 8 - 1 downto 0);
-    ip_payload_rx_bytes_i : in    natural range 0 to G_IP_PAYLOAD_BYTES - 1;
+    ip_payload_rx_bytes_i : in    natural range 0 to G_IP_PAYLOAD_BYTES;
     ip_payload_rx_last_i  : in    std_logic;
     --
     ip_payload_tx_ready_i : in    std_logic;
     ip_payload_tx_valid_o : out   std_logic;
     ip_payload_tx_data_o  : out   std_logic_vector(G_IP_PAYLOAD_BYTES * 8 - 1 downto 0);
-    ip_payload_tx_bytes_o : out   natural range 0 to G_IP_PAYLOAD_BYTES - 1;
+    ip_payload_tx_bytes_o : out   natural range 0 to G_IP_PAYLOAD_BYTES;
     ip_payload_tx_last_o  : out   std_logic
   );
 end entity tcp_wrapper;
