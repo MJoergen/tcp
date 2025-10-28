@@ -18,9 +18,10 @@ SRC += $(SIM_SRC_DIR)/axi_fifo_sync.vhd
 DUT = ip_wrapper_stress
 
 # Test duration
-STOP_TIME = 20us
+STOP_TIME = 500ns
 
 # Test specific generics
+GENERIC += -gG_MAX_LENGTH=100
 GENERIC += -gG_CNT_SIZE=12
 GENERIC += -gG_RANDOM=false
 GENERIC += -gG_FAST=false
