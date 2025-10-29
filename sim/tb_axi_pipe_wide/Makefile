@@ -15,7 +15,7 @@ DUT = axi_pipe_wide
 STOP_TIME = 10us
 
 # Don't stop on errors
-ASSERT_LEVEL = none
+#ASSERT_LEVEL = none
 
 include ../Makefile.inc
 

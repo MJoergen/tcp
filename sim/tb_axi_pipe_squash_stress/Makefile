@@ -24,7 +24,7 @@ GENERIC += -gG_S_DATA_BYTES=10
 GENERIC += -gG_M_DATA_BYTES=4
 
 # Don't stop on errors
-ASSERT_LEVEL = none
+#ASSERT_LEVEL = none
 
 include ../Makefile.inc
 

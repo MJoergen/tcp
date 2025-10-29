@@ -25,7 +25,7 @@ GENERIC += -gG_MAX_LENGTH=40
 GENERIC += -gG_CNT_SIZE=12
 
 # Don't stop on errors
-ASSERT_LEVEL = none
+#ASSERT_LEVEL = none
 
 include ../Makefile.inc
 

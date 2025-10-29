@@ -30,7 +30,7 @@ GENERIC += -gG_SHOW_PACKETS=false
 GENERIC += -gG_SHOW_PROTOCOL=false
 
 # Don't stop on errors
-ASSERT_LEVEL = none
+#ASSERT_LEVEL = none
 
 include ../Makefile.inc
 

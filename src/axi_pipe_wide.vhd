@@ -48,16 +48,18 @@ end entity axi_pipe_wide;
 
 architecture synthesis of axi_pipe_wide is
 
+  constant C_DEBUG : boolean := false;
+
   -- Input buffer
-  signal s_data  : std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
-  signal s_start : natural range 0 to G_S_DATA_BYTES;
-  signal s_end   : natural range 0 to G_S_DATA_BYTES;
-  signal s_last  : std_logic;
+  signal   s_data  : std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
+  signal   s_start : natural range 0 to G_S_DATA_BYTES;
+  signal   s_end   : natural range 0 to G_S_DATA_BYTES;
+  signal   s_last  : std_logic;
 
   -- Internal buffer
-  signal m_data  : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
-  signal m_bytes : natural range 0 to G_M_DATA_BYTES;
-  signal m_last  : std_logic;
+  signal   m_data  : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
+  signal   m_bytes : natural range 0 to G_M_DATA_BYTES;
+  signal   m_last  : std_logic;
 
   pure function copy_data (
     dst_data : std_logic_vector;
@@ -68,11 +70,17 @@ architecture synthesis of axi_pipe_wide is
     variable res_v   : std_logic_vector(dst_data'range);
     variable shift_v : natural range 0 to maximum(G_S_DATA_BYTES, G_M_DATA_BYTES);
   begin
+    if C_DEBUG then
+      report "copy_data: dst_ptr=" & to_string(dst_ptr) &
+             ", src_ptr=" & to_string(src_ptr);
+    end if;
     res_v := dst_data;
 
     -- Shift left and shift right are handled separately for better synthesis portability.
     if src_ptr >= dst_ptr then
-      -- Shift right
+      -- Shift right:
+      -- Input  :  |.|3|2|1|0|.|.|.|
+      -- Output :          |.|.|M|M|
       shift_v := src_ptr - dst_ptr;
 
       for i in 0 to G_M_DATA_BYTES - 1 loop
@@ -81,7 +89,9 @@ architecture synthesis of axi_pipe_wide is
         end if;
       end loop;
     else
-      -- Shift left
+      -- Shift left:
+      -- Input  :  |.|5|4|3|2|1|0|.|
+      -- Output :          |.|.|M|M|
       shift_v := dst_ptr - src_ptr;
 
       for i in 0 to G_M_DATA_BYTES - 1 loop
@@ -111,6 +121,7 @@ begin
                '0';
 
   fsm_proc : process (clk_i)
+    variable s_bytes_v : natural range 0 to G_S_DATA_BYTES;
   begin
     if rising_edge(clk_i) then
       if m_valid_o = '1' and m_ready_i = '1' then
@@ -118,18 +129,27 @@ begin
           m_bytes <= 0;
           m_last  <= '0';
 
-          if s_start < s_end and G_S_DATA_BYTES > G_M_DATA_BYTES then
+          if G_S_DATA_BYTES > G_M_DATA_BYTES and s_start < s_end then
+            s_bytes_v := s_end - s_start;
+            if C_DEBUG then
+              report "READY: Input buffer contains " & to_string(s_bytes_v) & " bytes";
+            end if;
             -- S : |.|.|.|2|1|0|.|.|
             -- M : |.|.|.|.|.|.|.|.|
             --
             -- Shift right
+            -- Copy remaining data to internal buffer
             m_data <= copy_data(m_data, s_data, 0, s_start);
-            if s_end - s_start >= G_M_DATA_BYTES then
-              m_bytes <= G_M_DATA_BYTES;
-              s_start <= s_start + G_M_DATA_BYTES;
-            else
+
+            if s_end - s_start < G_M_DATA_BYTES then
               m_bytes <= s_end - s_start;
               s_start <= s_end;
+            else
+              if C_DEBUG then
+                report "Internal buffer is now filled";
+              end if;
+              m_bytes <= G_M_DATA_BYTES;
+              s_start <= s_start + G_M_DATA_BYTES;
             end if;
 
             if s_end - s_start <= G_M_DATA_BYTES then

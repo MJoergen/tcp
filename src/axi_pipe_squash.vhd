@@ -102,7 +102,9 @@ begin
 
   -- TBD: This can perhaps be optimized to higher throughput, by setting s_ready_o to '1' in (specific) situations where
   -- m_ready_i = '1'.
-  s_ready_o <= '1' when m_bytes = 0 and m_valid_o = '0' and s_start = s_end else
+  s_ready_o <= '1' when m_bytes = 0 and
+                        m_valid_o = '0' and
+                        s_start = s_end else
                '0';
 
   m_last_o  <= m_last when m_bytes = 0 else
@@ -142,7 +144,10 @@ begin
             if C_DEBUG then
               report "READY: Input buffer contains " & to_string(s_bytes_v) & " bytes";
             end if;
-
+            -- S : |.|.|.|2|1|0|.|.|
+            -- M : |.|.|.|.|.|.|.|.|
+            --
+            -- Shift right
             -- Copy remaining data to internal buffer
             m_data <= copy_data(m_data, s_data, 0, s_start);
 
