@@ -7,6 +7,7 @@ library std;
 
 entity tb_axi_pipe_wide_stress is
   generic (
+    G_CNT_BITS     : natural;
     G_FAST         : boolean;
     G_RANDOM       : boolean;
     G_S_DATA_BYTES : natural;
@@ -15,8 +16,6 @@ entity tb_axi_pipe_wide_stress is
 end entity tb_axi_pipe_wide_stress;
 
 architecture simulation of tb_axi_pipe_wide_stress is
-
-  constant C_CNT_BITS : natural := 12;
 
   signal   clk     : std_logic  := '1';
   signal   rst     : std_logic  := '1';
@@ -36,11 +35,11 @@ architecture simulation of tb_axi_pipe_wide_stress is
   signal   m_last          : std_logic;
 
   signal   rand       : std_logic_vector(63 downto 0);
-  signal   stim_cnt   : std_logic_vector(C_CNT_BITS - 1 downto 0);
-  signal   verify_cnt : std_logic_vector(C_CNT_BITS - 1 downto 0);
+  signal   stim_cnt   : std_logic_vector(G_CNT_BITS - 1 downto 0);
+  signal   verify_cnt : std_logic_vector(G_CNT_BITS - 1 downto 0);
 
   signal   do_valid : std_logic;
-  signal   do_push  : std_logic;
+  signal   do_last  : std_logic;
 
 begin
 
@@ -74,7 +73,7 @@ begin
 
   do_valid        <= or(rand(42 downto 40)) when G_RANDOM else
                      '1';
-  do_push         <= and(rand(22 downto 20));
+  do_last         <= and(rand(22 downto 20));
 
 
   stimuli_proc : process (clk)
@@ -106,6 +105,7 @@ begin
 
           s_valid <= '1';
           s_bytes <= bytes_v;
+          s_last  <= do_last;
         end if;
       end if;
 

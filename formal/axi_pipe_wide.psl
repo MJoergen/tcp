@@ -142,6 +142,9 @@ vunit axi_pipe_wide_inst(axi_pipe_wide(synthesis))
 -- Data on master must have been from slave
    f_master_data_seen : assert always {f_data_out and rst_i = '0'} |-> {f_data_in};
 
+-- Output buffer full always valid
+   f_master_buffer_full : assert always {not rst_i } |-> {m_bytes_o < G_M_DATA_BYTES or m_valid_o = '1'};
+
 -- Packet length must match
    f_master_length : assert always {f_s_length_cnt = f_m_length_cnt and rst_i = '0'} |->
      {f_s_length = f_m_length};

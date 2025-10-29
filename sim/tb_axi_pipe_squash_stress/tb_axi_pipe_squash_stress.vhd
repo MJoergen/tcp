@@ -115,6 +115,7 @@ begin
 
       if rst = '1' then
         s_valid  <= '0';
+        s_last   <= '0';
         stim_cnt <= (others => '0');
       end if;
     end if;

@@ -17,6 +17,7 @@ DUT = axi_pipe_wide_stress
 STOP_TIME = 50us
 
 # Test specific generics
+GENERIC += -gG_CNT_BITS=12
 GENERIC += -gG_FAST=true
 GENERIC += -gG_RANDOM=true
 GENERIC += -gG_S_DATA_BYTES=8
