@@ -2,7 +2,7 @@ library ieee;
   use ieee.std_logic_1164.all;
   use ieee.numeric_std_unsigned.all;
 
-entity tb_stim_verf is
+entity tb_axi_stim_verf is
   generic (
     G_DEBUG        : boolean;
     G_SHOW_PACKETS : boolean;
@@ -11,9 +11,9 @@ entity tb_stim_verf is
     G_MAX_LENGTH   : natural;
     G_CNT_SIZE     : natural
   );
-end entity tb_stim_verf;
+end entity tb_axi_stim_verf;
 
-architecture simulation of tb_stim_verf is
+architecture simulation of tb_axi_stim_verf is
 
   constant C_DATA_BYTES : natural     := 8;
 
@@ -56,7 +56,7 @@ begin
   -- Generate stimuli and verify response
   ----------------------------------------------------------
 
-  stim_verf_inst : entity work.stim_verf
+  axi_stim_verf_inst : entity work.axi_stim_verf
     generic map (
       G_DEBUG        => G_DEBUG,
       G_RANDOM       => G_RANDOM,
@@ -79,7 +79,7 @@ begin
       s_data_i  => tb_s_data,
       s_bytes_i => tb_s_bytes,
       s_last_i  => tb_s_last
-    ); -- stim_verf_inst : entity work.stim_verf
+    ); -- axi_stim_verf_inst : entity work.axi_stim_verf
 
 
   ----------------------------------------------------------

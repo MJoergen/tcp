@@ -3,15 +3,15 @@
 # Description: Makefile for simulating the ip_wrapper.vhd file.
 
 # List of test specific simulation files
-SRC += tb_stim_verf.vhd
-SRC += $(SIM_SRC_DIR)/stim_verf.vhd
+SRC += tb_axi_stim_verf.vhd
+SRC += $(SIM_SRC_DIR)/axi_stim_verf.vhd
 SRC += $(SIM_SRC_DIR)/lfsr.vhd
 SRC += $(SIM_SRC_DIR)/random.vhd
 SRC += $(SIM_SRC_DIR)/axi_fifo_sync.vhd
 SRC += $(SIM_SRC_DIR)/data_logger.vhd
 
 # Top level entity
-DUT = stim_verf
+DUT = axi_stim_verf
 
 # Test duration
 STOP_TIME = 20us

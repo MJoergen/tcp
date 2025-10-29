@@ -52,7 +52,7 @@ begin
   -- Generate stimuli and verify response
   --------------------------------------------
 
-  stim_verf_inst : entity work.stim_verf
+  axi_stim_verf_inst : entity work.axi_stim_verf
     generic map (
       G_DEBUG        => G_DEBUG,
       G_MAX_LENGTH   => G_MAX_LENGTH,
@@ -75,7 +75,7 @@ begin
       s_data_i  => m_data,
       s_bytes_i => minimum(m_bytes_consume, m_bytes_avail),
       s_last_i  => m_last
-    ); -- stim_verf : entity work.stim_verf
+    ); -- axi_stim_verf : entity work.axi_stim_verf
 
 
   --------------------------------------------

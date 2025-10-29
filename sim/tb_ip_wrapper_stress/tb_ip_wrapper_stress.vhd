@@ -104,7 +104,7 @@ begin
   -- Generate stimuli and verify response
   ----------------------------------------------------------
 
-  stim_verf_inst : entity work.stim_verf
+  axi_stim_verf_inst : entity work.axi_stim_verf
     generic map (
       G_DEBUG        => false,
       G_RANDOM       => G_RANDOM,
@@ -127,7 +127,7 @@ begin
       s_data_i  => client_user_rx_data,
       s_bytes_i => client_user_rx_bytes,
       s_last_i  => client_user_rx_last
-    ); -- stim_verf_inst : entity work.stim_verf
+    ); -- axi_stim_verf_inst : entity work.axi_stim_verf
 
 
   ----------------------------------------------------------

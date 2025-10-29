@@ -2,7 +2,7 @@
 #
 # Description: Makefile for simulating the entire project
 
-TESTS += tb_stim_verf
+TESTS += tb_axi_stim_verf
 TESTS += tb_axi_pipe_squash
 TESTS += tb_axi_pipe_squash_stress
 TESTS += tb_axi_pipe_wide

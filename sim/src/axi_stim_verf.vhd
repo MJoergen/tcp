@@ -9,7 +9,7 @@ library ieee;
 library std;
   use std.env.stop;
 
-entity stim_verf is
+entity axi_stim_verf is
   generic (
     G_DEBUG        : boolean;
     G_RANDOM       : boolean;
@@ -37,9 +37,9 @@ entity stim_verf is
     s_bytes_i : in    natural range 0 to G_S_DATA_BYTES;
     s_last_i  : in    std_logic
   );
-end entity stim_verf;
+end entity axi_stim_verf;
 
-architecture synthesis of stim_verf is
+architecture synthesis of axi_stim_verf is
 
   constant C_LENGTH_SIZE : natural       := 8;
   constant C_RAM_DEPTH   : natural       := 4;

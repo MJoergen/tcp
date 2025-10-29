@@ -6,7 +6,7 @@
 SRC += $(SRC_DIR)/axi_pipe_wide.vhd
 SRC += $(SIM_SRC_DIR)/lfsr.vhd
 SRC += $(SIM_SRC_DIR)/random.vhd
-SRC += $(SIM_SRC_DIR)/stim_verf.vhd
+SRC += $(SIM_SRC_DIR)/axi_stim_verf.vhd
 SRC += $(SIM_SRC_DIR)/axi_fifo_sync.vhd
 
 # List of test specific simulation files
