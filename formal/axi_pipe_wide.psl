@@ -60,7 +60,7 @@ vunit axi_pipe_wide_inst(axi_pipe_wide(synthesis))
      if rising_edge(clk_i) then
        if s_valid_i = '1' and s_ready_o = '1' then
          for i in 0 to G_S_DATA_BYTES - 1 loop
-           if i < s_bytes_i then
+           if i >= s_start_i and i < s_end_i then
              if s_data_i(8 * i + 7 downto 8 * i) = f_data then
                f_data_in <= true;
              end if;
@@ -90,11 +90,11 @@ vunit axi_pipe_wide_inst(axi_pipe_wide(synthesis))
      if rising_edge(clk_i) then
        if s_valid_i = '1' and s_ready_o = '1' then
          if s_last_i = '1' then
-           f_s_length <= f_s_bytes + s_bytes_i;
+           f_s_length <= f_s_bytes + (s_end_i - s_start_i);
            f_s_length_cnt <= f_s_length_cnt + 1;
            f_s_bytes <= 0;
          else
-           f_s_bytes <= f_s_bytes + s_bytes_i;
+           f_s_bytes <= f_s_bytes + (s_end_i - s_start_i);
          end if;
        end if;
 
@@ -158,7 +158,10 @@ vunit axi_pipe_wide_inst(axi_pipe_wide(synthesis))
    f_reset : assume {rst_i};
 
 -- Input bytes must be a valid number.
-   f_s_bytes_valid : assume always {s_bytes_i <= G_S_DATA_BYTES};
+   f_slave_valid : assume always {s_start_i <= s_end_i and
+                                  s_start_i < G_S_DATA_BYTES and
+                                  s_end_i <= G_S_DATA_BYTES};
+
    f_m_bytes_valid : assume always {m_bytes_i <= G_M_DATA_BYTES};
 
 

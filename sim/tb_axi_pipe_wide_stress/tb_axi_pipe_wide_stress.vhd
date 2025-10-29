@@ -17,29 +17,30 @@ end entity tb_axi_pipe_wide_stress;
 
 architecture simulation of tb_axi_pipe_wide_stress is
 
-  signal   clk     : std_logic  := '1';
-  signal   rst     : std_logic  := '1';
-  signal   running : std_logic  := '1';
+  signal clk     : std_logic := '1';
+  signal rst     : std_logic := '1';
+  signal running : std_logic := '1';
 
-  signal   s_ready : std_logic;
-  signal   s_valid : std_logic;
-  signal   s_data  : std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
-  signal   s_bytes : natural range 0 to G_S_DATA_BYTES;
-  signal   s_last  : std_logic;
+  signal s_ready : std_logic;
+  signal s_valid : std_logic;
+  signal s_data  : std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
+  signal s_start : natural range 0 to G_S_DATA_BYTES - 1;
+  signal s_end   : natural range 0 to G_S_DATA_BYTES;
+  signal s_last  : std_logic;
 
-  signal   m_ready         : std_logic;
-  signal   m_bytes_consume : natural range 0 to G_M_DATA_BYTES;
-  signal   m_valid         : std_logic;
-  signal   m_data          : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
-  signal   m_bytes_avail   : natural range 0 to G_M_DATA_BYTES;
-  signal   m_last          : std_logic;
+  signal m_ready         : std_logic;
+  signal m_bytes_consume : natural range 0 to G_M_DATA_BYTES;
+  signal m_valid         : std_logic;
+  signal m_data          : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
+  signal m_bytes_avail   : natural range 0 to G_M_DATA_BYTES;
+  signal m_last          : std_logic;
 
-  signal   rand       : std_logic_vector(63 downto 0);
-  signal   stim_cnt   : std_logic_vector(G_CNT_BITS - 1 downto 0);
-  signal   verify_cnt : std_logic_vector(G_CNT_BITS - 1 downto 0);
+  signal rand       : std_logic_vector(63 downto 0);
+  signal stim_cnt   : std_logic_vector(G_CNT_BITS - 1 downto 0);
+  signal verify_cnt : std_logic_vector(G_CNT_BITS - 1 downto 0);
 
-  signal   do_valid : std_logic;
-  signal   do_last  : std_logic;
+  signal do_valid : std_logic;
+  signal do_last  : std_logic;
 
 begin
 
@@ -77,14 +78,16 @@ begin
 
 
   stimuli_proc : process (clk)
-    variable bytes_v : natural range 0 to G_S_DATA_BYTES;
+    variable start_v : natural range 0 to G_S_DATA_BYTES - 1;
+    variable end_v   : natural range 0 to G_S_DATA_BYTES;
     variable first_v : boolean := true;
   begin
     if rising_edge(clk) then
       if s_ready = '1' then
         s_valid <= '0';
         s_data  <= (others => '0');
-        s_bytes <= 0;
+        s_start <= 0;
+        s_end   <= 0;
         s_last  <= '0';
       end if;
 
@@ -95,16 +98,18 @@ begin
 
       if s_valid = '0' or (G_FAST and s_ready = '1') then
         if do_valid = '1' then
-          bytes_v  := to_integer(rand(15 downto 0)) mod (G_S_DATA_BYTES + 1);
+          start_v  := to_integer(rand(15 downto 0)) mod G_S_DATA_BYTES;
+          end_v    := to_integer(rand(15 downto 0)) mod (G_S_DATA_BYTES + 1 - start_v) + start_v;
 
-          stim_cnt <= stim_cnt + bytes_v;
+          stim_cnt <= stim_cnt + end_v - start_v;
 
-          for i in 0 to bytes_v - 1 loop
-            s_data(i * 8 + 7 downto i * 8) <= stim_cnt(7 downto 0) + i;
+          for i in start_v to end_v - 1 loop
+            s_data(i * 8 + 7 downto i * 8) <= stim_cnt(7 downto 0) + i - start_v;
           end loop;
 
           s_valid <= '1';
-          s_bytes <= bytes_v;
+          s_start <= start_v;
+          s_end   <= end_v;
           s_last  <= do_last;
         end if;
       end if;
@@ -171,7 +176,8 @@ begin
       s_ready_o => s_ready,
       s_valid_i => s_valid,
       s_data_i  => s_data,
-      s_bytes_i => s_bytes,
+      s_start_i => s_start,
+      s_end_i   => s_end,
       s_last_i  => s_last,
       m_ready_i => m_ready,
       m_bytes_i => m_bytes_consume,

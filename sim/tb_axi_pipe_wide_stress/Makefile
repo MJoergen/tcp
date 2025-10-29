@@ -14,7 +14,7 @@ SRC += tb_axi_pipe_wide_stress.vhd
 DUT = axi_pipe_wide_stress
 
 # Test duration
-STOP_TIME = 50us
+STOP_TIME = 100us
 
 # Test specific generics
 GENERIC += -gG_CNT_BITS=12

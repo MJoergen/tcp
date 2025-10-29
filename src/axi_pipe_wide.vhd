@@ -34,7 +34,8 @@ entity axi_pipe_wide is
     s_ready_o : out   std_logic;
     s_valid_i : in    std_logic;
     s_data_i  : in    std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
-    s_bytes_i : in    natural range 0 to G_S_DATA_BYTES;
+    s_start_i : in    natural range 0 to G_S_DATA_BYTES-1;
+    s_end_i   : in    natural range 0 to G_S_DATA_BYTES;
     s_last_i  : in    std_logic;
 
     m_ready_i : in    std_logic;
@@ -108,7 +109,7 @@ begin
 
   -- TBD: This can perhaps be optimized to higher throughput, by setting s_ready_o to '1' in (specific) situations where
   -- m_ready_i = '1'.
-  s_ready_o <= '1' when m_bytes + s_bytes_i <= maximum(G_S_DATA_BYTES, G_M_DATA_BYTES) and
+  s_ready_o <= '1' when m_bytes + (s_end_i - s_start_i) <= maximum(G_S_DATA_BYTES, G_M_DATA_BYTES) and
                         (m_valid_o = '0' or (m_ready_i = '0' and s_start = s_end)) and
                         m_last = '0' else
                '0';
@@ -160,36 +161,44 @@ begin
           m_data  <= std_logic_vector(shift_right(unsigned(m_data), 8 * m_bytes_i));
           m_bytes <= m_bytes - m_bytes_i;
         end if;
-      elsif s_valid_i = '1' and s_ready_o = '1' and s_bytes_i > 0 then
+      elsif s_valid_i = '1' and s_ready_o = '1' and s_start_i < s_end_i then
+        -- Number of input bytes consumed
+        s_bytes_v := s_end_i - s_start_i;
+
+        if C_DEBUG then
+          report "VALID: m_bytes_o=" & to_string(m_bytes_o) &
+                 ", s_bytes_v=" & to_string(s_bytes_v);
+        end if;
+
         if G_S_DATA_BYTES > G_M_DATA_BYTES then
-          if m_bytes + s_bytes_i <= G_M_DATA_BYTES then
-            -- S : |.|.|.|.|.|2|1|0|
-            -- M :         |.|.|.|M|
+          if m_bytes + s_bytes_v <= G_M_DATA_BYTES then
+            -- S : |.|.|.|.|.|1|0|.|
+            -- M :         |.|.|M|M|
 
             -- Shift left
-            m_data  <= copy_data(m_data, s_data_i, m_bytes, 0);
-            m_bytes <= m_bytes + s_bytes_i;
+            m_data  <= copy_data(m_data, s_data_i, m_bytes, s_start_i);
+            m_bytes <= m_bytes + s_bytes_v;
             m_last  <= s_last_i;
           else
-            -- S : |.|.|.|4|3|2|1|0|
-            -- M :         |.|.|.|M|
+            -- S : |.|.|.|.|2|1|0|.|
+            -- M :         |.|M|M|M|
 
             s_data  <= s_data_i;
-            s_start <= G_M_DATA_BYTES - m_bytes;
-            s_end   <= s_bytes_i;
+            s_start <= G_M_DATA_BYTES - m_bytes + s_start_i;
+            s_end   <= s_end_i;
             s_last  <= s_last_i;
 
             -- Shift left
-            m_data  <= copy_data(m_data, s_data_i, m_bytes, 0);
+            m_data  <= copy_data(m_data, s_data_i, m_bytes, s_start_i);
             m_bytes <= G_M_DATA_BYTES;
           end if;
         else
-          -- S :         |.|2|1|0|
+          -- S :         |2|1|0|.|
           -- M : |.|.|.|.|.|.|M|M|
           --
           -- Shift left
-          m_data  <= copy_data(m_data, s_data_i, m_bytes, 0);
-          m_bytes <= m_bytes + s_bytes_i;
+          m_data  <= copy_data(m_data, s_data_i, m_bytes, s_start_i);
+          m_bytes <= m_bytes + s_bytes_v;
           m_last  <= s_last_i;
         end if;
       end if;
