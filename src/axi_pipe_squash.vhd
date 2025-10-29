@@ -60,46 +60,41 @@ architecture synthesis of axi_pipe_squash is
     dst_ptr  : natural range 0 to G_M_DATA_BYTES - 1;
     src_ptr  : natural range 0 to G_S_DATA_BYTES - 1
   ) return std_logic_vector is
-    variable res_v         : std_logic_vector(dst_data'range);
-    variable shift_v       : integer range -G_S_DATA_BYTES to G_M_DATA_BYTES - 1;
-    variable shift_left_v  : natural range 0 to G_M_DATA_BYTES - 1;
-    variable shift_right_v : natural range 0 to G_S_DATA_BYTES;
+    variable res_v   : std_logic_vector(dst_data'range);
+    variable shift_v : natural range 0 to maximum(G_S_DATA_BYTES, G_M_DATA_BYTES);
   begin
     if C_DEBUG then
       report "copy_data: dst_ptr=" & to_string(dst_ptr) &
              ", src_ptr=" & to_string(src_ptr);
     end if;
-    res_v   := dst_data;
-    shift_v := dst_ptr - src_ptr;
+    res_v := dst_data;
 
     -- Shift left and shift right are handled separately for better synthesis portability.
-    if shift_v > 0 then
-      -- Shift left:
-      -- Input  :  |.|5|4|3|2|1|0|.|
+    if src_ptr >= dst_ptr then
+      -- Shift right:
+      -- Input  :  |.|3|2|1|0|.|.|.|
       -- Output :          |.|.|M|M|
-      shift_left_v := shift_v;
-
-      f_assert_0 : assert shift_left_v <= dst_ptr;
+      shift_v := src_ptr - dst_ptr;
 
       for i in 0 to G_M_DATA_BYTES - 1 loop
-        if i >= dst_ptr and i >= shift_left_v and i - shift_left_v < G_S_DATA_BYTES then
-          res_v(8 * i + 7 downto 8 * i) := src_data(8 * i + 7 - 8 * shift_left_v downto 8 * i - 8 * shift_left_v);
+        if i >= dst_ptr and i + shift_v < G_S_DATA_BYTES then
+          res_v(8 * i + 7 downto 8 * i) := src_data(8 * i + 7 + 8 * shift_v downto 8 * i + 8 * shift_v);
         end if;
       end loop;
 
     else
-      -- Shift right:
-      -- Input  :  |.|3|2|1|0|.|.|.|
+      -- Shift left:
+      -- Input  :  |.|5|4|3|2|1|0|.|
       -- Output :          |.|.|M|M|
-      shift_right_v := -shift_v;
+      shift_v := dst_ptr - src_ptr;
 
       for i in 0 to G_M_DATA_BYTES - 1 loop
-        if i >= dst_ptr and i + shift_right_v < G_S_DATA_BYTES then
-          res_v(8 * i + 7 downto 8 * i) := src_data(8 * i + 7 + 8 * shift_right_v downto 8 * i + 8 * shift_right_v);
+        if i >= dst_ptr and i >= shift_v and i - shift_v < G_S_DATA_BYTES then
+          res_v(8 * i + 7 downto 8 * i) := src_data(8 * i + 7 - 8 * shift_v downto 8 * i - 8 * shift_v);
         end if;
       end loop;
-
     end if;
+
     return res_v;
   end function copy_data;
 
@@ -267,9 +262,9 @@ begin
         m_bytes_o <= 0;
         m_data_o  <= (others => '0');
         m_valid_o <= '0';
-        m_last    <= '0';
         m_bytes   <= 0;
         m_data    <= (others => '0');
+        m_last    <= '0';
         s_start   <= 0;
         s_end     <= 0;
         s_data    <= (others => '0');

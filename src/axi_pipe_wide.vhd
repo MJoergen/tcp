@@ -48,11 +48,13 @@ end entity axi_pipe_wide;
 
 architecture synthesis of axi_pipe_wide is
 
+  -- Input buffer
   signal s_data  : std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
   signal s_start : natural range 0 to G_S_DATA_BYTES;
   signal s_end   : natural range 0 to G_S_DATA_BYTES;
   signal s_last  : std_logic;
 
+  -- Internal buffer
   signal m_data  : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
   signal m_bytes : natural range 0 to G_M_DATA_BYTES;
   signal m_last  : std_logic;
@@ -67,6 +69,8 @@ architecture synthesis of axi_pipe_wide is
     variable shift_v : natural range 0 to maximum(G_S_DATA_BYTES, G_M_DATA_BYTES);
   begin
     res_v := dst_data;
+
+    -- Shift left and shift right are handled separately for better synthesis portability.
     if src_ptr >= dst_ptr then
       -- Shift right
       shift_v := src_ptr - dst_ptr;
@@ -92,6 +96,8 @@ architecture synthesis of axi_pipe_wide is
 
 begin
 
+  -- TBD: This can perhaps be optimized to higher throughput, by setting s_ready_o to '1' in (specific) situations where
+  -- m_ready_i = '1'.
   s_ready_o <= '1' when m_bytes + s_bytes_i <= maximum(G_S_DATA_BYTES, G_M_DATA_BYTES) and
                         (m_valid_o = '0' or (m_ready_i = '0' and s_start = s_end)) and
                         m_last = '0' else
@@ -169,12 +175,12 @@ begin
       end if;
 
       if rst_i = '1' then
-        s_start <= 0;
-        s_end   <= 0;
-        s_last  <= '0';
         m_bytes <= 0;
         m_data  <= (others => '0');
         m_last  <= '0';
+        s_start <= 0;
+        s_end   <= 0;
+        s_last  <= '0';
       end if;
     end if;
   end process fsm_proc;

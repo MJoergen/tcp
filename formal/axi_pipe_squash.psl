@@ -4,8 +4,8 @@ vunit axi_pipe_squash_inst(axi_pipe_squash(synthesis))
    default clock is rising_edge(clk_i);
 
    signal f_old_m_bytes : natural range 0 to G_M_DATA_BYTES;
-   signal f_m_data      : std_logic_vector(8 * G_M_DATA_BYTES - 1 downto 0);
-   signal f_old_m_data  : std_logic_vector(8 * G_M_DATA_BYTES - 1 downto 0);
+   signal f_m_data      : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
+   signal f_old_m_data  : std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
 
    signal f_s_bytes      : natural range 0 to 1000;
    signal f_m_bytes      : natural range 0 to 1000;

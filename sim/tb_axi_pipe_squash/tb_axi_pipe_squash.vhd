@@ -5,7 +5,6 @@ library ieee;
 entity tb_axi_pipe_squash is
   generic (
     G_DATA_BYTES : natural;
-
     G_FAST       : boolean;
     G_SHOW_TESTS : boolean;
     G_SHOW_DATA  : boolean
@@ -186,7 +185,11 @@ begin
                ", expected " & to_string(last);
 
       if G_SHOW_DATA then
-        report "--  Received " & to_hstring(m_data(m_bytes * 8 - 1 downto 0));
+        if m_bytes > 0 then
+          report "--  Received " & to_hstring(m_data(m_bytes * 8 - 1 downto 0));
+        else
+          report "--  Received <empty>";
+        end if;
       end if;
 
       wait until rising_edge(clk);

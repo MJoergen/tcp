@@ -146,6 +146,7 @@ vunit axi_pipe_wide_inst(axi_pipe_wide(synthesis))
    f_master_length : assert always {f_s_length_cnt = f_m_length_cnt and rst_i = '0'} |->
      {f_s_length = f_m_length};
 
+
 -----------------------------
 -- ASSUMPTIONS ABOUT INPUTS
 -----------------------------
@@ -162,7 +163,7 @@ vunit axi_pipe_wide_inst(axi_pipe_wide(synthesis))
 -- COVER STATEMENTS TO VERIFY REACHABILITY
 --------------------------------------------
 
-   f_master_full : cover {not s_ready_o and not rst_i};
+   f_slave_full : cover {not s_ready_o and not rst_i};
 
 } -- vunit axi_pipe_wide_inst(axi_pipe_wide(synthesis))
 
