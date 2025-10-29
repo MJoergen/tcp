@@ -181,7 +181,7 @@ begin
     end if;
   end process rx_proc;
 
-  axi_fifo_squash_inst : entity work.axi_fifo_squash
+  axi_pipe_squash_inst : entity work.axi_pipe_squash
     generic map (
       G_S_DATA_BYTES => G_MAC_PAYLOAD_BYTES,
       G_M_DATA_BYTES => G_USER_BYTES
@@ -201,10 +201,10 @@ begin
       m_bytes_o => user_rx_bytes_o,
       m_last_o  => user_rx_last_o,
       m_empty_o => open
-    ); -- axi_fifo_squash_inst : entity work.axi_fifo_squash
+    ); -- axi_pipe_squash_inst : entity work.axi_pipe_squash
 
 
-  axi_fifo_wide_inst : entity work.axi_fifo_wide
+  axi_pipe_wide_inst : entity work.axi_pipe_wide
     generic map (
       G_S_DATA_BYTES => G_USER_BYTES,
       G_M_DATA_BYTES => G_MAC_PAYLOAD_BYTES
@@ -223,7 +223,7 @@ begin
       m_data_o  => wide_m_data,
       m_bytes_o => wide_m_bytes,
       m_last_o  => wide_m_last
-    ); -- axi_fifo_wide_inst : entity work.axi_fifo_wide
+    ); -- axi_pipe_wide_inst : entity work.axi_pipe_wide
 
 
   user_tx_ready_o <= user_tx_ready when state = ACTIVE_ST else

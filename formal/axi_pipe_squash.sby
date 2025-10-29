@@ -1,0 +1,22 @@
+[tasks]
+cover
+bmc
+
+[options]
+cover: mode cover
+cover: depth 10
+cover: append 1
+bmc: mode bmc
+bmc: depth 7
+
+[engines]
+smtbmc
+
+[script]
+ghdl --std=08 -gG_S_DATA_BYTES=7 -gG_M_DATA_BYTES=3 axi_pipe_squash.vhd axi_pipe_squash.psl -e axi_pipe_squash
+prep -top axi_pipe_squash
+
+[files]
+axi_pipe_squash.psl
+../src/axi_pipe_squash.vhd
+

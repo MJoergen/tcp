@@ -1,19 +1,19 @@
 # Author:  Michael Jørgensen
 #
-# Description: Makefile for simulating the axi_fifo_wide.vhd file.
+# Description: Makefile for simulating the axi_pipe_wide.vhd file.
 
 # List of source files
-SRC += $(SRC_DIR)/axi_fifo_wide.vhd
+SRC += $(SRC_DIR)/axi_pipe_wide.vhd
 SRC += $(SIM_SRC_DIR)/lfsr.vhd
 SRC += $(SIM_SRC_DIR)/random.vhd
 SRC += $(SIM_SRC_DIR)/stim_verf.vhd
 SRC += $(SIM_SRC_DIR)/axi_fifo_sync.vhd
 
 # List of test specific simulation files
-SRC += tb_axi_fifo_wide_packet.vhd
+SRC += tb_axi_pipe_wide_packet.vhd
 
 # Top level entity
-DUT = axi_fifo_wide_packet
+DUT = axi_pipe_wide_packet
 
 # Test duration
 STOP_TIME = 50us

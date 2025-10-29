@@ -5,16 +5,16 @@ library ieee;
 library std;
   use std.env.stop;
 
-entity tb_axi_fifo_wide_stress is
+entity tb_axi_pipe_wide_stress is
   generic (
     G_FAST         : boolean;
     G_RANDOM       : boolean;
     G_S_DATA_BYTES : natural;
     G_M_DATA_BYTES : natural
   );
-end entity tb_axi_fifo_wide_stress;
+end entity tb_axi_pipe_wide_stress;
 
-architecture simulation of tb_axi_fifo_wide_stress is
+architecture simulation of tb_axi_pipe_wide_stress is
 
   constant C_CNT_BITS : natural := 12;
 
@@ -160,7 +160,7 @@ begin
   -- Instantiate DUT
   -------------------------------------
 
-  axi_fifo_wide_inst : entity work.axi_fifo_wide
+  axi_pipe_wide_inst : entity work.axi_pipe_wide
     generic map (
       G_S_DATA_BYTES => G_S_DATA_BYTES,
       G_M_DATA_BYTES => G_M_DATA_BYTES
@@ -179,7 +179,7 @@ begin
       m_data_o  => m_data,
       m_bytes_o => m_bytes_avail,
       m_last_o  => m_last
-    ); -- axi_fifo_wide_inst : entity work.axi_fifo_wide
+    ); -- axi_pipe_wide_inst : entity work.axi_pipe_wide
 
 end architecture simulation;
 

@@ -2,7 +2,7 @@ library ieee;
   use ieee.std_logic_1164.all;
   use ieee.numeric_std.all;
 
-entity tb_axi_fifo_squash is
+entity tb_axi_pipe_squash is
   generic (
     G_DATA_BYTES : natural;
 
@@ -10,9 +10,9 @@ entity tb_axi_fifo_squash is
     G_SHOW_TESTS : boolean;
     G_SHOW_DATA  : boolean
   );
-end entity tb_axi_fifo_squash;
+end entity tb_axi_pipe_squash;
 
-architecture simulation of tb_axi_fifo_squash is
+architecture simulation of tb_axi_pipe_squash is
 
   signal   clk     : std_logic        := '1';
   signal   rst     : std_logic        := '1';
@@ -254,7 +254,7 @@ begin
   -- Instantiate DUT
   -------------------------------------
 
-  axi_fifo_squash_inst : entity work.axi_fifo_squash
+  axi_pipe_squash_inst : entity work.axi_pipe_squash
     generic map (
       G_S_DATA_BYTES => G_DATA_BYTES,
       G_M_DATA_BYTES => G_DATA_BYTES
@@ -274,7 +274,7 @@ begin
       m_bytes_o => m_bytes,
       m_last_o  => m_last,
       m_empty_o => m_empty
-    ); -- axi_fifo_squash_inst : entity work.axi_fifo_squash
+    ); -- axi_pipe_squash_inst : entity work.axi_pipe_squash
 
 end architecture simulation;
 

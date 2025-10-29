@@ -2,7 +2,7 @@ library ieee;
   use ieee.std_logic_1164.all;
   use ieee.numeric_std.all;
 
--- This is an "elastic" FIFO. It can accept a variable number of bytes in each clock
+-- This is an "elastic" pipeline. It can accept a variable number of bytes in each clock
 -- cycle, and will gather together and align the bytes.
 --
 -- Synth report with G_S_DATA_BYTES = 8 and G_M_DATA_BYTES = 4:
@@ -15,7 +15,7 @@ library ieee;
 --
 -- A frequency of 250 MHz closes timing.
 
-entity axi_fifo_squash is
+entity axi_pipe_squash is
   generic (
     G_S_DATA_BYTES : natural;
     G_M_DATA_BYTES : natural
@@ -38,9 +38,9 @@ entity axi_fifo_squash is
     m_last_o  : out   std_logic;
     m_empty_o : out   std_logic
   );
-end entity axi_fifo_squash;
+end entity axi_pipe_squash;
 
-architecture synthesis of axi_fifo_squash is
+architecture synthesis of axi_pipe_squash is
 
   constant C_DEBUG : boolean                           := false;
 

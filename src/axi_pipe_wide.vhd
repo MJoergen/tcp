@@ -2,7 +2,7 @@ library ieee;
   use ieee.std_logic_1164.all;
   use ieee.numeric_std.all;
 
--- This is an "elastic" FIFO. It accepts any number of bytes in each clock cycle.
+-- This is an "elastic" pipeline. It accepts any number of bytes in each clock cycle.
 -- And you can read out any number of bytes in each clock cycle.
 --
 -- The output m_bytes_o shows the number of bytes actually available.
@@ -22,7 +22,7 @@ library ieee;
 --
 -- A frequency of 250 MHz closes timing.
 
-entity axi_fifo_wide is
+entity axi_pipe_wide is
   generic (
     G_S_DATA_BYTES : natural;
     G_M_DATA_BYTES : natural
@@ -44,9 +44,9 @@ entity axi_fifo_wide is
     m_bytes_o : out   natural range 0 to G_M_DATA_BYTES;
     m_last_o  : out   std_logic
   );
-end entity axi_fifo_wide;
+end entity axi_pipe_wide;
 
-architecture synthesis of axi_fifo_wide is
+architecture synthesis of axi_pipe_wide is
 
   signal s_data  : std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
   signal s_start : natural range 0 to G_S_DATA_BYTES;

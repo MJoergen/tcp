@@ -1,4 +1,4 @@
-vunit axi_fifo_wide_inst(axi_fifo_wide(synthesis))
+vunit axi_pipe_wide_inst(axi_pipe_wide(synthesis))
 {
 -- set all declarations to run on clk_i
    default clock is rising_edge(clk_i);
@@ -164,5 +164,5 @@ vunit axi_fifo_wide_inst(axi_fifo_wide(synthesis))
 
    f_master_full : cover {not s_ready_o and not rst_i};
 
-} -- vunit axi_fifo_wide_inst(axi_fifo_wide(synthesis))
+} -- vunit axi_pipe_wide_inst(axi_pipe_wide(synthesis))
 

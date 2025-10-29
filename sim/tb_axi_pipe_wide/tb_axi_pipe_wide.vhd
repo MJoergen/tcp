@@ -1,25 +1,11 @@
--- ----------------------------------------------------------------------------
--- Title      : Main FPGA
--- Project    : XENTA, RCU, PCB1036 Board
--- ----------------------------------------------------------------------------
--- File       : tb_axi_fifo_wide.vhd
--- Author     : Michael Jørgensen
--- Company    : Weibel Scientific
--- Created    : 2025-05-19
--- Platform   : Simulation
--- ----------------------------------------------------------------------------
--- Description:
--- Simple testbench for the MAC to WBUS interface.
--- ----------------------------------------------------------------------------
-
 library ieee;
   use ieee.std_logic_1164.all;
   use ieee.numeric_std.all;
 
-entity tb_axi_fifo_wide is
-end entity tb_axi_fifo_wide;
+entity tb_axi_pipe_wide is
+end entity tb_axi_pipe_wide;
 
-architecture simulation of tb_axi_fifo_wide is
+architecture simulation of tb_axi_pipe_wide is
 
   constant C_S_DATA_BYTES : natural := 4;
   constant C_M_DATA_BYTES : natural := 4;
@@ -157,7 +143,7 @@ begin
   -- Instantiate DUT
   -------------------------------------
 
-  axi_fifo_wide_inst : entity work.axi_fifo_wide
+  axi_pipe_wide_inst : entity work.axi_pipe_wide
     generic map (
       G_S_DATA_BYTES => C_S_DATA_BYTES,
       G_M_DATA_BYTES => C_M_DATA_BYTES
@@ -176,7 +162,7 @@ begin
       m_data_o  => m_data,
       m_bytes_o => m_bytes_avail,
       m_last_o  => m_last
-    ); -- axi_fifo_wide_inst : entity work.axi_fifo_wide
+    ); -- axi_pipe_wide_inst : entity work.axi_pipe_wide
 
 end architecture simulation;
 

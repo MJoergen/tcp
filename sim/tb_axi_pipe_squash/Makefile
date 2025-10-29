@@ -1,15 +1,15 @@
 # Author:  Michael Jørgensen
 #
-# Description: Makefile for simulating the axi_fifo_squash.vhd file.
+# Description: Makefile for simulating the axi_pipe_squash.vhd file.
 
 # List of source files
-SRC += $(SRC_DIR)/axi_fifo_squash.vhd
+SRC += $(SRC_DIR)/axi_pipe_squash.vhd
 
 # List of test specific simulation files
-SRC += tb_axi_fifo_squash.vhd
+SRC += tb_axi_pipe_squash.vhd
 
 # Top level entity
-DUT = axi_fifo_squash
+DUT = axi_pipe_squash
 
 # Test duration
 STOP_TIME = 1us

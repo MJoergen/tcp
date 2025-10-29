@@ -5,7 +5,7 @@ library ieee;
 library std;
   use std.env.stop;
 
-entity tb_axi_fifo_squash_stress is
+entity tb_axi_pipe_squash_stress is
   generic (
     G_CNT_BITS     : natural;
     G_FAST         : boolean;
@@ -13,9 +13,9 @@ entity tb_axi_fifo_squash_stress is
     G_S_DATA_BYTES : natural;
     G_M_DATA_BYTES : natural
   );
-end entity tb_axi_fifo_squash_stress;
+end entity tb_axi_pipe_squash_stress;
 
-architecture simulation of tb_axi_fifo_squash_stress is
+architecture simulation of tb_axi_pipe_squash_stress is
 
   signal clk     : std_logic := '1';
   signal rst     : std_logic := '1';
@@ -160,7 +160,7 @@ begin
   -- Instantiate DUT
   -------------------------------------
 
-  axi_fifo_squash_inst : entity work.axi_fifo_squash
+  axi_pipe_squash_inst : entity work.axi_pipe_squash
     generic map (
       G_S_DATA_BYTES => G_S_DATA_BYTES,
       G_M_DATA_BYTES => G_M_DATA_BYTES
@@ -180,7 +180,7 @@ begin
       m_bytes_o => m_bytes,
       m_last_o  => m_last,
       m_empty_o => open
-    ); -- axi_fifo_squash_inst : entity work.axi_fifo_squash
+    ); -- axi_pipe_squash_inst : entity work.axi_pipe_squash
 
 end architecture simulation;
 
