@@ -6,6 +6,10 @@ library ieee;
 -- If dst_port_i is 0 then it opens a LISTENING session.
 --
 -- This interface is packet based.
+--
+-- Synth report with G_MAC_PAYLOAD_BYTES = 30 and G_USER_BYTES = 20:
+--   LUTs      : 3062
+--   Registers : 1241
 
 entity ip_wrapper is
   generic (
@@ -90,11 +94,11 @@ architecture synthesis of ip_wrapper is
   signal   user_tx_ready : std_logic;
   signal   user_tx_valid : std_logic;
 
-  signal   wide_m_ready : std_logic;
-  signal   wide_m_valid : std_logic;
-  signal   wide_m_data  : std_logic_vector(G_MAC_PAYLOAD_BYTES * 8 - 1 downto 0);
-  signal   wide_m_bytes : natural range 0 to G_MAC_PAYLOAD_BYTES;
-  signal   wide_m_last  : std_logic;
+  signal   flex_m_ready : std_logic;
+  signal   flex_m_valid : std_logic;
+  signal   flex_m_data  : std_logic_vector(G_MAC_PAYLOAD_BYTES * 8 - 1 downto 0);
+  signal   flex_m_bytes : natural range 0 to G_MAC_PAYLOAD_BYTES;
+  signal   flex_m_last  : std_logic;
 
 begin
 
@@ -181,7 +185,7 @@ begin
     end if;
   end process rx_proc;
 
-  axi_pipe_squash_inst : entity work.axi_pipe_squash
+  axi_pipe_flexible_rx_inst : entity work.axi_pipe_flexible
     generic map (
       G_S_DATA_BYTES => G_MAC_PAYLOAD_BYTES,
       G_M_DATA_BYTES => G_USER_BYTES
@@ -196,15 +200,14 @@ begin
       s_end_i   => squash_s_end,
       s_last_i  => squash_s_last,
       m_ready_i => user_rx_ready_i,
+      m_bytes_i => G_USER_BYTES,
       m_valid_o => user_rx_valid_o,
       m_data_o  => user_rx_data_o,
       m_bytes_o => user_rx_bytes_o,
-      m_last_o  => user_rx_last_o,
-      m_empty_o => open
-    ); -- axi_pipe_squash_inst : entity work.axi_pipe_squash
+      m_last_o  => user_rx_last_o
+    ); -- axi_pipe_flexible_rx_inst : entity work.axi_pipe_flexible
 
-
-  axi_pipe_wide_inst : entity work.axi_pipe_wide
+  axi_pipe_flexible_tx_inst : entity work.axi_pipe_flexible
     generic map (
       G_S_DATA_BYTES => G_USER_BYTES,
       G_M_DATA_BYTES => G_MAC_PAYLOAD_BYTES
@@ -218,13 +221,13 @@ begin
       s_start_i => 0,
       s_end_i   => user_tx_bytes_i,
       s_last_i  => user_tx_last_i,
-      m_ready_i => wide_m_ready,
+      m_ready_i => flex_m_ready,
       m_bytes_i => G_MAC_PAYLOAD_BYTES,
-      m_valid_o => wide_m_valid,
-      m_data_o  => wide_m_data,
-      m_bytes_o => wide_m_bytes,
-      m_last_o  => wide_m_last
-    ); -- axi_pipe_wide_inst : entity work.axi_pipe_wide
+      m_valid_o => flex_m_valid,
+      m_data_o  => flex_m_data,
+      m_bytes_o => flex_m_bytes,
+      m_last_o  => flex_m_last
+    ); -- axi_pipe_flexible_tx_inst : entity work.axi_pipe_flexible
 
 
   user_tx_ready_o <= user_tx_ready when state = ACTIVE_ST else
@@ -232,7 +235,7 @@ begin
   user_tx_valid   <= user_tx_valid_i when state = ACTIVE_ST else
                      '0';
 
-  wide_m_ready    <= mac_payload_tx_ready_i or not mac_payload_tx_valid_o when tx_state = TX_DATA_ST else
+  flex_m_ready    <= mac_payload_tx_ready_i or not mac_payload_tx_valid_o when tx_state = TX_DATA_ST else
                      '0';
 
   tx_proc : process (clk_i)
@@ -245,7 +248,7 @@ begin
       case tx_state is
 
         when TX_IDLE_ST =>
-          if wide_m_valid = '1' and (mac_payload_tx_ready_i = '1' or mac_payload_tx_valid_o = '0') then
+          if flex_m_valid = '1' and (mac_payload_tx_ready_i = '1' or mac_payload_tx_valid_o = '0') then
             mac_payload_tx_data_o(R_IP_SRC_ADDRESS) <= user_src_address;
             mac_payload_tx_data_o(R_IP_DST_ADDRESS) <= user_dst_address;
             mac_payload_tx_data_o(R_IP_PROTOCOL)    <= user_protocol;
@@ -256,12 +259,12 @@ begin
           end if;
 
         when TX_DATA_ST =>
-          if wide_m_valid = '1' and wide_m_ready = '1' then
-            mac_payload_tx_data_o  <= wide_m_data;
-            mac_payload_tx_bytes_o <= wide_m_bytes;
-            mac_payload_tx_last_o  <= wide_m_last;
+          if flex_m_valid = '1' and flex_m_ready = '1' then
+            mac_payload_tx_data_o  <= flex_m_data;
+            mac_payload_tx_bytes_o <= flex_m_bytes;
+            mac_payload_tx_last_o  <= flex_m_last;
             mac_payload_tx_valid_o <= '1';
-            if wide_m_last = '1' then
+            if flex_m_last = '1' then
               tx_state <= TX_IDLE_ST;
             end if;
           end if;

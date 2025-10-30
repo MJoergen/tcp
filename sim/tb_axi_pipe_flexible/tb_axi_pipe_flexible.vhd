@@ -5,7 +5,7 @@ library ieee;
 library std;
   use std.env.stop;
 
-entity tb_axi_pipe_wide_packet is
+entity tb_axi_pipe_flexible is
   generic (
     G_START_ZERO   : boolean;
     G_DEBUG        : boolean;
@@ -16,9 +16,9 @@ entity tb_axi_pipe_wide_packet is
     G_S_DATA_BYTES : natural;
     G_M_DATA_BYTES : natural
   );
-end entity tb_axi_pipe_wide_packet;
+end entity tb_axi_pipe_flexible;
 
-architecture simulation of tb_axi_pipe_wide_packet is
+architecture simulation of tb_axi_pipe_flexible is
 
   signal clk     : std_logic := '1';
   signal rst     : std_logic := '1';
@@ -103,7 +103,7 @@ begin
   -- Instantiate DUT
   --------------------------------------------
 
-  axi_pipe_wide_inst : entity work.axi_pipe_wide
+  axi_pipe_flexible_inst : entity work.axi_pipe_flexible
     generic map (
       G_S_DATA_BYTES => G_S_DATA_BYTES,
       G_M_DATA_BYTES => G_M_DATA_BYTES
@@ -123,7 +123,7 @@ begin
       m_data_o  => m_data,
       m_bytes_o => m_bytes_avail,
       m_last_o  => m_last
-    ); -- axi_pipe_wide_inst : entity work.axi_pipe_wide
+    ); -- axi_pipe_flexible_inst : entity work.axi_pipe_flexible
 
 end architecture simulation;
 

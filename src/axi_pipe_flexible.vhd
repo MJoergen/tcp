@@ -26,7 +26,7 @@ library ieee;
 --
 -- A frequency of 200 MHz closes timing.
 
-entity axi_pipe_wide is
+entity axi_pipe_flexible is
   generic (
     G_S_DATA_BYTES : natural;
     G_M_DATA_BYTES : natural
@@ -49,9 +49,9 @@ entity axi_pipe_wide is
     m_bytes_o : out   natural range 0 to G_M_DATA_BYTES;
     m_last_o  : out   std_logic
   );
-end entity axi_pipe_wide;
+end entity axi_pipe_flexible;
 
-architecture synthesis of axi_pipe_wide is
+architecture synthesis of axi_pipe_flexible is
 
   -- Input buffer (only used when G_S_DATA_BYTES > G_M_DATA_BYTES).
   signal s_data  : std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);

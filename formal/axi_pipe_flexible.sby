@@ -1,0 +1,22 @@
+[tasks]
+cover
+bmc
+
+[options]
+cover: mode cover
+cover: depth 10
+cover: append 1
+bmc: mode bmc
+bmc: depth 6
+
+[engines]
+smtbmc
+
+[script]
+ghdl --std=08 -gG_S_DATA_BYTES=6 -gG_M_DATA_BYTES=3 axi_pipe_flexible.vhd axi_pipe_flexible.psl -e axi_pipe_flexible
+prep -top axi_pipe_flexible
+
+[files]
+axi_pipe_flexible.psl
+../src/axi_pipe_flexible.vhd
+

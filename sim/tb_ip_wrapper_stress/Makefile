@@ -4,8 +4,7 @@
 
 # List of source files
 SRC += $(SRC_DIR)/ip_wrapper.vhd
-SRC += $(SRC_DIR)/axi_pipe_squash.vhd
-SRC += $(SRC_DIR)/axi_pipe_wide.vhd
+SRC += $(SRC_DIR)/axi_pipe_flexible.vhd
 
 # List of test specific simulation files
 SRC += tb_ip_wrapper_stress.vhd

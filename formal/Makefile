@@ -1,8 +1,7 @@
 # This Makefile runs through all the DUTs
 # and does Bounded Model Check on each of them.
 
-DUTS += axi_pipe_wide
-DUTS += axi_pipe_squash
+DUTS += axi_pipe_flexible
 
 BMC        = $(patsubst %,%_bmc,$(DUTS))
 COVER      = $(patsubst %,%_cover,$(DUTS))

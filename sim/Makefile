@@ -3,10 +3,7 @@
 # Description: Makefile for simulating the entire project
 
 TESTS += tb_axi_stim_verf
-TESTS += tb_axi_pipe_squash
-TESTS += tb_axi_pipe_squash_stress
-TESTS += tb_axi_pipe_wide
-TESTS += tb_axi_pipe_wide_packet
+TESTS += tb_axi_pipe_flexible
 TESTS += tb_ip_wrapper_stress
 #TESTS += tb_tcp_wrapper
 #TESTS += tb_tcp_wrapper_stress
