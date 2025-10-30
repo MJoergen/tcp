@@ -16,9 +16,10 @@ SRC += tb_axi_pipe_wide_packet.vhd
 DUT = axi_pipe_wide_packet
 
 # Test duration
-STOP_TIME = 50us
+STOP_TIME = 60us
 
 # Test specific generics
+GENERIC += -gG_START_ZERO=false
 GENERIC += -gG_DEBUG=false
 GENERIC += -gG_MAX_LENGTH=100
 GENERIC += -gG_CNT_SIZE=12

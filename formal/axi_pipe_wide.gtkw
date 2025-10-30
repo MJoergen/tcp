@@ -1,82 +1,64 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Tue Oct 28 10:46:11 2025
+[*] Thu Oct 30 10:16:04 2025
 [*]
-[dumpfile] "/home/mfj/git/PRIVATE/MJoergen/tcp/formal/axi_fifo_wide_bmc/engine_0/trace.vcd"
-[dumpfile_mtime] "Tue Oct 28 10:43:28 2025"
-[dumpfile_size] 4278
-[savefile] "/home/mfj/git/PRIVATE/MJoergen/tcp/formal/axi_fifo_wide.gtkw"
+[dumpfile] "/home/mfj/git/PRIVATE/MJoergen/tcp/formal/axi_pipe_wide_bmc/engine_0/trace.vcd"
+[dumpfile_mtime] "Thu Oct 30 10:12:43 2025"
+[dumpfile_size] 2572
+[savefile] "/home/mfj/git/PRIVATE/MJoergen/tcp/formal/axi_pipe_wide.gtkw"
 [timestart] 0
 [size] 1407 914
 [pos] -1 -1
 *-3.798612 26 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
-[treeopen] axi_fifo_wide.
+[treeopen] axi_pipe_wide.
 [sst_width] 210
 [signals_width] 331
 [sst_expanded] 1
 [sst_vpaned_height] 253
+@800200
+-axi_pipe_wide
 @28
-axi_fifo_wide.clk_i
-axi_fifo_wide.rst_i
+axi_pipe_wide.clk_i
+axi_pipe_wide.rst_i
 [color] 7
-axi_fifo_wide.s_ready_o
+axi_pipe_wide.s_ready_o
 [color] 2
-axi_fifo_wide.s_valid_i
+axi_pipe_wide.s_valid_i
 @22
-axi_fifo_wide.s_data_i[63:0]
-axi_fifo_wide.s_bytes_i[3:0]
+axi_pipe_wide.s_data_i[63:0]
 @28
-axi_fifo_wide.s_last_i
+axi_pipe_wide.s_start_i[2:0]
+@22
+axi_pipe_wide.s_end_i[3:0]
+@28
+axi_pipe_wide.s_last_i
 @200
 -
 @28
 [color] 7
-axi_fifo_wide.m_ready_i
-@24
-axi_fifo_wide.m_bytes_i[2:0]
-@28
+axi_pipe_wide.m_ready_i
+axi_pipe_wide.m_bytes_i[2:0]
 [color] 2
-axi_fifo_wide.m_valid_o
+axi_pipe_wide.m_valid_o
 @22
-axi_fifo_wide.m_data_o[31:0]
-@24
-axi_fifo_wide.m_bytes_o[2:0]
+axi_pipe_wide.m_data_o[31:0]
 @28
-axi_fifo_wide.m_last_o
+axi_pipe_wide.m_bytes_o[2:0]
+axi_pipe_wide.m_last_o
 @200
 -
 @22
-axi_fifo_wide.s_data[63:0]
-@24
-axi_fifo_wide.s_start[3:0]
-axi_fifo_wide.s_end[3:0]
+axi_pipe_wide.s_data[63:0]
+axi_pipe_wide.s_start[3:0]
+axi_pipe_wide.s_end[3:0]
 @28
-axi_fifo_wide.s_last
+axi_pipe_wide.s_last
 @22
-axi_fifo_wide.m_data[31:0]
-@24
-axi_fifo_wide.m_bytes[2:0]
-@29
-axi_fifo_wide.m_last
-@200
--
-@24
-axi_fifo_wide.axi_fifo_wide_inst.f_old_m_bytes[2:0]
-@22
-axi_fifo_wide.axi_fifo_wide_inst.f_m_data[31:0]
-axi_fifo_wide.axi_fifo_wide_inst.f_old_m_data[31:0]
-axi_fifo_wide.axi_fifo_wide_inst.f_data[7:0]
+axi_pipe_wide.m_data[31:0]
 @28
-axi_fifo_wide.axi_fifo_wide_inst.f_data_in
-axi_fifo_wide.axi_fifo_wide_inst.f_data_out
-@200
--
-@24
-axi_fifo_wide.axi_fifo_wide_inst.f_s_bytes[9:0]
-axi_fifo_wide.axi_fifo_wide_inst.f_s_length[9:0]
-axi_fifo_wide.axi_fifo_wide_inst.f_s_length_cnt[1:0]
-axi_fifo_wide.axi_fifo_wide_inst.f_m_bytes[9:0]
-axi_fifo_wide.axi_fifo_wide_inst.f_m_length[9:0]
-axi_fifo_wide.axi_fifo_wide_inst.f_m_length_cnt[1:0]
+axi_pipe_wide.m_bytes[2:0]
+axi_pipe_wide.m_last
+@1000200
+-axi_pipe_wide
 [pattern_trace] 1
 [pattern_trace] 0

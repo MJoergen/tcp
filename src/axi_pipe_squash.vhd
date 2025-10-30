@@ -89,7 +89,7 @@ architecture synthesis of axi_pipe_squash is
       shift_v := dst_ptr - src_ptr;
 
       for i in 0 to G_M_DATA_BYTES - 1 loop
-        if i >= dst_ptr and i >= shift_v and i - shift_v < G_S_DATA_BYTES then
+        if i >= dst_ptr and i - shift_v < G_S_DATA_BYTES then
           res_v(8 * i + 7 downto 8 * i) := src_data(8 * i + 7 - 8 * shift_v downto 8 * i - 8 * shift_v);
         end if;
       end loop;

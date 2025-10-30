@@ -14,9 +14,10 @@ SRC += $(SIM_SRC_DIR)/data_logger.vhd
 DUT = axi_stim_verf
 
 # Test duration
-STOP_TIME = 20us
+STOP_TIME = 30us
 
 # Test specific generics
+GENERIC += -gG_START_ZERO=false
 GENERIC += -gG_DEBUG=false
 GENERIC += -gG_SHOW_PACKETS=false
 GENERIC += -gG_RANDOM=true

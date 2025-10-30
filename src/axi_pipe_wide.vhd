@@ -34,7 +34,7 @@ entity axi_pipe_wide is
     s_ready_o : out   std_logic;
     s_valid_i : in    std_logic;
     s_data_i  : in    std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
-    s_start_i : in    natural range 0 to G_S_DATA_BYTES-1;
+    s_start_i : in    natural range 0 to G_S_DATA_BYTES - 1;
     s_end_i   : in    natural range 0 to G_S_DATA_BYTES;
     s_last_i  : in    std_logic;
 
@@ -128,7 +128,10 @@ begin
       if m_valid_o = '1' and m_ready_i = '1' then
         if m_bytes_i >= m_bytes then
           m_bytes <= 0;
+          m_data  <= (others => '0');
           m_last  <= '0';
+
+          f_assert_7 : assert s_start <= s_end or rst_i = '1';
 
           if G_S_DATA_BYTES > G_M_DATA_BYTES and s_start < s_end then
             s_bytes_v := s_end - s_start;
@@ -142,14 +145,21 @@ begin
             -- Copy remaining data to internal buffer
             m_data <= copy_data(m_data, s_data, 0, s_start);
 
-            if s_end - s_start < G_M_DATA_BYTES then
-              m_bytes <= s_end - s_start;
+            -- Can all data fit in internal buffer?
+            if s_bytes_v < G_M_DATA_BYTES then
+              if C_DEBUG then
+                report "Internal buffer filled with " & to_string(s_bytes_v) & " bytes";
+              end if;
+              -- Populate internal buffer
+              m_bytes <= s_bytes_v;
+              -- Entire input is consumed
               s_start <= s_end;
             else
               if C_DEBUG then
                 report "Internal buffer is now filled";
               end if;
               m_bytes <= G_M_DATA_BYTES;
+              f_assert_1 : assert s_start + G_M_DATA_BYTES <= s_end;
               s_start <= s_start + G_M_DATA_BYTES;
             end if;
 
@@ -209,6 +219,7 @@ begin
         m_last  <= '0';
         s_start <= 0;
         s_end   <= 0;
+        s_data  <= (others => '0');
         s_last  <= '0';
       end if;
     end if;

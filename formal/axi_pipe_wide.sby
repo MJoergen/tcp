@@ -7,13 +7,13 @@ cover: mode cover
 cover: depth 10
 cover: append 1
 bmc: mode bmc
-bmc: depth 7
+bmc: depth 6
 
 [engines]
 smtbmc
 
 [script]
-ghdl --std=08 -gG_S_DATA_BYTES=8 -gG_M_DATA_BYTES=4 axi_pipe_wide.vhd axi_pipe_wide.psl -e axi_pipe_wide
+ghdl --std=08 -gG_S_DATA_BYTES=6 -gG_M_DATA_BYTES=3 axi_pipe_wide.vhd axi_pipe_wide.psl -e axi_pipe_wide
 prep -top axi_pipe_wide
 
 [files]

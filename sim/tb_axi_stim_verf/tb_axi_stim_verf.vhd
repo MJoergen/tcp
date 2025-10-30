@@ -4,6 +4,7 @@ library ieee;
 
 entity tb_axi_stim_verf is
   generic (
+    G_START_ZERO   : boolean;
     G_DEBUG        : boolean;
     G_SHOW_PACKETS : boolean;
     G_RANDOM       : boolean;
@@ -15,6 +16,7 @@ end entity tb_axi_stim_verf;
 
 architecture simulation of tb_axi_stim_verf is
 
+  -- This must be a constant and not a generic.
   constant C_DATA_BYTES : natural     := 8;
 
   signal   clk : std_logic            := '1';
@@ -26,7 +28,8 @@ architecture simulation of tb_axi_stim_verf is
   signal   tb_m_ready     : std_logic;
   signal   tb_m_valid     : std_logic;
   signal   tb_m_data      : std_logic_vector(C_DATA_BYTES * 8 - 1 downto 0);
-  signal   tb_m_bytes     : natural range 0 to C_DATA_BYTES;
+  signal   tb_m_start     : natural range 0 to C_DATA_BYTES - 1;
+  signal   tb_m_end       : natural range 0 to C_DATA_BYTES;
   signal   tb_m_bytes_slv : std_logic_vector(7 downto 0);
   signal   tb_m_last      : std_logic;
 
@@ -58,6 +61,7 @@ begin
 
   axi_stim_verf_inst : entity work.axi_stim_verf
     generic map (
+      G_START_ZERO   => G_START_ZERO,
       G_DEBUG        => G_DEBUG,
       G_RANDOM       => G_RANDOM,
       G_FAST         => G_FAST,
@@ -72,7 +76,8 @@ begin
       m_ready_i => tb_m_ready,
       m_valid_o => tb_m_valid,
       m_data_o  => tb_m_data,
-      m_bytes_o => tb_m_bytes,
+      m_start_o => tb_m_start,
+      m_end_o   => tb_m_end,
       m_last_o  => tb_m_last,
       s_ready_o => tb_s_ready,
       s_valid_i => tb_s_valid,
@@ -98,7 +103,7 @@ begin
       fill_o            => tb_fill,
       s_ready_o         => tb_m_ready,
       s_valid_i         => tb_m_valid,
-      s_data_i(R_DATA)  => tb_m_data,
+      s_data_i(R_DATA)  => rotate_right(tb_m_data, tb_m_start * 8),
       s_data_i(R_BYTES) => tb_m_bytes_slv,
       s_data_i(C_LAST)  => tb_m_last,
       m_ready_i         => tb_s_ready,
@@ -108,7 +113,7 @@ begin
       m_data_o(C_LAST)  => tb_s_last
     ); -- axi_fifo_sync_inst : entity work.axi_fifo_sync
 
-  tb_m_bytes_slv <= to_stdlogicvector(tb_m_bytes, 8);
+  tb_m_bytes_slv <= to_stdlogicvector(tb_m_end - tb_m_start, 8);
   tb_s_bytes     <= to_integer(tb_s_bytes_slv);
 
 
@@ -118,9 +123,9 @@ begin
 
   data_logger_m_inst : entity work.data_logger
     generic map (
-      G_ENABLE    => G_SHOW_PACKETS,
-      G_LOG_NAME  => "TB ",
-      G_DATA_SIZE => C_DATA_BYTES * 8
+      G_ENABLE     => G_SHOW_PACKETS,
+      G_LOG_NAME   => "TB ",
+      G_DATA_BYTES => C_DATA_BYTES
     )
     port map (
       clk_i   => clk,
@@ -128,7 +133,8 @@ begin
       ready_i => tb_m_ready,
       valid_i => tb_m_valid,
       data_i  => tb_m_data,
-      bytes_i => tb_m_bytes,
+      start_i => tb_m_start,
+      end_i   => tb_m_end,
       last_i  => tb_m_last
     ); -- data_logger_m_inst : entity work.data_logger
 

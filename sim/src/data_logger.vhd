@@ -2,21 +2,22 @@ library ieee;
   use ieee.std_logic_1164.all;
   use ieee.numeric_std.all;
 
--- This dumps the data transmitted, in byte order
+-- This dumps the AXI data, in byte order
 
 entity data_logger is
   generic (
-    G_ENABLE    : boolean;
-    G_LOG_NAME  : string(1 to 3);
-    G_DATA_SIZE : natural
+    G_ENABLE     : boolean;
+    G_LOG_NAME   : string(1 to 3);
+    G_DATA_BYTES : natural
   );
   port (
     clk_i   : in    std_logic;
     rst_i   : in    std_logic;
     ready_i : in    std_logic;
     valid_i : in    std_logic;
-    data_i  : in    std_logic_vector(G_DATA_SIZE - 1  downto 0);
-    bytes_i : in    natural range 0 to G_DATA_SIZE / 8;
+    data_i  : in    std_logic_vector(G_DATA_BYTES * 8 - 1  downto 0);
+    start_i : in    natural range 0 to G_DATA_BYTES - 1;
+    end_i   : in    natural range 0 to G_DATA_BYTES;
     last_i  : in    std_logic
   );
 end entity data_logger;
@@ -43,56 +44,52 @@ architecture simulation of data_logger is
 
 begin
 
-  assert (G_DATA_SIZE mod 8) = 0;
-
   logger_proc : process (clk_i)
-    variable first_str_v  : string(1 to 6);
-    variable last_str_v   : string(1 to 5);
-    variable bytes_v      : natural range 1 to G_DATA_SIZE / 8;
-    variable bytes_last_v : natural range 1 to C_BYTES_PER_ROW;
-    variable num_rows_v   : natural range 1 to G_DATA_SIZE / 8 / C_BYTES_PER_ROW;
+    constant C_EMPTY_STR_V : string(1 to 2 * G_DATA_BYTES) := (others => '.');
+    variable first_str_v   : string(1 to 6);
+    variable last_str_v    : string(1 to 5);
+    variable bytes_v       : natural range 1 to G_DATA_BYTES;
+    variable first_row_v   : natural range 0 to G_DATA_BYTES / C_BYTES_PER_ROW;
+    variable last_row_v    : natural range 0 to G_DATA_BYTES / C_BYTES_PER_ROW;
+    variable first_idx_v   : natural range 0 to C_BYTES_PER_ROW - 1;
+    variable last_idx_v    : natural range 0 to C_BYTES_PER_ROW;
   begin
     if rising_edge(clk_i) then
       if valid_i = '1' and ready_i = '1' and G_ENABLE then
-        -- Total number of bytes in packet
-        bytes_v := G_DATA_SIZE / 8;
-        if bytes_i > 0 then
-          bytes_v := bytes_i;
-        end if;
+        if end_i > start_i then
+          bytes_v     := end_i - start_i;
 
-        assert bytes_v > 0;
-        assert bytes_v <= G_DATA_SIZE / 8;
+          -- Determine which rows are active
+          first_row_v := start_i / C_BYTES_PER_ROW;
+          last_row_v  := (end_i - 1)  / C_BYTES_PER_ROW;
 
-        -- Number of rows
-        num_rows_v   := (bytes_v + C_BYTES_PER_ROW - 1) / C_BYTES_PER_ROW;
+          for row in first_row_v to last_row_v loop
+            first_str_v := "      ";
+            first_idx_v := 0;
+            last_str_v  := "     ";
+            last_idx_v  := C_BYTES_PER_ROW;
 
-        -- Number of bytes in last row
-        bytes_last_v := (bytes_v - 1) mod C_BYTES_PER_ROW + 1;
-
-        for row in 0 to num_rows_v - 1 loop
-          if row = 0 then
-            first_str_v := G_LOG_NAME & " : ";
-          else
-            first_str_v := (others => ' ');
-          end if;
-
-          last_str_v := "     ";
-          if row = num_rows_v - 1 then
-            if last_i = '1' then
-              last_str_v := " LAST";
+            if row = first_row_v then
+              first_str_v := G_LOG_NAME & " : ";
+              first_idx_v := start_i mod C_BYTES_PER_ROW;
             end if;
-            report first_str_v & to_hstring(byte_reverse(data_i(
-                   row * C_BYTES_PER_ROW * 8 + bytes_last_v * 8 - 1 downto
-                   row * C_BYTES_PER_ROW * 8)
-                   )) & last_str_v;
-          else
-            report first_str_v & to_hstring(byte_reverse(data_i(
-                   row * C_BYTES_PER_ROW * 8 + C_BYTES_PER_ROW * 8 - 1 downto
-                   row * C_BYTES_PER_ROW * 8)
-                   ));
-          end if;
 
-        end loop;
+            if row = last_row_v then
+              last_idx_v := (end_i + C_BYTES_PER_ROW - 1) mod C_BYTES_PER_ROW + 1;
+              if last_i = '1' then
+                last_str_v := " LAST";
+              end if;
+            end if;
+
+            report first_str_v &
+                   C_EMPTY_STR_V(1 to 2 * first_idx_v) &
+                   to_hstring(byte_reverse(data_i(
+                   row * C_BYTES_PER_ROW * 8 + last_idx_v * 8 - 1 downto
+                   row * C_BYTES_PER_ROW * 8 + first_idx_v * 8))) &
+                   C_EMPTY_STR_V(2 * last_idx_v + 1 to 2 * C_BYTES_PER_ROW) &
+                   last_str_v;
+          end loop;
+        end if;
       end if;
     end if;
   end process logger_proc;

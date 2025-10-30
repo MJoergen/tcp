@@ -7,6 +7,7 @@ library std;
 
 entity tb_axi_pipe_wide_packet is
   generic (
+    G_START_ZERO   : boolean;
     G_DEBUG        : boolean;
     G_MAX_LENGTH   : natural;
     G_CNT_SIZE     : natural;
@@ -21,12 +22,12 @@ architecture simulation of tb_axi_pipe_wide_packet is
 
   signal clk     : std_logic := '1';
   signal rst     : std_logic := '1';
-  signal running : std_logic := '1';
 
   signal s_ready : std_logic;
   signal s_valid : std_logic;
   signal s_data  : std_logic_vector(G_S_DATA_BYTES * 8 - 1 downto 0);
-  signal s_bytes : natural range 0 to G_S_DATA_BYTES;
+  signal s_start : natural range 0 to G_S_DATA_BYTES-1;
+  signal s_end   : natural range 0 to G_S_DATA_BYTES;
   signal s_last  : std_logic;
 
   signal m_ready         : std_logic;
@@ -44,7 +45,7 @@ begin
   -- Clock and reset
   --------------------------------------------
 
-  clk <= running and not clk after 5 ns;
+  clk <= not clk after 5 ns;
   rst <= '1', '0' after 100 ns;
 
 
@@ -54,6 +55,7 @@ begin
 
   axi_stim_verf_inst : entity work.axi_stim_verf
     generic map (
+      G_START_ZERO   => G_START_ZERO,
       G_DEBUG        => G_DEBUG,
       G_MAX_LENGTH   => G_MAX_LENGTH,
       G_CNT_SIZE     => G_CNT_SIZE,
@@ -68,7 +70,8 @@ begin
       m_ready_i => s_ready,
       m_valid_o => s_valid,
       m_data_o  => s_data,
-      m_bytes_o => s_bytes,
+      m_start_o => s_start,
+      m_end_o   => s_end,
       m_last_o  => s_last,
       s_ready_o => m_ready,
       s_valid_i => m_valid,
@@ -84,7 +87,7 @@ begin
 
   random_inst : entity work.random
     generic map (
-      G_SEED => X"DEADBEAFC007BABE"
+      G_SEED => X"BEAFDEADC007BABE"
     )
     port map (
       clk_i    => clk,
@@ -111,8 +114,8 @@ begin
       s_ready_o => s_ready,
       s_valid_i => s_valid,
       s_data_i  => s_data,
-      s_start_i => 0,
-      s_end_i   => s_bytes,
+      s_start_i => s_start,
+      s_end_i   => s_end,
       s_last_i  => s_last,
       m_ready_i => m_ready,
       m_bytes_i => m_bytes_consume,

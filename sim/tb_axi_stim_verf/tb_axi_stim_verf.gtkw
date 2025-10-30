@@ -1,83 +1,85 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Tue Oct 28 08:52:04 2025
+[*] Thu Oct 30 10:57:36 2025
 [*]
-[dumpfile] "/home/mfj/git/PRIVATE/MJoergen/tcp/sim/tb_stim_verf/tb_stim_verf.ghw"
-[dumpfile_mtime] "Tue Oct 28 08:51:23 2025"
-[dumpfile_size] 733706
-[savefile] "/home/mfj/git/PRIVATE/MJoergen/tcp/sim/tb_stim_verf/tb_stim_verf.gtkw"
+[dumpfile] "/home/mfj/git/PRIVATE/MJoergen/tcp/sim/tb_axi_stim_verf/tb_axi_stim_verf.ghw"
+[dumpfile_mtime] "Thu Oct 30 10:55:14 2025"
+[dumpfile_size] 9625
+[savefile] "/home/mfj/git/PRIVATE/MJoergen/tcp/sim/tb_axi_stim_verf/tb_axi_stim_verf.gtkw"
 [timestart] 0
 [size] 1277 847
 [pos] -1 -1
-*-31.970793 8084300000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-25.253496 130000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
-[treeopen] top.tb_stim_verf.
-[treeopen] top.tb_stim_verf.stim_verf_inst.
+[treeopen] top.tb_axi_stim_verf.
+[treeopen] top.tb_axi_stim_verf.axi_stim_verf_inst.
 [sst_width] 210
 [signals_width] 338
 [sst_expanded] 1
 [sst_vpaned_height] 229
 @800200
--stim_verf
+-axi_stim_verf
 @28
-top.tb_stim_verf.stim_verf_inst.clk_i
-top.tb_stim_verf.stim_verf_inst.rst_i
+top.tb_axi_stim_verf.axi_stim_verf_inst.clk_i
+top.tb_axi_stim_verf.axi_stim_verf_inst.rst_i
 [color] 7
-top.tb_stim_verf.stim_verf_inst.m_ready_i
+top.tb_axi_stim_verf.axi_stim_verf_inst.m_ready_i
 [color] 2
-top.tb_stim_verf.stim_verf_inst.m_valid_o
+top.tb_axi_stim_verf.axi_stim_verf_inst.m_valid_o
 @22
-#{top.tb_stim_verf.stim_verf_inst.m_data_o[63:0]} top.tb_stim_verf.stim_verf_inst.m_data_o[63] top.tb_stim_verf.stim_verf_inst.m_data_o[62] top.tb_stim_verf.stim_verf_inst.m_data_o[61] top.tb_stim_verf.stim_verf_inst.m_data_o[60] top.tb_stim_verf.stim_verf_inst.m_data_o[59] top.tb_stim_verf.stim_verf_inst.m_data_o[58] top.tb_stim_verf.stim_verf_inst.m_data_o[57] top.tb_stim_verf.stim_verf_inst.m_data_o[56] top.tb_stim_verf.stim_verf_inst.m_data_o[55] top.tb_stim_verf.stim_verf_inst.m_data_o[54] top.tb_stim_verf.stim_verf_inst.m_data_o[53] top.tb_stim_verf.stim_verf_inst.m_data_o[52] top.tb_stim_verf.stim_verf_inst.m_data_o[51] top.tb_stim_verf.stim_verf_inst.m_data_o[50] top.tb_stim_verf.stim_verf_inst.m_data_o[49] top.tb_stim_verf.stim_verf_inst.m_data_o[48] top.tb_stim_verf.stim_verf_inst.m_data_o[47] top.tb_stim_verf.stim_verf_inst.m_data_o[46] top.tb_stim_verf.stim_verf_inst.m_data_o[45] top.tb_stim_verf.stim_verf_inst.m_data_o[44] top.tb_stim_verf.stim_verf_inst.m_data_o[43] top.tb_stim_verf.stim_verf_inst.m_data_o[42] top.tb_stim_verf.stim_verf_inst.m_data_o[41] top.tb_stim_verf.stim_verf_inst.m_data_o[40] top.tb_stim_verf.stim_verf_inst.m_data_o[39] top.tb_stim_verf.stim_verf_inst.m_data_o[38] top.tb_stim_verf.stim_verf_inst.m_data_o[37] top.tb_stim_verf.stim_verf_inst.m_data_o[36] top.tb_stim_verf.stim_verf_inst.m_data_o[35] top.tb_stim_verf.stim_verf_inst.m_data_o[34] top.tb_stim_verf.stim_verf_inst.m_data_o[33] top.tb_stim_verf.stim_verf_inst.m_data_o[32] top.tb_stim_verf.stim_verf_inst.m_data_o[31] top.tb_stim_verf.stim_verf_inst.m_data_o[30] top.tb_stim_verf.stim_verf_inst.m_data_o[29] top.tb_stim_verf.stim_verf_inst.m_data_o[28] top.tb_stim_verf.stim_verf_inst.m_data_o[27] top.tb_stim_verf.stim_verf_inst.m_data_o[26] top.tb_stim_verf.stim_verf_inst.m_data_o[25] top.tb_stim_verf.stim_verf_inst.m_data_o[24] top.tb_stim_verf.stim_verf_inst.m_data_o[23] top.tb_stim_verf.stim_verf_inst.m_data_o[22] top.tb_stim_verf.stim_verf_inst.m_data_o[21] top.tb_stim_verf.stim_verf_inst.m_data_o[20] top.tb_stim_verf.stim_verf_inst.m_data_o[19] top.tb_stim_verf.stim_verf_inst.m_data_o[18] top.tb_stim_verf.stim_verf_inst.m_data_o[17] top.tb_stim_verf.stim_verf_inst.m_data_o[16] top.tb_stim_verf.stim_verf_inst.m_data_o[15] top.tb_stim_verf.stim_verf_inst.m_data_o[14] top.tb_stim_verf.stim_verf_inst.m_data_o[13] top.tb_stim_verf.stim_verf_inst.m_data_o[12] top.tb_stim_verf.stim_verf_inst.m_data_o[11] top.tb_stim_verf.stim_verf_inst.m_data_o[10] top.tb_stim_verf.stim_verf_inst.m_data_o[9] top.tb_stim_verf.stim_verf_inst.m_data_o[8] top.tb_stim_verf.stim_verf_inst.m_data_o[7] top.tb_stim_verf.stim_verf_inst.m_data_o[6] top.tb_stim_verf.stim_verf_inst.m_data_o[5] top.tb_stim_verf.stim_verf_inst.m_data_o[4] top.tb_stim_verf.stim_verf_inst.m_data_o[3] top.tb_stim_verf.stim_verf_inst.m_data_o[2] top.tb_stim_verf.stim_verf_inst.m_data_o[1] top.tb_stim_verf.stim_verf_inst.m_data_o[0]
+#{top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[63:0]} top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[63] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[62] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[61] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[60] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[59] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[58] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[57] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[56] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[55] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[54] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[53] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[52] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[51] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[50] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[49] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[48] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[47] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[46] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[45] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[44] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[43] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[42] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[41] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[40] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[39] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[38] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[37] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[36] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[35] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[34] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[33] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[32] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[31] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[30] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[29] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[28] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[27] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[26] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[25] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[24] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[23] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[22] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[21] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[20] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[19] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[18] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[17] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[16] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[15] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[14] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[13] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[12] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[11] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[10] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[9] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[8] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[7] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[6] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[5] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[4] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[3] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[2] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[1] top.tb_axi_stim_verf.axi_stim_verf_inst.m_data_o[0]
 @420
-top.tb_stim_verf.stim_verf_inst.m_bytes_o
+top.tb_axi_stim_verf.axi_stim_verf_inst.m_start_o
+top.tb_axi_stim_verf.axi_stim_verf_inst.m_end_o
 @28
-top.tb_stim_verf.stim_verf_inst.m_last_o
-[color] 7
-top.tb_stim_verf.stim_verf_inst.s_ready_o
-[color] 2
-top.tb_stim_verf.stim_verf_inst.s_valid_i
-@22
-#{top.tb_stim_verf.stim_verf_inst.s_data_i[63:0]} top.tb_stim_verf.stim_verf_inst.s_data_i[63] top.tb_stim_verf.stim_verf_inst.s_data_i[62] top.tb_stim_verf.stim_verf_inst.s_data_i[61] top.tb_stim_verf.stim_verf_inst.s_data_i[60] top.tb_stim_verf.stim_verf_inst.s_data_i[59] top.tb_stim_verf.stim_verf_inst.s_data_i[58] top.tb_stim_verf.stim_verf_inst.s_data_i[57] top.tb_stim_verf.stim_verf_inst.s_data_i[56] top.tb_stim_verf.stim_verf_inst.s_data_i[55] top.tb_stim_verf.stim_verf_inst.s_data_i[54] top.tb_stim_verf.stim_verf_inst.s_data_i[53] top.tb_stim_verf.stim_verf_inst.s_data_i[52] top.tb_stim_verf.stim_verf_inst.s_data_i[51] top.tb_stim_verf.stim_verf_inst.s_data_i[50] top.tb_stim_verf.stim_verf_inst.s_data_i[49] top.tb_stim_verf.stim_verf_inst.s_data_i[48] top.tb_stim_verf.stim_verf_inst.s_data_i[47] top.tb_stim_verf.stim_verf_inst.s_data_i[46] top.tb_stim_verf.stim_verf_inst.s_data_i[45] top.tb_stim_verf.stim_verf_inst.s_data_i[44] top.tb_stim_verf.stim_verf_inst.s_data_i[43] top.tb_stim_verf.stim_verf_inst.s_data_i[42] top.tb_stim_verf.stim_verf_inst.s_data_i[41] top.tb_stim_verf.stim_verf_inst.s_data_i[40] top.tb_stim_verf.stim_verf_inst.s_data_i[39] top.tb_stim_verf.stim_verf_inst.s_data_i[38] top.tb_stim_verf.stim_verf_inst.s_data_i[37] top.tb_stim_verf.stim_verf_inst.s_data_i[36] top.tb_stim_verf.stim_verf_inst.s_data_i[35] top.tb_stim_verf.stim_verf_inst.s_data_i[34] top.tb_stim_verf.stim_verf_inst.s_data_i[33] top.tb_stim_verf.stim_verf_inst.s_data_i[32] top.tb_stim_verf.stim_verf_inst.s_data_i[31] top.tb_stim_verf.stim_verf_inst.s_data_i[30] top.tb_stim_verf.stim_verf_inst.s_data_i[29] top.tb_stim_verf.stim_verf_inst.s_data_i[28] top.tb_stim_verf.stim_verf_inst.s_data_i[27] top.tb_stim_verf.stim_verf_inst.s_data_i[26] top.tb_stim_verf.stim_verf_inst.s_data_i[25] top.tb_stim_verf.stim_verf_inst.s_data_i[24] top.tb_stim_verf.stim_verf_inst.s_data_i[23] top.tb_stim_verf.stim_verf_inst.s_data_i[22] top.tb_stim_verf.stim_verf_inst.s_data_i[21] top.tb_stim_verf.stim_verf_inst.s_data_i[20] top.tb_stim_verf.stim_verf_inst.s_data_i[19] top.tb_stim_verf.stim_verf_inst.s_data_i[18] top.tb_stim_verf.stim_verf_inst.s_data_i[17] top.tb_stim_verf.stim_verf_inst.s_data_i[16] top.tb_stim_verf.stim_verf_inst.s_data_i[15] top.tb_stim_verf.stim_verf_inst.s_data_i[14] top.tb_stim_verf.stim_verf_inst.s_data_i[13] top.tb_stim_verf.stim_verf_inst.s_data_i[12] top.tb_stim_verf.stim_verf_inst.s_data_i[11] top.tb_stim_verf.stim_verf_inst.s_data_i[10] top.tb_stim_verf.stim_verf_inst.s_data_i[9] top.tb_stim_verf.stim_verf_inst.s_data_i[8] top.tb_stim_verf.stim_verf_inst.s_data_i[7] top.tb_stim_verf.stim_verf_inst.s_data_i[6] top.tb_stim_verf.stim_verf_inst.s_data_i[5] top.tb_stim_verf.stim_verf_inst.s_data_i[4] top.tb_stim_verf.stim_verf_inst.s_data_i[3] top.tb_stim_verf.stim_verf_inst.s_data_i[2] top.tb_stim_verf.stim_verf_inst.s_data_i[1] top.tb_stim_verf.stim_verf_inst.s_data_i[0]
-@420
-top.tb_stim_verf.stim_verf_inst.s_bytes_i
-@28
-top.tb_stim_verf.stim_verf_inst.s_last_i
+top.tb_axi_stim_verf.axi_stim_verf_inst.m_last_o
 @200
 -
-@8420
-top.tb_stim_verf.stim_verf_inst.length_fill
 @28
 [color] 7
-top.tb_stim_verf.stim_verf_inst.length_s_ready
+top.tb_axi_stim_verf.axi_stim_verf_inst.s_ready_o
 [color] 2
-top.tb_stim_verf.stim_verf_inst.length_s_valid
+top.tb_axi_stim_verf.axi_stim_verf_inst.s_valid_i
 @22
-#{top.tb_stim_verf.stim_verf_inst.length_s_data[7:0]} top.tb_stim_verf.stim_verf_inst.length_s_data[7] top.tb_stim_verf.stim_verf_inst.length_s_data[6] top.tb_stim_verf.stim_verf_inst.length_s_data[5] top.tb_stim_verf.stim_verf_inst.length_s_data[4] top.tb_stim_verf.stim_verf_inst.length_s_data[3] top.tb_stim_verf.stim_verf_inst.length_s_data[2] top.tb_stim_verf.stim_verf_inst.length_s_data[1] top.tb_stim_verf.stim_verf_inst.length_s_data[0]
+#{top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[63:0]} top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[63] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[62] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[61] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[60] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[59] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[58] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[57] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[56] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[55] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[54] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[53] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[52] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[51] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[50] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[49] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[48] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[47] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[46] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[45] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[44] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[43] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[42] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[41] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[40] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[39] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[38] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[37] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[36] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[35] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[34] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[33] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[32] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[31] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[30] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[29] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[28] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[27] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[26] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[25] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[24] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[23] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[22] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[21] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[20] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[19] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[18] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[17] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[16] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[15] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[14] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[13] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[12] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[11] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[10] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[9] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[8] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[7] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[6] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[5] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[4] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[3] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[2] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[1] top.tb_axi_stim_verf.axi_stim_verf_inst.s_data_i[0]
+@420
+top.tb_axi_stim_verf.axi_stim_verf_inst.s_bytes_i
 @28
-[color] 7
-top.tb_stim_verf.stim_verf_inst.length_m_ready
-[color] 2
-top.tb_stim_verf.stim_verf_inst.length_m_valid
-@22
-#{top.tb_stim_verf.stim_verf_inst.length_m_data[7:0]} top.tb_stim_verf.stim_verf_inst.length_m_data[7] top.tb_stim_verf.stim_verf_inst.length_m_data[6] top.tb_stim_verf.stim_verf_inst.length_m_data[5] top.tb_stim_verf.stim_verf_inst.length_m_data[4] top.tb_stim_verf.stim_verf_inst.length_m_data[3] top.tb_stim_verf.stim_verf_inst.length_m_data[2] top.tb_stim_verf.stim_verf_inst.length_m_data[1] top.tb_stim_verf.stim_verf_inst.length_m_data[0]
+top.tb_axi_stim_verf.axi_stim_verf_inst.s_last_i
 @200
 -
-@420
-top.tb_stim_verf.stim_verf_inst.stim_state
-top.tb_stim_verf.stim_verf_inst.stim_length
-@22
-#{top.tb_stim_verf.stim_verf_inst.stim_cnt[11:0]} top.tb_stim_verf.stim_verf_inst.stim_cnt[7] top.tb_stim_verf.stim_verf_inst.stim_cnt[6] top.tb_stim_verf.stim_verf_inst.stim_cnt[5] top.tb_stim_verf.stim_verf_inst.stim_cnt[4] top.tb_stim_verf.stim_verf_inst.stim_cnt[3] top.tb_stim_verf.stim_verf_inst.stim_cnt[2] top.tb_stim_verf.stim_verf_inst.stim_cnt[1] top.tb_stim_verf.stim_verf_inst.stim_cnt[0]
-@420
-top.tb_stim_verf.stim_verf_inst.verf_state
-top.tb_stim_verf.stim_verf_inst.verf_length
-@22
-#{top.tb_stim_verf.stim_verf_inst.verf_cnt[11:0]} top.tb_stim_verf.stim_verf_inst.verf_cnt[11] top.tb_stim_verf.stim_verf_inst.verf_cnt[10] top.tb_stim_verf.stim_verf_inst.verf_cnt[9] top.tb_stim_verf.stim_verf_inst.verf_cnt[8] top.tb_stim_verf.stim_verf_inst.verf_cnt[7] top.tb_stim_verf.stim_verf_inst.verf_cnt[6] top.tb_stim_verf.stim_verf_inst.verf_cnt[5] top.tb_stim_verf.stim_verf_inst.verf_cnt[4] top.tb_stim_verf.stim_verf_inst.verf_cnt[3] top.tb_stim_verf.stim_verf_inst.verf_cnt[2] top.tb_stim_verf.stim_verf_inst.verf_cnt[1] top.tb_stim_verf.stim_verf_inst.verf_cnt[0]
 @28
-top.tb_stim_verf.stim_verf_inst.s_do_ready
-top.tb_stim_verf.stim_verf_inst.m_do_valid
+[color] 7
+top.tb_axi_stim_verf.axi_stim_verf_inst.length_s_ready
+[color] 2
+top.tb_axi_stim_verf.axi_stim_verf_inst.length_s_valid
 @22
-#{top.tb_stim_verf.stim_verf_inst.rand[63:0]} top.tb_stim_verf.stim_verf_inst.rand[63] top.tb_stim_verf.stim_verf_inst.rand[62] top.tb_stim_verf.stim_verf_inst.rand[61] top.tb_stim_verf.stim_verf_inst.rand[60] top.tb_stim_verf.stim_verf_inst.rand[59] top.tb_stim_verf.stim_verf_inst.rand[58] top.tb_stim_verf.stim_verf_inst.rand[57] top.tb_stim_verf.stim_verf_inst.rand[56] top.tb_stim_verf.stim_verf_inst.rand[55] top.tb_stim_verf.stim_verf_inst.rand[54] top.tb_stim_verf.stim_verf_inst.rand[53] top.tb_stim_verf.stim_verf_inst.rand[52] top.tb_stim_verf.stim_verf_inst.rand[51] top.tb_stim_verf.stim_verf_inst.rand[50] top.tb_stim_verf.stim_verf_inst.rand[49] top.tb_stim_verf.stim_verf_inst.rand[48] top.tb_stim_verf.stim_verf_inst.rand[47] top.tb_stim_verf.stim_verf_inst.rand[46] top.tb_stim_verf.stim_verf_inst.rand[45] top.tb_stim_verf.stim_verf_inst.rand[44] top.tb_stim_verf.stim_verf_inst.rand[43] top.tb_stim_verf.stim_verf_inst.rand[42] top.tb_stim_verf.stim_verf_inst.rand[41] top.tb_stim_verf.stim_verf_inst.rand[40] top.tb_stim_verf.stim_verf_inst.rand[39] top.tb_stim_verf.stim_verf_inst.rand[38] top.tb_stim_verf.stim_verf_inst.rand[37] top.tb_stim_verf.stim_verf_inst.rand[36] top.tb_stim_verf.stim_verf_inst.rand[35] top.tb_stim_verf.stim_verf_inst.rand[34] top.tb_stim_verf.stim_verf_inst.rand[33] top.tb_stim_verf.stim_verf_inst.rand[32] top.tb_stim_verf.stim_verf_inst.rand[31] top.tb_stim_verf.stim_verf_inst.rand[30] top.tb_stim_verf.stim_verf_inst.rand[29] top.tb_stim_verf.stim_verf_inst.rand[28] top.tb_stim_verf.stim_verf_inst.rand[27] top.tb_stim_verf.stim_verf_inst.rand[26] top.tb_stim_verf.stim_verf_inst.rand[25] top.tb_stim_verf.stim_verf_inst.rand[24] top.tb_stim_verf.stim_verf_inst.rand[23] top.tb_stim_verf.stim_verf_inst.rand[22] top.tb_stim_verf.stim_verf_inst.rand[21] top.tb_stim_verf.stim_verf_inst.rand[20] top.tb_stim_verf.stim_verf_inst.rand[19] top.tb_stim_verf.stim_verf_inst.rand[18] top.tb_stim_verf.stim_verf_inst.rand[17] top.tb_stim_verf.stim_verf_inst.rand[16] top.tb_stim_verf.stim_verf_inst.rand[15] top.tb_stim_verf.stim_verf_inst.rand[14] top.tb_stim_verf.stim_verf_inst.rand[13] top.tb_stim_verf.stim_verf_inst.rand[12] top.tb_stim_verf.stim_verf_inst.rand[11] top.tb_stim_verf.stim_verf_inst.rand[10] top.tb_stim_verf.stim_verf_inst.rand[9] top.tb_stim_verf.stim_verf_inst.rand[8] top.tb_stim_verf.stim_verf_inst.rand[7] top.tb_stim_verf.stim_verf_inst.rand[6] top.tb_stim_verf.stim_verf_inst.rand[5] top.tb_stim_verf.stim_verf_inst.rand[4] top.tb_stim_verf.stim_verf_inst.rand[3] top.tb_stim_verf.stim_verf_inst.rand[2] top.tb_stim_verf.stim_verf_inst.rand[1] top.tb_stim_verf.stim_verf_inst.rand[0]
+#{top.tb_axi_stim_verf.axi_stim_verf_inst.length_s_data[7:0]} top.tb_axi_stim_verf.axi_stim_verf_inst.length_s_data[7] top.tb_axi_stim_verf.axi_stim_verf_inst.length_s_data[6] top.tb_axi_stim_verf.axi_stim_verf_inst.length_s_data[5] top.tb_axi_stim_verf.axi_stim_verf_inst.length_s_data[4] top.tb_axi_stim_verf.axi_stim_verf_inst.length_s_data[3] top.tb_axi_stim_verf.axi_stim_verf_inst.length_s_data[2] top.tb_axi_stim_verf.axi_stim_verf_inst.length_s_data[1] top.tb_axi_stim_verf.axi_stim_verf_inst.length_s_data[0]
+@28
+[color] 7
+top.tb_axi_stim_verf.axi_stim_verf_inst.length_m_ready
+[color] 2
+top.tb_axi_stim_verf.axi_stim_verf_inst.length_m_valid
+@22
+#{top.tb_axi_stim_verf.axi_stim_verf_inst.length_m_data[7:0]} top.tb_axi_stim_verf.axi_stim_verf_inst.length_m_data[7] top.tb_axi_stim_verf.axi_stim_verf_inst.length_m_data[6] top.tb_axi_stim_verf.axi_stim_verf_inst.length_m_data[5] top.tb_axi_stim_verf.axi_stim_verf_inst.length_m_data[4] top.tb_axi_stim_verf.axi_stim_verf_inst.length_m_data[3] top.tb_axi_stim_verf.axi_stim_verf_inst.length_m_data[2] top.tb_axi_stim_verf.axi_stim_verf_inst.length_m_data[1] top.tb_axi_stim_verf.axi_stim_verf_inst.length_m_data[0]
+@420
+top.tb_axi_stim_verf.axi_stim_verf_inst.length_fill
+top.tb_axi_stim_verf.axi_stim_verf_inst.stim_state
+top.tb_axi_stim_verf.axi_stim_verf_inst.stim_length
+@22
+#{top.tb_axi_stim_verf.axi_stim_verf_inst.stim_cnt[11:0]} top.tb_axi_stim_verf.axi_stim_verf_inst.stim_cnt[11] top.tb_axi_stim_verf.axi_stim_verf_inst.stim_cnt[10] top.tb_axi_stim_verf.axi_stim_verf_inst.stim_cnt[9] top.tb_axi_stim_verf.axi_stim_verf_inst.stim_cnt[8] top.tb_axi_stim_verf.axi_stim_verf_inst.stim_cnt[7] top.tb_axi_stim_verf.axi_stim_verf_inst.stim_cnt[6] top.tb_axi_stim_verf.axi_stim_verf_inst.stim_cnt[5] top.tb_axi_stim_verf.axi_stim_verf_inst.stim_cnt[4] top.tb_axi_stim_verf.axi_stim_verf_inst.stim_cnt[3] top.tb_axi_stim_verf.axi_stim_verf_inst.stim_cnt[2] top.tb_axi_stim_verf.axi_stim_verf_inst.stim_cnt[1] top.tb_axi_stim_verf.axi_stim_verf_inst.stim_cnt[0]
+@28
+top.tb_axi_stim_verf.axi_stim_verf_inst.stim_do_valid
+@420
+top.tb_axi_stim_verf.axi_stim_verf_inst.verf_state
+top.tb_axi_stim_verf.axi_stim_verf_inst.verf_length
+@22
+#{top.tb_axi_stim_verf.axi_stim_verf_inst.verf_cnt[11:0]} top.tb_axi_stim_verf.axi_stim_verf_inst.verf_cnt[11] top.tb_axi_stim_verf.axi_stim_verf_inst.verf_cnt[10] top.tb_axi_stim_verf.axi_stim_verf_inst.verf_cnt[9] top.tb_axi_stim_verf.axi_stim_verf_inst.verf_cnt[8] top.tb_axi_stim_verf.axi_stim_verf_inst.verf_cnt[7] top.tb_axi_stim_verf.axi_stim_verf_inst.verf_cnt[6] top.tb_axi_stim_verf.axi_stim_verf_inst.verf_cnt[5] top.tb_axi_stim_verf.axi_stim_verf_inst.verf_cnt[4] top.tb_axi_stim_verf.axi_stim_verf_inst.verf_cnt[3] top.tb_axi_stim_verf.axi_stim_verf_inst.verf_cnt[2] top.tb_axi_stim_verf.axi_stim_verf_inst.verf_cnt[1] top.tb_axi_stim_verf.axi_stim_verf_inst.verf_cnt[0]
+@28
+top.tb_axi_stim_verf.axi_stim_verf_inst.verf_do_ready
+@22
+#{top.tb_axi_stim_verf.axi_stim_verf_inst.rand[63:0]} top.tb_axi_stim_verf.axi_stim_verf_inst.rand[63] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[62] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[61] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[60] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[59] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[58] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[57] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[56] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[55] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[54] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[53] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[52] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[51] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[50] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[49] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[48] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[47] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[46] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[45] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[44] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[43] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[42] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[41] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[40] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[39] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[38] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[37] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[36] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[35] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[34] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[33] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[32] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[31] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[30] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[29] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[28] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[27] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[26] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[25] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[24] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[23] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[22] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[21] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[20] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[19] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[18] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[17] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[16] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[15] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[14] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[13] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[12] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[11] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[10] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[9] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[8] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[7] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[6] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[5] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[4] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[3] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[2] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[1] top.tb_axi_stim_verf.axi_stim_verf_inst.rand[0]
 @1000200
--stim_verf
+-axi_stim_verf
 [pattern_trace] 1
 [pattern_trace] 0

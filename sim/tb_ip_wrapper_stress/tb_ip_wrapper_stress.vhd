@@ -106,6 +106,7 @@ begin
 
   axi_stim_verf_inst : entity work.axi_stim_verf
     generic map (
+      G_START_ZERO   => true,
       G_DEBUG        => false,
       G_RANDOM       => G_RANDOM,
       G_FAST         => G_FAST,
@@ -120,7 +121,8 @@ begin
       m_ready_i => client_user_tx_ready,
       m_valid_o => client_user_tx_valid,
       m_data_o  => client_user_tx_data,
-      m_bytes_o => client_user_tx_bytes,
+      m_start_o => open,
+      m_end_o   => client_user_tx_bytes,
       m_last_o  => client_user_tx_last,
       s_ready_o => client_user_rx_ready,
       s_valid_i => client_user_rx_valid,
@@ -247,9 +249,9 @@ begin
 
   data_logger_c2s_inst : entity work.data_logger
     generic map (
-      G_ENABLE    => G_SHOW_PACKETS,
-      G_LOG_NAME  => "C2S", -- Client to Server
-      G_DATA_SIZE => C_MAC_PAYLOAD_BYTES * 8
+      G_ENABLE     => G_SHOW_PACKETS,
+      G_LOG_NAME   => "C2S", -- Client to Server
+      G_DATA_BYTES => C_MAC_PAYLOAD_BYTES
     )
     port map (
       clk_i   => clk,
@@ -257,15 +259,16 @@ begin
       ready_i => tb_mac_payload_c2s_ready,
       valid_i => tb_mac_payload_c2s_valid,
       data_i  => tb_mac_payload_c2s_data,
-      bytes_i => tb_mac_payload_c2s_bytes,
+      start_i => 0,
+      end_i   => tb_mac_payload_c2s_bytes,
       last_i  => tb_mac_payload_c2s_last
     ); -- data_logger_c2s_inst : entity work.data_logger
 
   data_logger_s2c_inst : entity work.data_logger
     generic map (
-      G_ENABLE    => G_SHOW_PACKETS,
-      G_LOG_NAME  => "S2C", -- Server to Client
-      G_DATA_SIZE => C_MAC_PAYLOAD_BYTES * 8
+      G_ENABLE     => G_SHOW_PACKETS,
+      G_LOG_NAME   => "S2C", -- Server to Client
+      G_DATA_BYTES => C_MAC_PAYLOAD_BYTES
     )
     port map (
       clk_i   => clk,
@@ -273,7 +276,8 @@ begin
       ready_i => tb_mac_payload_s2c_ready,
       valid_i => tb_mac_payload_s2c_valid,
       data_i  => tb_mac_payload_s2c_data,
-      bytes_i => tb_mac_payload_s2c_bytes,
+      start_i => 0,
+      end_i   => tb_mac_payload_s2c_bytes,
       last_i  => tb_mac_payload_s2c_last
     ); -- data_logger_s2c_inst : entity work.data_logger
 

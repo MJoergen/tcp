@@ -11,6 +11,7 @@ library std;
 
 entity axi_stim_verf is
   generic (
+    G_START_ZERO   : boolean;
     G_DEBUG        : boolean;
     G_RANDOM       : boolean;
     G_FAST         : boolean;
@@ -27,7 +28,8 @@ entity axi_stim_verf is
     m_ready_i : in    std_logic;
     m_valid_o : out   std_logic;
     m_data_o  : out   std_logic_vector(G_M_DATA_BYTES * 8 - 1 downto 0);
-    m_bytes_o : out   natural range 0 to G_M_DATA_BYTES;
+    m_start_o : out   natural range 0 to G_M_DATA_BYTES - 1;
+    m_end_o   : out   natural range 0 to G_M_DATA_BYTES;
     m_last_o  : out   std_logic;
 
     -- Input interface
@@ -41,32 +43,53 @@ end entity axi_stim_verf;
 
 architecture synthesis of axi_stim_verf is
 
-  constant C_LENGTH_SIZE : natural       := 8;
-  constant C_RAM_DEPTH   : natural       := 4;
+  -- C_LENGTH_SIZE is the number of bits necessary to encode the packet length.
+  -- The value 8 allows packet lengths up to 255 bytes.
+  constant C_LENGTH_SIZE : natural         := 8;
 
+  -- C_RAM_DEPTH is the maximum number of allowed packets sent but not received. The
+  -- reason is that the lengths of each transmitted packet must be stored until the
+  -- packet is received. So this value is determined by the maximum latency outside this
+  -- module.
+  constant C_RAM_DEPTH : natural           := 4;
+
+  -- FIFO containing lengths of packets sent, but not yet received.
   signal   length_s_ready : std_logic;
   signal   length_s_valid : std_logic;
   signal   length_s_data  : std_logic_vector(C_LENGTH_SIZE - 1 downto 0);
   signal   length_m_ready : std_logic;
   signal   length_m_valid : std_logic;
   signal   length_m_data  : std_logic_vector(C_LENGTH_SIZE - 1 downto 0);
+  signal   length_fill    : natural range 0 to C_RAM_DEPTH - 1;
 
+  -- State machine for controlling generation and transmission of packets.
   type     stim_state_type is (STIM_IDLE_ST, STIM_DATA_ST);
-  signal   stim_state  : stim_state_type := STIM_IDLE_ST;
-  signal   stim_length : natural range 0 to G_MAX_LENGTH;
-  signal   stim_cnt    : std_logic_vector(G_CNT_SIZE - 1 downto 0);
+  signal   stim_state    : stim_state_type := STIM_IDLE_ST;
+  signal   stim_length   : natural range 0 to G_MAX_LENGTH;
+  signal   stim_cnt      : std_logic_vector(G_CNT_SIZE - 1 downto 0);
+  signal   stim_do_valid : std_logic;
 
+  -- State machine for controlling reception and verification of packets.
   type     verf_state_type is (VERF_IDLE_ST, VERF_DATA_ST);
-  signal   verf_state  : verf_state_type := VERF_IDLE_ST;
-  signal   verf_length : natural range 0 to G_MAX_LENGTH;
-  signal   verf_cnt    : std_logic_vector(G_CNT_SIZE - 1 downto 0);
+  signal   verf_state    : verf_state_type := VERF_IDLE_ST;
+  signal   verf_length   : natural range 0 to G_MAX_LENGTH;
+  signal   verf_cnt      : std_logic_vector(G_CNT_SIZE - 1 downto 0);
+  signal   verf_do_ready : std_logic;
 
-  signal   m_do_valid : std_logic;
-  signal   s_do_ready : std_logic;
-
+  -- Randomness
   signal   rand : std_logic_vector(63 downto 0);
 
-  signal   length_fill : natural range 0 to C_RAM_DEPTH - 1;
+  -- This controls how often data is transmitted.
+  subtype  R_RAND_DO_VALID is natural range 42 downto 40;
+
+  -- This controls how often data is received.
+  subtype  R_RAND_DO_READY is natural range 32 downto 30;
+
+  -- This controls the total length of the packet.
+  subtype  R_RAND_LENGTH   is natural range 20 downto 5;
+
+  -- This controls the number of bytes sent in this beat.
+  subtype  R_RAND_BYTES    is natural range 15 downto 0;
 
 begin
 
@@ -89,11 +112,12 @@ begin
     ); -- random_inst : entity work.random
 
 
-  m_do_valid <= or(rand(42 downto 40)) when G_RANDOM else
-                '1';
+  stim_do_valid <= or(rand(R_RAND_DO_VALID)) when G_RANDOM else
+                   '1';
 
   stimuli_proc : process (clk_i)
     variable length_v : natural range 1 to G_MAX_LENGTH;
+    variable start_v  : natural range 0 to G_M_DATA_BYTES-1;
     variable bytes_v  : natural range 1 to G_M_DATA_BYTES;
     variable first_v  : boolean := true;
   begin
@@ -106,7 +130,8 @@ begin
       if m_ready_i = '1' then
         m_valid_o <= '0';
         m_data_o  <= (others => '0');
-        m_bytes_o <= 0;
+        m_start_o <= 0;
+        m_end_o   <= 0;
         m_last_o  <= '0';
       end if;
 
@@ -118,7 +143,7 @@ begin
 
         when STIM_IDLE_ST =>
           if length_s_ready = '1' or length_s_valid = '0' then
-            length_v := (to_integer(rand(20 downto 5)) mod G_MAX_LENGTH) + 1;
+            length_v := (to_integer(rand(R_RAND_LENGTH)) mod G_MAX_LENGTH) + 1;
 
             if rst_i = '0' and G_DEBUG then
               report "STIM length " & to_string(length_v);
@@ -134,8 +159,13 @@ begin
 
         when STIM_DATA_ST =>
           if m_valid_o = '0' or (G_FAST and m_ready_i = '1') then
-            if m_do_valid = '1' then
-              bytes_v := (to_integer(rand(15 downto 0)) mod G_M_DATA_BYTES) + 1;
+            if stim_do_valid = '1' then
+              start_v := 0;
+              if not G_START_ZERO then
+                start_v := to_integer(rand(R_RAND_BYTES)) mod G_M_DATA_BYTES;
+              end if;
+
+              bytes_v := (to_integer(rand(R_RAND_BYTES)) mod (G_M_DATA_BYTES - start_v)) + 1;
               if bytes_v > stim_length then
                 bytes_v := stim_length;
               end if;
@@ -143,19 +173,20 @@ begin
               stim_cnt    <= stim_cnt + bytes_v;
               stim_length <= stim_length - bytes_v;
 
-              for i in 0 to bytes_v - 1 loop
-                m_data_o(i * 8 + 7 downto i * 8) <= stim_cnt(7 downto 0) + i;
+              for i in start_v to start_v + bytes_v - 1 loop
+                m_data_o(i * 8 + 7 downto i * 8) <= stim_cnt(7 downto 0) + i - start_v;
               end loop;
 
               m_valid_o <= '1';
-              m_bytes_o <= bytes_v;
+              m_start_o <= start_v;
+              m_end_o   <= start_v + bytes_v;
               if stim_length = bytes_v then
                 m_last_o   <= '1';
                 stim_state <= STIM_IDLE_ST;
 
                 if G_FAST then
                   if length_s_ready = '1' or length_s_valid = '0' then
-                    length_v := (to_integer(rand(20 downto 5)) mod G_MAX_LENGTH) + 1;
+                    length_v := (to_integer(rand(R_RAND_LENGTH)) mod G_MAX_LENGTH) + 1;
 
                     if rst_i = '0' and G_DEBUG then
                       report "STIM length " & to_string(length_v);
@@ -178,9 +209,13 @@ begin
       end case;
 
       if rst_i = '1' then
-        length_s_valid <= '0';
         m_valid_o      <= '0';
         m_data_o       <= (others => '0');
+        m_start_o      <= 0;
+        m_end_o        <= 0;
+        m_last_o       <= '0';
+        --
+        length_s_valid <= '0';
         stim_cnt       <= (others => '0');
         stim_state     <= STIM_IDLE_ST;
       end if;
@@ -210,9 +245,9 @@ begin
   -- Verify output
   ----------------------------------------------------------
 
-  s_do_ready     <= or(rand(32 downto 30)) when G_RANDOM else
+  verf_do_ready  <= or(rand(R_RAND_DO_READY)) when G_RANDOM else
                     '1';
-  s_ready_o      <= s_do_ready when verf_state = VERF_DATA_ST else
+  s_ready_o      <= verf_do_ready when verf_state = VERF_DATA_ST else
                     '0';
 
   length_m_ready <= '1' when verf_state = VERF_IDLE_ST else
