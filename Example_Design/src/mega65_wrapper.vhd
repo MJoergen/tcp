@@ -1,0 +1,232 @@
+library ieee;
+  use ieee.std_logic_1164.all;
+  use ieee.numeric_std_unsigned.all;
+
+library xpm;
+  use xpm.vcomponents.all;
+
+library unisim;
+  use unisim.vcomponents.all;
+
+library work;
+  use work.video_modes_pkg.all;
+
+-- This provides a generic user interface to the MEGA65 platform
+
+-- The first byte of a frame is in data(7 downto 0).
+-- Wheneven last = 0 then bytes = G_USER_BYTES.
+
+entity mega65_wrapper is
+  generic (
+    G_USER_BYTES : natural
+  );
+  port (
+    --------------------------------------------------------
+    -- Connect to MEGA65 I/O ports
+    --------------------------------------------------------
+
+    -- Board clock and reset
+    sys_clk_i            : in    std_logic;             -- 100 MHz
+    sys_rst_i            : in    std_logic;
+
+    -- UART
+    debug_rxd_i          : in    std_logic;
+    debug_txd_o          : out   std_logic;
+
+    -- Keyboard interface
+    kb_io0_o             : out   std_logic;
+    kb_io1_o             : out   std_logic;
+    kb_io2_i             : in    std_logic;
+
+    -- VGA interface
+    vdac_blank_n_o       : out   std_logic;
+    vdac_clk_o           : out   std_logic;
+    vdac_psave_n_o       : out   std_logic;
+    vdac_sync_n_o        : out   std_logic;
+    vga_blue_o           : out   std_logic_vector(7 downto 0);
+    vga_green_o          : out   std_logic_vector(7 downto 0);
+    vga_hs_o             : out   std_logic;
+    vga_red_o            : out   std_logic_vector(7 downto 0);
+    vga_vs_o             : out   std_logic;
+
+    -- Ethernet interface
+    eth_clk_o            : out   std_logic;
+    eth_led2_o           : out   std_logic;
+    eth_mdc_o            : out   std_logic;
+    eth_mdio_io          : inout std_logic;
+    eth_rst_n_o          : out   std_logic;
+    eth_rx_d_i           : in    std_logic_vector(1 downto 0);
+    eth_crs_dv_i         : in    std_logic;
+    eth_rxer_i           : in    std_logic;
+    eth_tx_d_o           : out   std_logic_vector(1 downto 0);
+    eth_tx_en_o          : out   std_logic;
+
+
+    --------------------------------------------------------
+    -- Connect to design (everything in user_clk domain)
+    --------------------------------------------------------
+
+    user_clk_o           : out   std_logic;             -- 100 MHz
+    user_rst_o           : out   std_logic;
+
+    -- UART interface
+    user_uart_rx_ready_i : in    std_logic;
+    user_uart_rx_valid_o : out   std_logic;
+    user_uart_rx_data_o  : out   std_logic_vector(7 downto 0);
+    user_uart_tx_ready_o : out   std_logic;
+    user_uart_tx_valid_i : in    std_logic;
+    user_uart_tx_data_i  : in    std_logic_vector(7 downto 0);
+
+    -- Keyboard events
+    user_key_num_o            : out   integer range 0 to 79; -- cycles through all keys with G_SCAN_FREQUENCY
+    user_key_pressed_n_o      : out   std_logic;             -- low active: debounced feedback: is kb_key_num_o pressed right now?
+
+
+    -- VGA frame buffer
+    user_vga_addr_i      : in    std_logic_vector(15 downto 0);
+    user_vga_data_i      : in    std_logic_vector(7 downto 0);
+    user_vga_wren_i      : in    std_logic;
+
+    -- Ethernet
+    user_mac_rx_ready_i  : in    std_logic;
+    user_mac_rx_valid_o  : out   std_logic;
+    user_mac_rx_data_o   : out   std_logic_vector(G_USER_BYTES * 8 - 1 downto 0);
+    user_mac_rx_last_o   : out   std_logic;
+    user_mac_rx_bytes_o  : out   natural range 0 to G_USER_BYTES;
+    user_mac_tx_ready_o  : out   std_logic;
+    user_mac_tx_valid_i  : in    std_logic;
+    user_mac_tx_data_i   : in    std_logic_vector(G_USER_BYTES * 8 - 1 downto 0);
+    user_mac_tx_last_i   : in    std_logic;
+    user_mac_tx_bytes_i  : in    natural range 0 to G_USER_BYTES
+  );
+end entity mega65_wrapper;
+
+architecture synthesis of mega65_wrapper is
+
+  signal vga_clk : std_logic;
+  signal vga_rst : std_logic;
+  signal eth_clk : std_logic;
+  signal eth_rst : std_logic;
+
+begin
+
+  ---------------------------------------------------------
+  -- Local Clock and Reset
+  ---------------------------------------------------------
+
+  clk_rst_inst : entity work.clk_rst
+    port map (
+      clk_i      => sys_clk_i,  -- 100 MHz
+      rst_i      => sys_rst_i,
+      user_clk_o => user_clk_o, -- 100 MHz
+      user_rst_o => user_rst_o,
+      eth_clk_o  => eth_clk,    -- 50 MHz
+      eth_rst_o  => eth_rst,
+      vga_clk_o  => vga_clk,    -- 27 MHz
+      vga_rst_o  => vga_rst
+    ); -- clk_rst_inst
+
+
+  ---------------------------------------------------------
+  -- Local Clock and Reset
+  ---------------------------------------------------------
+
+  uart_serdes_inst : entity work.uart_serdes
+    generic map (
+      G_DIVISOR => 100_000_000 / 115_200
+    )
+    port map (
+      clk_i      => user_clk_o,
+      rst_i      => user_rst_o,
+      tx_valid_i => user_uart_tx_valid_i,
+      tx_ready_o => user_uart_tx_ready_o,
+      tx_data_i  => user_uart_tx_data_i,
+      rx_valid_o => user_uart_rx_valid_o,
+      rx_ready_i => user_uart_rx_ready_i,
+      rx_data_o  => user_uart_rx_data_o,
+      uart_tx_o  => debug_txd_o,
+      uart_rx_i  => debug_rxd_i
+    ); -- uart_serdes_inst : entity work.uart_serdes
+
+
+  ----------------------------
+  -- Keyboard
+  ----------------------------
+
+  m2m_keyb_inst : entity work.m2m_keyb
+    generic map (
+      G_SCAN_FREQUENCY => 1000
+    )
+    port map (
+      clk_main_i       => user_clk_o,
+      clk_main_speed_i => 100_000_000,
+      kio8_o           => kb_io0_o,
+      kio9_o           => kb_io1_o,
+      kio10_i          => kb_io2_i,
+      enable_core_i    => '1',
+      key_num_o        => user_key_num_o,
+      key_pressed_n_o  => user_key_pressed_n_o,
+      power_led_i      => '0',
+      power_led_col_i  => X"000000",
+      drive_led_i      => '0',
+      drive_led_col_i  => X"000000",
+      qnice_keys_n_o   => open
+    ); -- m2m_keyb_inst : entity work.m2m_keyb
+
+
+  --------------------------------------------------
+  -- Instantiate VGA wrapper
+  --------------------------------------------------
+
+  vga_wrapper_inst : entity work.vga_wrapper
+    port map (
+      user_clk_i      => user_clk_o,
+      user_rst_i      => user_rst_o,
+      user_vga_addr_i => user_vga_addr_i,
+      user_vga_data_i => user_vga_data_i,
+      user_vga_wren_i => user_vga_wren_i,
+      --
+      vdac_blank_n_o  => vdac_blank_n_o,
+      vdac_clk_o      => vdac_clk_o,
+      vdac_psave_n_o  => vdac_psave_n_o,
+      vdac_sync_n_o   => vdac_sync_n_o,
+      vga_blue_o      => vga_blue_o,
+      vga_green_o     => vga_green_o,
+      vga_hs_o        => vga_hs_o,
+      vga_red_o       => vga_red_o,
+      vga_vs_o        => vga_vs_o
+    ); -- vga_wrapper_inst : entity work.vga_wrapper
+
+
+  --------------------------------------------------
+  -- Instantiate Ethernet module
+  --------------------------------------------------
+
+  eth_inst : entity work.eth
+    port map (
+      mac_clk_i      => user_clk_o,
+      mac_rst_i      => user_rst_o,
+      mac_rx_valid_o => user_rx_valid_o,
+      mac_rx_data_o  => user_rx_data_o,
+      mac_rx_last_o  => user_rx_last_o,
+      mac_rx_bytes_o => user_rx_bytes_o,
+      mac_tx_valid_i => user_tx_valid_i,
+      mac_tx_data_i  => user_tx_data_i,
+      mac_tx_last_i  => user_tx_last_i,
+      mac_tx_bytes_i => user_tx_bytes_i,
+      eth_clk_i      => eth_clk,
+      eth_rst_i      => eth_rst,
+      eth_clk_o      => eth_clk_o,
+      eth_rst_n_o    => eth_rst_n_o,
+      eth_led2_o     => eth_led2_o,
+      eth_mdc_o      => eth_mdc_o,
+      eth_mdio_io    => eth_mdio_io,
+      eth_rx_d_i     => eth_rx_d_i,
+      eth_crs_dv_i   => eth_crs_dv_i,
+      eth_rxer_i     => eth_rxer_i,
+      eth_tx_d_o     => eth_tx_d_o,
+      eth_tx_en_o    => eth_tx_en_o
+    ); -- eth_inst
+
+end architecture synthesis;
+
