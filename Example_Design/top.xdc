@@ -132,7 +132,7 @@ create_generated_clock -name vga_clk          [get_pins  mega65_wrapper_inst/clk
 # Timing Exceptions
 ###############################################################################
 
-set_false_path -from                          [get_ports vga_rst_i];                         # Asynchronous reset
+set_false_path -from                          [get_ports sys_rst_i];                         # Asynchronous reset
 
 
 ###############################################################################

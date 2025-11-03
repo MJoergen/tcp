@@ -126,7 +126,7 @@ begin
 
   vga_addr       <= vga_y & vga_x;
   vga_char       <= vga_rd_data;
-  vga_colors     <= x"CC44";
+  vga_colors     <= vga_rd_data(3 downto 0) & vga_rd_data & not vga_rd_data(7 downto 4);
 
   vga_proc : process (vga_clk_i)
   begin
@@ -138,9 +138,9 @@ begin
       vga_red_o   <= (others => '0');
 
       if vga_de = '1' then
-        vga_blue_o  <= vga_rgb;
-        vga_green_o <= vga_rgb;
-        vga_red_o   <= vga_rgb;
+        vga_blue_o  <= vga_rgb(1 downto 0) & vga_rgb(1 downto 0) & vga_rgb(1 downto 0) & vga_rgb(1 downto 0);
+        vga_green_o <= vga_rgb(4 downto 2) & vga_rgb(4 downto 2) & vga_rgb(4 downto 3);
+        vga_red_o   <= vga_rgb(7 downto 5) & vga_rgb(7 downto 5) & vga_rgb(7 downto 6);
       end if;
     end if;
   end process vga_proc;

@@ -123,6 +123,12 @@ begin
       user_mac_tx_last_i   => user_mac_tx_last
     ); -- mega65_wrapper_inst : entity work.mega65_wrapper
 
+  -- Loopback
+  user_uart_rx_ready <= user_uart_tx_ready;
+  user_uart_tx_valid <= user_uart_rx_valid;
+  user_uart_tx_data  <= user_uart_rx_data;
+
+
   design_inst : entity work.design
     port map (
       clk_i          => user_clk,

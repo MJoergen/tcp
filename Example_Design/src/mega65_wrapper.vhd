@@ -159,9 +159,9 @@ begin
       key_num_o        => user_key_num_o,
       key_pressed_n_o  => user_key_pressed_n_o,
       power_led_i      => '0',
-      power_led_col_i  => X"000000",
+      power_led_col_i  => X"445566",
       drive_led_i      => '0',
-      drive_led_col_i  => X"000000",
+      drive_led_col_i  => X"665544",
       qnice_keys_n_o   => open
     ); -- m2m_keyb_inst : entity work.m2m_keyb
 
