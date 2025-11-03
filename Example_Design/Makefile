@@ -1,12 +1,13 @@
 # List of library files
-SRC_DIR = src
-#SRC += $(SRC_DIR)/axi_pipe_flexible.vhd
-#SRC += $(SRC_DIR)/ip_wrapper.vhd
-#SRC += $(SRC_DIR)/mac_wrapper.vhd
-#SRC += $(SRC_DIR)/tcp_protocol.vhd
-#SRC += $(SRC_DIR)/tcp_wrapper.vhd
+LIB_SRC_DIR = ../src
+SRC += $(LIB_SRC_DIR)/axi_pipe_flexible.vhd
+SRC += $(LIB_SRC_DIR)/mac_wrapper.vhd
+#SRC += $(LIB_SRC_DIR)/ip_wrapper.vhd
+#SRC += $(LIB_SRC_DIR)/tcp_protocol.vhd
+#SRC += $(LIB_SRC_DIR)/tcp_wrapper.vhd
 
 # List of platform files
+SRC_DIR = src
 SRC += $(SRC_DIR)/clk_rst.vhd
 SRC += $(SRC_DIR)/mega65/axi_dropper.vhd
 SRC += $(SRC_DIR)/mega65/axi_fifo_sync.vhd
@@ -28,7 +29,9 @@ SRC += $(SRC_DIR)/mega65_wrapper.vhd
 SRC += $(SRC_DIR)/top.vhd
 
 # List of Example Design files
-#SRC += $(SRC_DIR)/design.vhd
+SRC += $(SRC_DIR)/byte2wide.vhd
+SRC += $(SRC_DIR)/wide2byte.vhd
+SRC += $(SRC_DIR)/design.vhd
 
 # Top level entity
 TOP = top

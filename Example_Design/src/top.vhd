@@ -123,24 +123,22 @@ begin
       user_mac_tx_last_i   => user_mac_tx_last
     ); -- mega65_wrapper_inst : entity work.mega65_wrapper
 
---  design_inst : entity work.design
---    generic map (
---      G_ETH_BYTES => C_USER_BYTES
---    )
---    port map (
---      clk_i          => user_clk,
---      rst_i          => user_rst,
---      eth_rx_ready_o => user_rx_ready,
---      eth_rx_valid_i => user_rx_valid,
---      eth_rx_data_i  => user_rx_data,
---      eth_rx_last_i  => user_rx_last,
---      eth_rx_bytes_i => user_rx_bytes,
---      eth_tx_ready_i => user_tx_ready,
---      eth_tx_valid_o => user_tx_valid,
---      eth_tx_data_o  => user_tx_data,
---      eth_tx_last_o  => user_tx_last,
---      eth_tx_bytes_o => user_tx_bytes
---    ); -- design_inst : entity work.design
+  design_inst : entity work.design
+    port map (
+      clk_i          => user_clk,
+      rst_i          => user_rst,
+      eth_rx_ready_o => user_mac_rx_ready,
+      eth_rx_valid_i => user_mac_rx_valid,
+      eth_rx_data_i  => user_mac_rx_data,
+      eth_rx_last_i  => user_mac_rx_last,
+      eth_tx_ready_i => user_mac_tx_ready,
+      eth_tx_valid_o => user_mac_tx_valid,
+      eth_tx_data_o  => user_mac_tx_data,
+      eth_tx_last_o  => user_mac_tx_last,
+      vga_addr_o     => user_vga_addr,
+      vga_data_o     => user_vga_data,
+      vga_wren_o     => user_vga_wren
+    ); -- design_inst : entity work.design
 
 end architecture synthesis;
 
