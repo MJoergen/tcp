@@ -54,6 +54,10 @@ end entity m2m_keyb;
 
 architecture synthesis of m2m_keyb is
 
+  signal matrix_ram_offset : integer range 0 to 15;
+  signal matrix_dia        : std_logic_vector(7 downto 0);
+  signal keyram_wea        : std_logic_vector(7 downto 0);
+
   signal matrix_col     : std_logic_vector(7 downto 0);
   signal matrix_col_idx : integer range 0 to 15         := 0;
   signal key_num        : integer range 0 to 79;
@@ -71,28 +75,40 @@ begin
   qnice_keys_n_o  <= keys_n;
 
   mega65kbd_to_matrix_inst : entity work.mega65kbd_to_matrix
+    generic map (
+      G_CLOCK_KHZ => 100_000
+    )
     port map (
-      ioclock           => clk_main_i,
-      clock_frequency   => clk_main_speed_i,
+      clk_i               => clk_main_i,
+      rst_i               => '0',
 
       -- _steady means that the led stays on steadily
       -- _blinking means that the led is blinking
       -- The colors are specified as BGR (reverse RGB)
-      powerled_steady   => power_led_i,
-      powerled_col      => power_led_col_i(7 downto 0) & power_led_col_i(15 downto 8) & power_led_col_i(23 downto 16), -- RGB to BGR
-      driveled_steady   => drive_led_i,
-      driveled_blinking => '0',
-      driveled_col      => drive_led_col_i(7 downto 0) & drive_led_col_i(15 downto 8) & drive_led_col_i(23 downto 16), -- RGB to BGR
+      powerled_steady_i   => power_led_i,
+      powerled_col_i      => power_led_col_i(7 downto 0) & power_led_col_i(15 downto 8) & power_led_col_i(23 downto 16), -- RGB to BGR
+      driveled_steady_i   => drive_led_i,
+      driveled_blinking_i => '0',
+      driveled_col_i      => drive_led_col_i(7 downto 0) & drive_led_col_i(15 downto 8) & drive_led_col_i(23 downto 16), -- RGB to BGR
 
-      kio8              => kio8_o,
-      kio9              => kio9_o,
-      kio10             => kio10_i,
+      matrix_ram_offset_o => matrix_ram_offset,
+      matrix_dia_o        => matrix_dia,
+      keyram_wea_o        => keyram_wea,
 
-      matrix_col        => matrix_col,
-      matrix_col_idx    => matrix_col_idx,
-
-      capslock_out      => open
+      kio8_o              => kio8_o,
+      kio9_o              => kio9_o,
+      kio10_i             => kio10_i
     ); -- mega65kbd_to_matrix_inst : entity work.mega65kbd_to_matrix
+
+  kb_matrix_ram_inst : entity work.kb_matrix_ram
+    port map (
+      clka_i     => clk_main_i,
+      addressa_i => matrix_ram_offset,
+      dia_i      => matrix_dia,
+      wea_i      => keyram_wea,
+      addressb_i => matrix_col_idx,
+      dob_o      => matrix_col
+    ); -- kb_matrix_ram_inst : entity work.kb_matrix_ram
 
   matrix_to_keynum_inst : entity work.matrix_to_keynum
     generic map (

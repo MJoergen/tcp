@@ -13,13 +13,7 @@ library work;
 
 -- This provides a generic user interface to the MEGA65 platform
 
--- The first byte of a frame is in data(7 downto 0).
--- Wheneven last = 0 then bytes = G_USER_BYTES.
-
 entity mega65_wrapper is
-  generic (
-    G_USER_BYTES : natural
-  );
   port (
     --------------------------------------------------------
     -- Connect to MEGA65 I/O ports
@@ -78,8 +72,8 @@ entity mega65_wrapper is
     user_uart_tx_data_i  : in    std_logic_vector(7 downto 0);
 
     -- Keyboard events
-    user_key_num_o            : out   integer range 0 to 79; -- cycles through all keys with G_SCAN_FREQUENCY
-    user_key_pressed_n_o      : out   std_logic;             -- low active: debounced feedback: is kb_key_num_o pressed right now?
+    user_key_num_o       : out   integer range 0 to 79; -- cycles through all keys with G_SCAN_FREQUENCY
+    user_key_pressed_n_o : out   std_logic;             -- low active: debounced feedback: is kb_key_num_o pressed right now?
 
 
     -- VGA frame buffer
@@ -90,14 +84,12 @@ entity mega65_wrapper is
     -- Ethernet
     user_mac_rx_ready_i  : in    std_logic;
     user_mac_rx_valid_o  : out   std_logic;
-    user_mac_rx_data_o   : out   std_logic_vector(G_USER_BYTES * 8 - 1 downto 0);
+    user_mac_rx_data_o   : out   std_logic_vector(7 downto 0);
     user_mac_rx_last_o   : out   std_logic;
-    user_mac_rx_bytes_o  : out   natural range 0 to G_USER_BYTES;
     user_mac_tx_ready_o  : out   std_logic;
     user_mac_tx_valid_i  : in    std_logic;
-    user_mac_tx_data_i   : in    std_logic_vector(G_USER_BYTES * 8 - 1 downto 0);
-    user_mac_tx_last_i   : in    std_logic;
-    user_mac_tx_bytes_i  : in    natural range 0 to G_USER_BYTES
+    user_mac_tx_data_i   : in    std_logic_vector(7 downto 0);
+    user_mac_tx_last_i   : in    std_logic
   );
 end entity mega65_wrapper;
 
@@ -116,8 +108,8 @@ begin
 
   clk_rst_inst : entity work.clk_rst
     port map (
-      clk_i      => sys_clk_i,  -- 100 MHz
-      rst_i      => sys_rst_i,
+      sys_clk_i  => sys_clk_i,  -- 100 MHz
+      sys_rst_i  => sys_rst_i,
       user_clk_o => user_clk_o, -- 100 MHz
       user_rst_o => user_rst_o,
       eth_clk_o  => eth_clk,    -- 50 MHz
@@ -186,6 +178,8 @@ begin
       user_vga_data_i => user_vga_data_i,
       user_vga_wren_i => user_vga_wren_i,
       --
+      vga_clk_i       => vga_clk,
+      vga_rst_i       => vga_rst,
       vdac_blank_n_o  => vdac_blank_n_o,
       vdac_clk_o      => vdac_clk_o,
       vdac_psave_n_o  => vdac_psave_n_o,
@@ -202,31 +196,34 @@ begin
   -- Instantiate Ethernet module
   --------------------------------------------------
 
-  eth_inst : entity work.eth
+  eth_wrapper_inst : entity work.eth_wrapper
+    generic map (
+      G_SIM => false
+    )
     port map (
-      mac_clk_i      => user_clk_o,
-      mac_rst_i      => user_rst_o,
-      mac_rx_valid_o => user_rx_valid_o,
-      mac_rx_data_o  => user_rx_data_o,
-      mac_rx_last_o  => user_rx_last_o,
-      mac_rx_bytes_o => user_rx_bytes_o,
-      mac_tx_valid_i => user_tx_valid_i,
-      mac_tx_data_i  => user_tx_data_i,
-      mac_tx_last_i  => user_tx_last_i,
-      mac_tx_bytes_i => user_tx_bytes_i,
-      eth_clk_i      => eth_clk,
-      eth_rst_i      => eth_rst,
-      eth_clk_o      => eth_clk_o,
-      eth_rst_n_o    => eth_rst_n_o,
-      eth_led2_o     => eth_led2_o,
-      eth_mdc_o      => eth_mdc_o,
-      eth_mdio_io    => eth_mdio_io,
-      eth_rx_d_i     => eth_rx_d_i,
-      eth_crs_dv_i   => eth_crs_dv_i,
-      eth_rxer_i     => eth_rxer_i,
-      eth_tx_d_o     => eth_tx_d_o,
-      eth_tx_en_o    => eth_tx_en_o
-    ); -- eth_inst
+      user_clk_i      => user_clk_o,
+      user_rst_i      => user_rst_o,
+      user_rx_ready_i => user_mac_rx_ready_i,
+      user_rx_valid_o => user_mac_rx_valid_o,
+      user_rx_data_o  => user_mac_rx_data_o,
+      user_rx_last_o  => user_mac_rx_last_o,
+      user_tx_ready_o => user_mac_tx_ready_o,
+      user_tx_valid_i => user_mac_tx_valid_i,
+      user_tx_data_i  => user_mac_tx_data_i,
+      user_tx_last_i  => user_mac_tx_last_i,
+      eth_clk_i       => eth_clk,
+      eth_rst_i       => eth_rst,
+      eth_clk_o       => eth_clk_o,
+      eth_rst_n_o     => eth_rst_n_o,
+      eth_led2_o      => eth_led2_o,
+      eth_mdc_o       => eth_mdc_o,
+      eth_mdio_io     => eth_mdio_io,
+      eth_rx_d_i      => eth_rx_d_i,
+      eth_crs_dv_i    => eth_crs_dv_i,
+      eth_rxer_i      => eth_rxer_i,
+      eth_tx_d_o      => eth_tx_d_o,
+      eth_tx_en_o     => eth_tx_en_o
+    ); -- eth_wrapper_inst
 
 end architecture synthesis;
 

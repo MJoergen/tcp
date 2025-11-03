@@ -68,8 +68,8 @@ set_property PACKAGE_PIN V14  [get_ports vga_vs_o               ];            # 
 # I/O Standards
 ###############################################################################
 
-set_property -dict {IOSTANDARD LVCMOS33          }  [get_ports clk_i               ];
-set_property -dict {IOSTANDARD LVCMOS33          }  [get_ports rst_i               ];
+set_property -dict {IOSTANDARD LVCMOS33          }  [get_ports sys_clk_i           ];
+set_property -dict {IOSTANDARD LVCMOS33          }  [get_ports sys_rst_i           ];
 set_property -dict {IOSTANDARD LVCMOS33  IOB TRUE}  [get_ports debug_rxd_i         ];
 set_property -dict {IOSTANDARD LVCMOS33  IOB TRUE}  [get_ports debug_txd_o         ];
 set_property -dict {IOSTANDARD LVCMOS33  IOB TRUE}  [get_ports eth_clk_o           ];
@@ -122,17 +122,17 @@ set_property -dict {IOSTANDARD LVCMOS33  IOB TRUE}  [get_ports vga_vs_o         
 # Clocks
 ###############################################################################
 
-create_clock           -name clk   -period 10 [get_ports clk_i];
-create_generated_clock -name user_clk         [get_pins  clk_rst_inst/mmcme2_base_inst/CLKOUT0];
-create_generated_clock -name eth_clk          [get_pins  clk_rst_inst/mmcme2_base_inst/CLKOUT1];
-create_generated_clock -name vga_clk          [get_pins  clk_rst_inst/mmcme2_base_inst/CLKOUT2];
+create_clock           -name clk   -period 10 [get_ports sys_clk_i];
+create_generated_clock -name user_clk         [get_pins  mega65_wrapper_inst/clk_rst_inst/mmcme2_base_inst/CLKOUT0];
+create_generated_clock -name eth_clk          [get_pins  mega65_wrapper_inst/clk_rst_inst/mmcme2_base_inst/CLKOUT1];
+create_generated_clock -name vga_clk          [get_pins  mega65_wrapper_inst/clk_rst_inst/mmcme2_base_vga_inst/CLKOUT0];
 
 
 ###############################################################################
 # Timing Exceptions
 ###############################################################################
 
-set_false_path -from                     [get_ports rst_i];                         # Asynchronous reset
+set_false_path -from                          [get_ports vga_rst_i];                         # Asynchronous reset
 
 
 ###############################################################################

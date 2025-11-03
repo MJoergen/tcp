@@ -48,21 +48,17 @@ end entity top;
 
 architecture synthesis of top is
 
-  constant C_USER_BYTES : natural := 10;
-
   signal   user_clk            : std_logic;
   signal   user_rst            : std_logic;
   signal   user_mac_rx_ready   : std_logic;
   signal   user_mac_rx_valid   : std_logic;
-  signal   user_mac_rx_data    : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
+  signal   user_mac_rx_data    : std_logic_vector(7 downto 0);
   signal   user_mac_rx_last    : std_logic;
-  signal   user_mac_rx_bytes   : natural range 0 to C_USER_BYTES;
   signal   user_mac_tx_ready   : std_logic;
   signal   user_mac_tx_valid   : std_logic;
-  signal   user_mac_tx_data    : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
+  signal   user_mac_tx_data    : std_logic_vector(7 downto 0);
   signal   user_mac_tx_last    : std_logic;
-  signal   user_mac_tx_bytes   : natural range 0 to C_USER_BYTES;
-  signal   user_uart_rx_ready_ : std_logic;
+  signal   user_uart_rx_ready  : std_logic;
   signal   user_uart_rx_valid  : std_logic;
   signal   user_uart_rx_data   : std_logic_vector(7 downto 0);
   signal   user_uart_tx_ready  : std_logic;
@@ -77,9 +73,6 @@ architecture synthesis of top is
 begin
 
   mega65_wrapper_inst : entity work.mega65_wrapper
-    generic map (
-      G_USER_BYTES => C_USER_BYTES
-    )
     port map (
       sys_clk_i            => sys_clk_i,
       sys_rst_i            => sys_rst_i,
@@ -124,12 +117,10 @@ begin
       user_mac_rx_valid_o  => user_mac_rx_valid,
       user_mac_rx_data_o   => user_mac_rx_data,
       user_mac_rx_last_o   => user_mac_rx_last,
-      user_mac_rx_bytes_o  => user_mac_rx_bytes,
       user_mac_tx_ready_o  => user_mac_tx_ready,
       user_mac_tx_valid_i  => user_mac_tx_valid,
       user_mac_tx_data_i   => user_mac_tx_data,
-      user_mac_tx_last_i   => user_mac_tx_last,
-      user_mac_tx_bytes_i  => user_mac_tx_bytes
+      user_mac_tx_last_i   => user_mac_tx_last
     ); -- mega65_wrapper_inst : entity work.mega65_wrapper
 
 --  design_inst : entity work.design

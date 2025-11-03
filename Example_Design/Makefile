@@ -1,22 +1,34 @@
 # List of library files
 SRC_DIR = src
-SRC += $(SRC_DIR)/axi_pipe_flexible.vhd
-SRC += $(SRC_DIR)/ip_wrapper.vhd
-SRC += $(SRC_DIR)/mac_wrapper.vhd
-SRC += $(SRC_DIR)/tcp_protocol.vhd
-SRC += $(SRC_DIR)/tcp_wrapper.vhd
+#SRC += $(SRC_DIR)/axi_pipe_flexible.vhd
+#SRC += $(SRC_DIR)/ip_wrapper.vhd
+#SRC += $(SRC_DIR)/mac_wrapper.vhd
+#SRC += $(SRC_DIR)/tcp_protocol.vhd
+#SRC += $(SRC_DIR)/tcp_wrapper.vhd
+
 # List of platform files
+SRC += $(SRC_DIR)/clk_rst.vhd
+SRC += $(SRC_DIR)/mega65/axi_dropper.vhd
+SRC += $(SRC_DIR)/mega65/axi_fifo_sync.vhd
+SRC += $(SRC_DIR)/mega65/uart_serdes.vhd
+SRC += $(SRC_DIR)/mega65/tdp_ram.vhd
+SRC += $(SRC_DIR)/mega65/keyboard/kb_matrix_ram.vhd
+SRC += $(SRC_DIR)/mega65/keyboard/m2m_keyb.vhd
+SRC += $(SRC_DIR)/mega65/keyboard/matrix_to_keynum.vhd
+SRC += $(SRC_DIR)/mega65/keyboard/mega65kbd_to_matrix.vhd
+SRC += $(SRC_DIR)/mega65/vga/font.vhd
+SRC += $(SRC_DIR)/mega65/vga/video_chars.vhd
+SRC += $(SRC_DIR)/mega65/vga/video_modes_pkg.vhd
+SRC += $(SRC_DIR)/mega65/vga/video_sync.vhd
+SRC += $(SRC_DIR)/mega65/vga_wrapper.vhd
+SRC += $(SRC_DIR)/mega65/eth/eth_rmii.vhd
+SRC += $(SRC_DIR)/mega65/eth/eth_fifo.vhd
+SRC += $(SRC_DIR)/mega65/eth/eth_wrapper.vhd
 SRC += $(SRC_DIR)/mega65_wrapper.vhd
-SRC += $(SRC_DIR)/mega65/font.vhd
-SRC += $(SRC_DIR)/mega65/mega65kbd_to_matrix.vhd
-SRC += $(SRC_DIR)/mega65/video_chars.vhd
-SRC += $(SRC_DIR)/mega65/video_modes_pkg.vhd
-SRC += $(SRC_DIR)/mega65/video_sync.vhd
-# List of design files
-SRC += $(SRC_DIR)/design.vhd
+SRC += $(SRC_DIR)/top.vhd
 
 # List of Example Design files
-SRC += top.vhd
+#SRC += $(SRC_DIR)/design.vhd
 
 # Top level entity
 TOP = top
@@ -55,7 +67,7 @@ build/$(TOP).tcl: Makefile
 	echo "set_property PART $(PART) [current_project]" >> $@
 	echo "set_property XPM_LIBRARIES {XPM_CDC XPM_FIFO} [current_project]" >> $@
 	echo "synth_design -top $(TOP) $(OPTIONS) -generic { $(GENERICS) }" >> $@
-	echo "source ../synth/debug.tcl" >> $@
+#	echo "source ../synth/debug.tcl" >> $@
 	echo "opt_design" >> $@
 	echo "place_design" >> $@
 	echo "phys_opt_design" >> $@

@@ -86,7 +86,7 @@ architecture synthesis of matrix_to_keynum is
 
   signal   reset : std_logic                                        := '1';
 
-  signal   key_num : integer range 0 to MAXKEY                      := 0;
+  signal   key_num : integer range 0 to C_MAXKEY                    := 0;
 
 begin
 
@@ -96,9 +96,9 @@ begin
   -- As long as the core only uses one clock frequency, then Vivado will be able to treat everything
   -- here as constants and optimize away any logic, so that there is nothing to constrain in the XDC file.
   -- @TODO We need to find a more elegant solution in future
-  keyscan_delay      <= clock_frequency / (72 * G_SCAN_FREQUENCY);
+  keyscan_delay      <= clock_frequency_i / (72 * G_SCAN_FREQUENCY);
   -- repeat_start_timer <= clock_frequency / scan_frequency / 2;  -- 0.5 sec
-  repeat_again_timer <= clock_frequency / G_SCAN_FREQUENCY / 10; -- 0.1 sec
+  repeat_again_timer <= clock_frequency_i / G_SCAN_FREQUENCY / 10; -- 0.1 sec
 
   -- This is our first local copy that gets updated continuously by snooping
   -- the incoming column state from the keymapper.  It exists mostly so we have
@@ -154,7 +154,7 @@ begin
     read_index_v       := 0;
     key_num_vec_v      := "0000000";
     key_num_bit_v      := 0;
-    key_num_bit_chop_v := 0;
+    key_num_bit_chop_v := "000";
     debounce_mask_v    := x"00";
     last_mask_v        := x"00";
     dks_v              := '1';
@@ -165,7 +165,7 @@ begin
         read_index_v    := keyscan_counter - 1;
         debounce_mask_v := x"FF";
       end if;
-      if suppress_key_glitches = '1' then
+      if suppress_key_glitches_i = '1' then
         debounce_in <= current_col_out and debounce_col_out;
       else
         debounce_in <= current_col_out;
@@ -173,11 +173,11 @@ begin
     else
       debounce_in        <= current_col_out;
       key_num_vec_v      := std_logic_vector(to_unsigned(key_num, 7));
-      read_index_v       := to_integer(unsigned(key_num_vec(6 downto 3)));
-      key_num_bit_v      := to_integer(unsigned(key_num_vec(2 downto 0)));
-      key_num_bit_chop_v := to_unsigned(key_num_bit, 7)(2 downto 0);
+      read_index_v       := to_integer(unsigned(key_num_vec_v(6 downto 3)));
+      key_num_bit_v      := to_integer(unsigned(key_num_vec_v(2 downto 0)));
+      key_num_bit_chop_v := to_unsigned(key_num_bit_v, 7)(2 downto 0);
 
-      case key_num_bit_chop is
+      case key_num_bit_chop_v is
 
         when "000" =>
           last_mask_v := "00000001";
@@ -208,19 +208,19 @@ begin
 
       end case;
 
-      debounce_mask_v := last_mask;
-      dks_v           := debounce_col_out(key_num_bit);
-      lks_v           := last_col_out(key_num_bit);
+      debounce_mask_v := last_mask_v;
+      dks_v           := debounce_col_out(key_num_bit_v);
+      lks_v           := last_col_out(key_num_bit_v);
     end if;
 
     -- update debounce and last bits
-    debounce_key_state  <= dks;
-    last_key_state      <= lks;
+    debounce_key_state  <= dks_v;
+    last_key_state      <= lks_v;
 
     -- update other ram input signals
-    ram_read_index      <= read_index;
-    debounce_write_mask <= debounce_mask;
-    last_write_mask     <= last_mask;
+    ram_read_index      <= read_index_v;
+    debounce_write_mask <= debounce_mask_v;
+    last_write_mask     <= last_mask_v;
   end process comb_proc;
 
   key_proc : process (clk_i)
@@ -242,12 +242,12 @@ begin
       -- C= takes precedence over SHIFT, so that we can have C= + cursor keys
       -- as unique keys
 
-      bucky_key <= bucky_key_internal;
+      bucky_key_o <= bucky_key_internal;
 
       -- Check for key press events
       if keyscan_counter /= 0 then
-        keyscan_counter <= keyscan_counter - 1;
-        ascii_key_valid <= '0';
+        keyscan_counter   <= keyscan_counter - 1;
+        ascii_key_valid_o <= '0';
       else
         --        report "Checking matrix for key event, matrix=" & to_string(matrix);
 
@@ -278,16 +278,16 @@ begin
 
         end case;
 
-        m65_key_num      <= key_num;
-        m65_key_status_n <= debounce_key_state;
+        m65_key_num_o      <= key_num;
+        m65_key_status_n_o <= debounce_key_state;
 
-        keyscan_counter  <= keyscan_delay;
+        keyscan_counter    <= keyscan_delay;
 
-        if key_num /= MAXKEY then
+        if key_num /= C_MAXKEY then
           key_num <= key_num + 1;
         else
           key_num <= 0;
-          -- If we hit key_num MAXKEY and the repeat key has expired then reset it.
+          -- If we hit key_num C_MAXKEY and the repeat key has expired then reset it.
           -- otherwise we set it so we do the repeat check on the next pass and
           -- then reset it.
           if repeat_timer_expired = '1' then
