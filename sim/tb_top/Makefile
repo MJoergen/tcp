@@ -6,9 +6,9 @@
 SRC += tb_top.vhd
 SRC += $(EXAMPLE_SRC_DIR)/clk_rst.vhd
 SRC += $(EXAMPLE_SRC_DIR)/mega65/keyboard/kb_matrix_ram.vhd
-SRC += $(EXAMPLE_SRC_DIR)/mega65/keyboard/m2m_keyb.vhd
 SRC += $(EXAMPLE_SRC_DIR)/mega65/keyboard/matrix_to_keynum.vhd
 SRC += $(EXAMPLE_SRC_DIR)/mega65/keyboard/mega65kbd_to_matrix.vhd
+SRC += $(EXAMPLE_SRC_DIR)/mega65/keyboard/keyboard_wrapper.vhd
 SRC += $(EXAMPLE_SRC_DIR)/mega65/vga/font.vhd
 SRC += $(EXAMPLE_SRC_DIR)/mega65/vga/video_chars.vhd
 SRC += $(EXAMPLE_SRC_DIR)/mega65/vga/video_modes_pkg.vhd

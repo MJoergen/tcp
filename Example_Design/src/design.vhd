@@ -4,19 +4,25 @@ library ieee;
 
 entity design is
   port (
-    clk_i          : in    std_logic;
-    rst_i          : in    std_logic;
-    eth_rx_ready_o : out   std_logic;
-    eth_rx_valid_i : in    std_logic;
-    eth_rx_data_i  : in    std_logic_vector(7 downto 0);
-    eth_rx_last_i  : in    std_logic;
-    eth_tx_ready_i : in    std_logic;
-    eth_tx_valid_o : out   std_logic;
-    eth_tx_data_o  : out   std_logic_vector(7 downto 0);
-    eth_tx_last_o  : out   std_logic;
-    vga_addr_o     : out   std_logic_vector(15 downto 0);
-    vga_data_o     : out   std_logic_vector(7 downto 0);
-    vga_wren_o     : out   std_logic
+    clk_i           : in    std_logic;
+    rst_i           : in    std_logic;
+    uart_rx_ready_o : out   std_logic;
+    uart_rx_valid_i : in    std_logic;
+    uart_rx_data_i  : in    std_logic_vector(7 downto 0);
+    uart_tx_ready_i : in    std_logic;
+    uart_tx_valid_o : out   std_logic;
+    uart_tx_data_o  : out   std_logic_vector(7 downto 0);
+    eth_rx_ready_o  : out   std_logic;
+    eth_rx_valid_i  : in    std_logic;
+    eth_rx_data_i   : in    std_logic_vector(7 downto 0);
+    eth_rx_last_i   : in    std_logic;
+    eth_tx_ready_i  : in    std_logic;
+    eth_tx_valid_o  : out   std_logic;
+    eth_tx_data_o   : out   std_logic_vector(7 downto 0);
+    eth_tx_last_o   : out   std_logic;
+    vga_addr_o      : out   std_logic_vector(15 downto 0);
+    vga_data_o      : out   std_logic_vector(7 downto 0);
+    vga_wren_o      : out   std_logic
   );
 end entity design;
 
@@ -59,6 +65,14 @@ architecture synthesis of design is
   signal   state : state_type     := IDLE_ST;
 
 begin
+
+  -- Loopback
+  uart_rx_ready_o <= uart_tx_ready_i;
+  uart_tx_valid_o <= uart_rx_valid_i;
+  uart_tx_data_o  <= uart_rx_data_i;
+
+
+  eth_tx_valid_o  <= '0';
 
   --  byte2wide_inst : entity work.byte2wide
   --    generic map (
@@ -132,8 +146,8 @@ begin
   --      eth_payload_tx_last_o  => eth_tx_wide_last
   --    ); -- mac_wrapper_inst : entity work.mac_wrapper
 
-  eth_rx_ready_o <= '1' when state = IDLE_ST else
-                    '0';
+  eth_rx_ready_o  <= '1' when state = IDLE_ST else
+                     '0';
 
   vga_proc : process (clk_i)
     --

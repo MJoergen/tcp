@@ -1,9 +1,10 @@
 library ieee;
   use ieee.std_logic_1164.all;
-  use ieee.numeric_std_unsigned.all;
+  use ieee.numeric_std.all;
 
 entity top is
   generic (
+    G_SIM       : boolean := false;
     G_TIMESTAMP : std_logic_vector(31 downto 0); -- Automatically filled out by Vivado
     G_COMMIT_ID : std_logic_vector(31 downto 0)  -- Automatically filled out by Vivado
   );
@@ -48,32 +49,41 @@ end entity top;
 
 architecture synthesis of top is
 
-  signal   user_clk            : std_logic;
-  signal   user_rst            : std_logic;
-  signal   user_mac_rx_ready   : std_logic;
-  signal   user_mac_rx_valid   : std_logic;
-  signal   user_mac_rx_data    : std_logic_vector(7 downto 0);
-  signal   user_mac_rx_last    : std_logic;
-  signal   user_mac_tx_ready   : std_logic;
-  signal   user_mac_tx_valid   : std_logic;
-  signal   user_mac_tx_data    : std_logic_vector(7 downto 0);
-  signal   user_mac_tx_last    : std_logic;
-  signal   user_uart_rx_ready  : std_logic;
-  signal   user_uart_rx_valid  : std_logic;
-  signal   user_uart_rx_data   : std_logic_vector(7 downto 0);
-  signal   user_uart_tx_ready  : std_logic;
-  signal   user_uart_tx_valid  : std_logic;
-  signal   user_uart_tx_data   : std_logic_vector(7 downto 0);
-  signal   user_key_num        : integer range 0 to 79;
-  signal   user_key_pressed_n  : std_logic;
-  signal   user_vga_addr       : std_logic_vector(15 downto 0);
-  signal   user_vga_data       : std_logic_vector(7 downto 0);
-  signal   user_vga_wren       : std_logic;
+  -- Example design runs in a single (internal) clock domain
+  signal user_clk           : std_logic;
+  signal user_rst           : std_logic;
+  signal user_mac_rx_ready  : std_logic;
+  signal user_mac_rx_valid  : std_logic;
+  signal user_mac_rx_data   : std_logic_vector(7 downto 0);
+  signal user_mac_rx_last   : std_logic;
+  signal user_mac_tx_ready  : std_logic;
+  signal user_mac_tx_valid  : std_logic;
+  signal user_mac_tx_data   : std_logic_vector(7 downto 0);
+  signal user_mac_tx_last   : std_logic;
+  signal user_uart_rx_ready : std_logic;
+  signal user_uart_rx_valid : std_logic;
+  signal user_uart_rx_data  : std_logic_vector(7 downto 0);
+  signal user_uart_tx_ready : std_logic;
+  signal user_uart_tx_valid : std_logic;
+  signal user_uart_tx_data  : std_logic_vector(7 downto 0);
+  signal user_key_num       : integer range 0 to 79;
+  signal user_key_pressed_n : std_logic;
+  signal user_vga_addr      : std_logic_vector(15 downto 0);
+  signal user_vga_data      : std_logic_vector(7 downto 0);
+  signal user_vga_wren      : std_logic;
 
 begin
 
+  ------------------------------------------------
+  -- Instantiate wrapper to MEGA65 platform
+  ------------------------------------------------
+
   mega65_wrapper_inst : entity work.mega65_wrapper
+    generic map (
+      G_SIM => G_SIM
+    )
     port map (
+      -- MEGA65 I/O ports
       sys_clk_i            => sys_clk_i,
       sys_rst_i            => sys_rst_i,
       debug_rxd_i          => debug_rxd_i,
@@ -100,6 +110,7 @@ begin
       eth_rxer_i           => eth_rxer_i,
       eth_tx_d_o           => eth_tx_d_o,
       eth_tx_en_o          => eth_tx_en_o,
+      -- Connection to Example Design
       user_clk_o           => user_clk,
       user_rst_o           => user_rst,
       user_uart_rx_ready_i => user_uart_rx_ready,
@@ -123,27 +134,32 @@ begin
       user_mac_tx_last_i   => user_mac_tx_last
     ); -- mega65_wrapper_inst : entity work.mega65_wrapper
 
-  -- Loopback
-  user_uart_rx_ready <= user_uart_tx_ready;
-  user_uart_tx_valid <= user_uart_rx_valid;
-  user_uart_tx_data  <= user_uart_rx_data;
 
+  ------------------------------------------------
+  -- Instantiate example design
+  ------------------------------------------------
 
   design_inst : entity work.design
     port map (
-      clk_i          => user_clk,
-      rst_i          => user_rst,
-      eth_rx_ready_o => user_mac_rx_ready,
-      eth_rx_valid_i => user_mac_rx_valid,
-      eth_rx_data_i  => user_mac_rx_data,
-      eth_rx_last_i  => user_mac_rx_last,
-      eth_tx_ready_i => user_mac_tx_ready,
-      eth_tx_valid_o => user_mac_tx_valid,
-      eth_tx_data_o  => user_mac_tx_data,
-      eth_tx_last_o  => user_mac_tx_last,
-      vga_addr_o     => user_vga_addr,
-      vga_data_o     => user_vga_data,
-      vga_wren_o     => user_vga_wren
+      clk_i           => user_clk,
+      rst_i           => user_rst,
+      uart_rx_ready_o => user_uart_rx_ready,
+      uart_rx_valid_i => user_uart_rx_valid,
+      uart_rx_data_i  => user_uart_rx_data,
+      uart_tx_ready_i => user_uart_tx_ready,
+      uart_tx_valid_o => user_uart_tx_valid,
+      uart_tx_data_o  => user_uart_tx_data,
+      eth_rx_ready_o  => user_mac_rx_ready,
+      eth_rx_valid_i  => user_mac_rx_valid,
+      eth_rx_data_i   => user_mac_rx_data,
+      eth_rx_last_i   => user_mac_rx_last,
+      eth_tx_ready_i  => user_mac_tx_ready,
+      eth_tx_valid_o  => user_mac_tx_valid,
+      eth_tx_data_o   => user_mac_tx_data,
+      eth_tx_last_o   => user_mac_tx_last,
+      vga_addr_o      => user_vga_addr,
+      vga_data_o      => user_vga_data,
+      vga_wren_o      => user_vga_wren
     ); -- design_inst : entity work.design
 
 end architecture synthesis;

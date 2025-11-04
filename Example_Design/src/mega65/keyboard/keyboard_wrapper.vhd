@@ -23,7 +23,7 @@ library ieee;
   use ieee.std_logic_1164.all;
   use ieee.numeric_std.all;
 
-entity m2m_keyb is
+entity keyboard_wrapper is
   generic (
     G_SCAN_FREQUENCY : integer := 1000 -- keyboard scan frequency in Herz, default: 1 kHz
   );
@@ -50,9 +50,9 @@ entity m2m_keyb is
     -- interface to QNICE: used by the firmware and the Shell (see sysdef.asm for details)
     qnice_keys_n_o   : out   std_logic_vector(15 downto 0)
   );
-end entity m2m_keyb;
+end entity keyboard_wrapper;
 
-architecture synthesis of m2m_keyb is
+architecture synthesis of keyboard_wrapper is
 
   signal matrix_ram_offset : integer range 0 to 15;
   signal matrix_dia        : std_logic_vector(7 downto 0);

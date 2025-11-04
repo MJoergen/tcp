@@ -42,6 +42,12 @@ entity vga_wrapper is
     vga_red_o       : out   std_logic_vector(7 downto 0);
     vga_vs_o        : out   std_logic
   );
+
+  attribute keep : string;
+  attribute keep of vga_blue_o  : signal is "true";
+  attribute keep of vga_green_o : signal is "true";
+  attribute keep of vga_red_o   : signal is "true";
+
 end entity vga_wrapper;
 
 architecture synthesis of vga_wrapper is
