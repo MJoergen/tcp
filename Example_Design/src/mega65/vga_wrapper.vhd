@@ -22,7 +22,7 @@ entity vga_wrapper is
 
     -- VGA frame buffer
     user_vga_addr_i : in    std_logic_vector(15 downto 0);
-    user_vga_data_i : in    std_logic_vector(7 downto 0);
+    user_vga_data_i : in    std_logic_vector(23 downto 0);
     user_vga_wren_i : in    std_logic;
 
     --------------------------------------------------------
@@ -68,7 +68,7 @@ architecture synthesis of vga_wrapper is
   signal   vga_colors : std_logic_vector(15 downto 0);
 
   signal   vga_addr    : std_logic_vector(15 downto 0);
-  signal   vga_rd_data : std_logic_vector(7 downto 0);
+  signal   vga_rd_data : std_logic_vector(23 downto 0);
 
 begin
 
@@ -79,7 +79,7 @@ begin
       G_INIT_FILE => "",
       G_RAM_STYLE => "block",
       G_ADDR_SIZE => 16,
-      G_DATA_SIZE => 8
+      G_DATA_SIZE => 24
     )
     port map (
       a_clk_i     => user_clk_i,
@@ -93,7 +93,7 @@ begin
       b_rst_i     => vga_rst_i,
       b_addr_i    => vga_addr,
       b_wr_en_i   => '0',
-      b_wr_data_i => X"00",
+      b_wr_data_i => X"000000",
       b_rd_en_i   => '1',
       b_rd_data_o => vga_rd_data
     ); -- tdp_ram_inst : entity work.tdp_ram
@@ -131,8 +131,8 @@ begin
     ); -- video_chars_inst : entity work.video_chars
 
   vga_addr       <= vga_y & vga_x;
-  vga_char       <= vga_rd_data;
-  vga_colors     <= vga_rd_data(3 downto 0) & vga_rd_data & not vga_rd_data(7 downto 4);
+  vga_char       <= vga_rd_data(7 downto 0);
+  vga_colors     <= vga_rd_data(23 downto 8);
 
   vga_proc : process (vga_clk_i)
   begin

@@ -70,7 +70,7 @@ architecture synthesis of top is
   signal user_key_num       : integer range 0 to 79;
   signal user_key_pressed_n : std_logic;
   signal user_vga_addr      : std_logic_vector(15 downto 0);
-  signal user_vga_data      : std_logic_vector(7 downto 0);
+  signal user_vga_data      : std_logic_vector(23 downto 0);
   signal user_vga_wren      : std_logic;
 
 begin

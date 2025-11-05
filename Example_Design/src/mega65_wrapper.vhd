@@ -75,7 +75,7 @@ entity mega65_wrapper is
 
     -- VGA frame buffer
     user_vga_addr_i      : in    std_logic_vector(15 downto 0);
-    user_vga_data_i      : in    std_logic_vector(7 downto 0);
+    user_vga_data_i      : in    std_logic_vector(23 downto 0);
     user_vga_wren_i      : in    std_logic;
 
     -- Ethernet

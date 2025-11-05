@@ -23,7 +23,7 @@ entity design is
     eth_tx_data_o   : out   std_logic_vector(7 downto 0);
     eth_tx_last_o   : out   std_logic;
     vga_addr_o      : out   std_logic_vector(15 downto 0);
-    vga_data_o      : out   std_logic_vector(7 downto 0);
+    vga_data_o      : out   std_logic_vector(23 downto 0);
     vga_wren_o      : out   std_logic
   );
 end entity design;
@@ -239,14 +239,14 @@ begin
             eth_rx_last <= eth_rx_last_i;
 
             vga_addr_o  <= vga_addr_o + 1;
-            vga_data_o  <= to_hex(eth_rx_data_i(7 downto 4));
+            vga_data_o  <= X"CC44" & to_hex(eth_rx_data_i(7 downto 4));
             vga_wren_o  <= '1';
             state       <= BUSY_ST;
           end if;
 
         when BUSY_ST =>
           vga_addr_o <= vga_addr_o + 1;
-          vga_data_o <= to_hex(eth_rx_data(3 downto 0));
+          vga_data_o <= X"CC44" & to_hex(eth_rx_data(3 downto 0));
           vga_wren_o <= '1';
           state      <= LAST_ST;
 
@@ -261,7 +261,7 @@ begin
       if rst_i = '1' then
         eth_rx_last <= '0';
         vga_addr_o  <= X"0000";
-        vga_data_o  <= X"00";
+        vga_data_o  <= X"000000";
         vga_wren_o  <= '0';
         state       <= IDLE_ST;
       end if;
