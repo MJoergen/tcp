@@ -4,9 +4,10 @@ library ieee;
 
 entity top is
   generic (
-    G_SIM       : boolean := false;
-    G_TIMESTAMP : std_logic_vector(31 downto 0); -- Automatically filled out by Vivado
-    G_COMMIT_ID : std_logic_vector(31 downto 0)  -- Automatically filled out by Vivado
+    G_SIM           : boolean := false;
+    G_UART_BAUDRATE : natural := 115_200;
+    G_TIMESTAMP     : std_logic_vector(31 downto 0); -- Automatically filled out by Vivado
+    G_COMMIT_ID     : std_logic_vector(31 downto 0)  -- Automatically filled out by Vivado
   );
   port (
     -- Main input clock and reset
@@ -80,7 +81,8 @@ begin
 
   mega65_wrapper_inst : entity work.mega65_wrapper
     generic map (
-      G_SIM => G_SIM
+      G_UART_BAUDRATE => G_UART_BAUDRATE,
+      G_SIM           => G_SIM
     )
     port map (
       -- MEGA65 I/O ports
@@ -149,6 +151,8 @@ begin
       uart_tx_ready_i => user_uart_tx_ready,
       uart_tx_valid_o => user_uart_tx_valid,
       uart_tx_data_o  => user_uart_tx_data,
+      key_num_i       => user_key_num,
+      key_pressed_n_i => user_key_pressed_n,
       eth_rx_ready_o  => user_mac_rx_ready,
       eth_rx_valid_i  => user_mac_rx_valid,
       eth_rx_data_i   => user_mac_rx_data,

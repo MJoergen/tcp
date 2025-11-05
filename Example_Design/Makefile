@@ -31,6 +31,7 @@ SRC += $(SRC_DIR)/top.vhd
 # List of Example Design files
 SRC += $(SRC_DIR)/byte2wide.vhd
 SRC += $(SRC_DIR)/wide2byte.vhd
+SRC += $(SRC_DIR)/controller.vhd
 SRC += $(SRC_DIR)/design.vhd
 
 # Top level entity

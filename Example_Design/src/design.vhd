@@ -12,6 +12,8 @@ entity design is
     uart_tx_ready_i : in    std_logic;
     uart_tx_valid_o : out   std_logic;
     uart_tx_data_o  : out   std_logic_vector(7 downto 0);
+    key_num_i       : in    integer range 0 to 79;
+    key_pressed_n_i : in    std_logic;
     eth_rx_ready_o  : out   std_logic;
     eth_rx_valid_i  : in    std_logic;
     eth_rx_data_i   : in    std_logic_vector(7 downto 0);
@@ -28,24 +30,24 @@ end entity design;
 
 architecture synthesis of design is
 
-  constant C_ETH_BYTES  : natural := 16;
-  constant C_USER_BYTES : natural := 4;
+  constant C_ETH_BYTES : natural := 60;
+  --  constant C_USER_BYTES : natural := 4;
 
-  signal   mac_user_start       : std_logic;
-  signal   mac_user_src_address : std_logic_vector(47 downto 0); -- MAC address
-  signal   mac_user_dst_address : std_logic_vector(47 downto 0); -- MAC address
-  signal   mac_user_protocol    : std_logic_vector(15 downto 0); -- MAC protocol
-  signal   mac_user_established : std_logic;
-  signal   mac_user_rx_ready    : std_logic;
-  signal   mac_user_rx_valid    : std_logic;
-  signal   mac_user_rx_data     : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
-  signal   mac_user_rx_bytes    : natural range 0 to C_USER_BYTES;
-  signal   mac_user_rx_last     : std_logic;
-  signal   mac_user_tx_ready    : std_logic;
-  signal   mac_user_tx_valid    : std_logic;
-  signal   mac_user_tx_data     : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
-  signal   mac_user_tx_bytes    : natural range 0 to C_USER_BYTES;
-  signal   mac_user_tx_last     : std_logic;
+  --  signal   mac_user_start       : std_logic;
+  --  signal   mac_user_src_address : std_logic_vector(47 downto 0); -- MAC address
+  --  signal   mac_user_dst_address : std_logic_vector(47 downto 0); -- MAC address
+  --  signal   mac_user_protocol    : std_logic_vector(15 downto 0); -- MAC protocol
+  --  signal   mac_user_established : std_logic;
+  --  signal   mac_user_rx_ready    : std_logic;
+  --  signal   mac_user_rx_valid    : std_logic;
+  --  signal   mac_user_rx_data     : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
+  --  signal   mac_user_rx_bytes    : natural range 0 to C_USER_BYTES;
+  --  signal   mac_user_rx_last     : std_logic;
+  --  signal   mac_user_tx_ready    : std_logic;
+  --  signal   mac_user_tx_valid    : std_logic;
+  --  signal   mac_user_tx_data     : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
+  --  signal   mac_user_tx_bytes    : natural range 0 to C_USER_BYTES;
+  --  signal   mac_user_tx_last     : std_logic;
 
   signal   eth_rx_wide_ready : std_logic;
   signal   eth_rx_wide_valid : std_logic;
@@ -62,17 +64,79 @@ architecture synthesis of design is
   signal   eth_rx_last : std_logic;
 
   type     state_type is (IDLE_ST, BUSY_ST, LAST_ST);
-  signal   state : state_type     := IDLE_ST;
+  signal   state : state_type    := IDLE_ST;
+
+  signal   cmd_ready : std_logic;
+  signal   cmd_valid : std_logic;
+  signal   cmd_data  : std_logic_vector(7 downto 0);
 
 begin
 
-  -- Loopback
-  uart_rx_ready_o <= uart_tx_ready_i;
-  uart_tx_valid_o <= uart_rx_valid_i;
-  uart_tx_data_o  <= uart_rx_data_i;
+  controller_inst : entity work.controller
+    port map (
+      clk_i           => clk_i,
+      rst_i           => rst_i,
+      uart_rx_ready_o => uart_rx_ready_o,
+      uart_rx_valid_i => uart_rx_valid_i,
+      uart_rx_data_i  => uart_rx_data_i,
+      uart_tx_ready_i => uart_tx_ready_i,
+      uart_tx_valid_o => uart_tx_valid_o,
+      uart_tx_data_o  => uart_tx_data_o,
+      key_num_i       => key_num_i,
+      key_pressed_n_i => key_pressed_n_i,
+      cmd_ready_i     => cmd_ready,
+      cmd_valid_o     => cmd_valid,
+      cmd_data_o      => cmd_data
+    ); -- controller_inst : entity work.controller
+
+  cmd_ready <= not eth_tx_wide_valid;
+
+  cmd_proc : process (clk_i)
+  begin
+    if rising_edge(clk_i) then
+      if eth_tx_wide_ready = '1' then
+        eth_tx_wide_valid <= '0';
+      end if;
+
+      if cmd_valid = '1' and cmd_ready = '1' then
+        eth_tx_wide_valid <= '1';
+        eth_tx_wide_last  <= '1';
+        eth_tx_wide_bytes <= 60;
+        eth_tx_wide_data  <= X"FFFFFFFFFFFF0000" &
+                             X"1122334455667788" &
+                             X"1122334455667788" &
+                             X"1122334455667788" &
+                             X"1122334455667788" &
+                             X"1122334455667788" &
+                             X"1122334455667788" &
+                             X"11223344";
+      end if;
+
+      if rst_i = '1' then
+        eth_tx_wide_valid <= '0';
+      end if;
+    end if;
+  end process cmd_proc;
 
 
-  eth_tx_valid_o  <= '0';
+  wide2byte_inst : entity work.wide2byte
+    generic map (
+      G_BYTES => C_ETH_BYTES
+    )
+    port map (
+      clk_i     => clk_i,
+      rst_i     => rst_i,
+      s_ready_o => eth_tx_wide_ready,
+      s_valid_i => eth_tx_wide_valid,
+      s_last_i  => eth_tx_wide_last,
+      s_bytes_i => eth_tx_wide_bytes,
+      s_data_i  => eth_tx_wide_data,
+      m_ready_i => eth_tx_ready_i,
+      m_valid_o => eth_tx_valid_o,
+      m_last_o  => eth_tx_last_o,
+      m_data_o  => eth_tx_data_o
+    ); -- wide2byte_inst : entity work.wide2byte
+
 
   --  byte2wide_inst : entity work.byte2wide
   --    generic map (
@@ -146,8 +210,8 @@ begin
   --      eth_payload_tx_last_o  => eth_tx_wide_last
   --    ); -- mac_wrapper_inst : entity work.mac_wrapper
 
-  eth_rx_ready_o  <= '1' when state = IDLE_ST else
-                     '0';
+  eth_rx_ready_o <= '1' when state = IDLE_ST else
+                    '0';
 
   vga_proc : process (clk_i)
     --

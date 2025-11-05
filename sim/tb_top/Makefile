@@ -24,6 +24,7 @@ SRC += $(EXAMPLE_SRC_DIR)/mega65/tdp_ram.vhd
 SRC += $(EXAMPLE_SRC_DIR)/mega65_wrapper.vhd
 SRC += $(EXAMPLE_SRC_DIR)/byte2wide.vhd
 SRC += $(EXAMPLE_SRC_DIR)/wide2byte.vhd
+SRC += $(EXAMPLE_SRC_DIR)/controller.vhd
 SRC += $(EXAMPLE_SRC_DIR)/design.vhd
 SRC += $(EXAMPLE_SRC_DIR)/top.vhd
 

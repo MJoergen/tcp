@@ -1,19 +1,20 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Tue Nov  4 07:52:58 2025
+[*] Wed Nov  5 15:40:55 2025
 [*]
 [dumpfile] "/home/mfj/git/PRIVATE/MJoergen/tcp/sim/tb_top/tb_top.ghw"
-[dumpfile_mtime] "Tue Nov  4 07:47:24 2025"
-[dumpfile_size] 23250575
+[dumpfile_mtime] "Wed Nov  5 15:39:38 2025"
+[dumpfile_size] 23373309
 [savefile] "/home/mfj/git/PRIVATE/MJoergen/tcp/sim/tb_top/tb_top.gtkw"
 [timestart] 0
 [size] 1426 935
 [pos] -1 -1
-*-32.591675 9380000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-32.916718 11180000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.tb_top.
 [treeopen] top.tb_top.top_inst.
-[treeopen] top.tb_top.top_inst.mega65_wrapper_inst.
+[treeopen] top.tb_top.top_inst.design_inst.
+[treeopen] top.tb_top.top_inst.design_inst.controller_inst.
 [treeopen] top.tb_top.top_inst.mega65_wrapper_inst.eth_wrapper_inst.
 [sst_width] 397
 [signals_width] 235
@@ -61,13 +62,34 @@ top.tb_top.top_inst.user_vga_wren
 @28
 top.tb_top.top_inst.design_inst.clk_i
 top.tb_top.top_inst.design_inst.rst_i
+[color] 7
+top.tb_top.top_inst.design_inst.uart_rx_ready_o
+[color] 2
+top.tb_top.top_inst.design_inst.uart_rx_valid_i
+@22
+#{top.tb_top.top_inst.design_inst.uart_rx_data_i[7:0]} top.tb_top.top_inst.design_inst.uart_rx_data_i[7] top.tb_top.top_inst.design_inst.uart_rx_data_i[6] top.tb_top.top_inst.design_inst.uart_rx_data_i[5] top.tb_top.top_inst.design_inst.uart_rx_data_i[4] top.tb_top.top_inst.design_inst.uart_rx_data_i[3] top.tb_top.top_inst.design_inst.uart_rx_data_i[2] top.tb_top.top_inst.design_inst.uart_rx_data_i[1] top.tb_top.top_inst.design_inst.uart_rx_data_i[0]
+@28
+[color] 7
+top.tb_top.top_inst.design_inst.uart_tx_ready_i
+[color] 2
+top.tb_top.top_inst.design_inst.uart_tx_valid_o
+@22
+#{top.tb_top.top_inst.design_inst.uart_tx_data_o[7:0]} top.tb_top.top_inst.design_inst.uart_tx_data_o[7] top.tb_top.top_inst.design_inst.uart_tx_data_o[6] top.tb_top.top_inst.design_inst.uart_tx_data_o[5] top.tb_top.top_inst.design_inst.uart_tx_data_o[4] top.tb_top.top_inst.design_inst.uart_tx_data_o[3] top.tb_top.top_inst.design_inst.uart_tx_data_o[2] top.tb_top.top_inst.design_inst.uart_tx_data_o[1] top.tb_top.top_inst.design_inst.uart_tx_data_o[0]
+@420
+top.tb_top.top_inst.design_inst.key_num_i
+@28
+top.tb_top.top_inst.design_inst.key_pressed_n_i
+[color] 7
 top.tb_top.top_inst.design_inst.eth_rx_ready_o
+[color] 2
 top.tb_top.top_inst.design_inst.eth_rx_valid_i
 @22
 #{top.tb_top.top_inst.design_inst.eth_rx_data_i[7:0]} top.tb_top.top_inst.design_inst.eth_rx_data_i[7] top.tb_top.top_inst.design_inst.eth_rx_data_i[6] top.tb_top.top_inst.design_inst.eth_rx_data_i[5] top.tb_top.top_inst.design_inst.eth_rx_data_i[4] top.tb_top.top_inst.design_inst.eth_rx_data_i[3] top.tb_top.top_inst.design_inst.eth_rx_data_i[2] top.tb_top.top_inst.design_inst.eth_rx_data_i[1] top.tb_top.top_inst.design_inst.eth_rx_data_i[0]
 @28
 top.tb_top.top_inst.design_inst.eth_rx_last_i
+[color] 7
 top.tb_top.top_inst.design_inst.eth_tx_ready_i
+[color] 2
 top.tb_top.top_inst.design_inst.eth_tx_valid_o
 @22
 #{top.tb_top.top_inst.design_inst.eth_tx_data_o[7:0]} top.tb_top.top_inst.design_inst.eth_tx_data_o[7] top.tb_top.top_inst.design_inst.eth_tx_data_o[6] top.tb_top.top_inst.design_inst.eth_tx_data_o[5] top.tb_top.top_inst.design_inst.eth_tx_data_o[4] top.tb_top.top_inst.design_inst.eth_tx_data_o[3] top.tb_top.top_inst.design_inst.eth_tx_data_o[2] top.tb_top.top_inst.design_inst.eth_tx_data_o[1] top.tb_top.top_inst.design_inst.eth_tx_data_o[0]
@@ -79,7 +101,7 @@ top.tb_top.top_inst.design_inst.vga_wren_o
 #{top.tb_top.top_inst.design_inst.vga_data_o[7:0]} top.tb_top.top_inst.design_inst.vga_data_o[7] top.tb_top.top_inst.design_inst.vga_data_o[6] top.tb_top.top_inst.design_inst.vga_data_o[5] top.tb_top.top_inst.design_inst.vga_data_o[4] top.tb_top.top_inst.design_inst.vga_data_o[3] top.tb_top.top_inst.design_inst.vga_data_o[2] top.tb_top.top_inst.design_inst.vga_data_o[1] top.tb_top.top_inst.design_inst.vga_data_o[0]
 @1401200
 -design
-@800200
+@c00200
 -eth_wrapper
 @28
 top.tb_top.top_inst.mega65_wrapper_inst.eth_wrapper_inst.user_clk_i
@@ -112,7 +134,95 @@ top.tb_top.top_inst.mega65_wrapper_inst.eth_wrapper_inst.eth_crs_dv_i
 top.tb_top.top_inst.mega65_wrapper_inst.eth_wrapper_inst.eth_rxer_i
 #{top.tb_top.top_inst.mega65_wrapper_inst.eth_wrapper_inst.eth_tx_d_o[1:0]} top.tb_top.top_inst.mega65_wrapper_inst.eth_wrapper_inst.eth_tx_d_o[1] top.tb_top.top_inst.mega65_wrapper_inst.eth_wrapper_inst.eth_tx_d_o[0]
 top.tb_top.top_inst.mega65_wrapper_inst.eth_wrapper_inst.eth_tx_en_o
-@1000200
+@1401200
 -eth_wrapper
+@c00200
+-TB
+@28
+top.tb_top.sys_clk
+top.tb_top.sys_rst
+[color] 7
+top.tb_top.tb_uart_tx_ready
+[color] 2
+top.tb_top.tb_uart_tx_valid
+@22
+#{top.tb_top.tb_uart_tx_data[7:0]} top.tb_top.tb_uart_tx_data[7] top.tb_top.tb_uart_tx_data[6] top.tb_top.tb_uart_tx_data[5] top.tb_top.tb_uart_tx_data[4] top.tb_top.tb_uart_tx_data[3] top.tb_top.tb_uart_tx_data[2] top.tb_top.tb_uart_tx_data[1] top.tb_top.tb_uart_tx_data[0]
+@28
+[color] 7
+top.tb_top.tb_uart_rx_ready
+[color] 2
+top.tb_top.tb_uart_rx_valid
+@22
+#{top.tb_top.tb_uart_rx_data[7:0]} top.tb_top.tb_uart_rx_data[7] top.tb_top.tb_uart_rx_data[6] top.tb_top.tb_uart_rx_data[5] top.tb_top.tb_uart_rx_data[4] top.tb_top.tb_uart_rx_data[3] top.tb_top.tb_uart_rx_data[2] top.tb_top.tb_uart_rx_data[1] top.tb_top.tb_uart_rx_data[0]
+@28
+top.tb_top.debug_rxd
+top.tb_top.debug_txd
+top.tb_top.kb_io0
+top.tb_top.kb_io1
+top.tb_top.kb_io2
+[color] 2
+top.tb_top.eth_tb_rx_valid
+@22
+#{top.tb_top.eth_tb_rx_data[7:0]} top.tb_top.eth_tb_rx_data[7] top.tb_top.eth_tb_rx_data[6] top.tb_top.eth_tb_rx_data[5] top.tb_top.eth_tb_rx_data[4] top.tb_top.eth_tb_rx_data[3] top.tb_top.eth_tb_rx_data[2] top.tb_top.eth_tb_rx_data[1] top.tb_top.eth_tb_rx_data[0]
+@28
+top.tb_top.eth_tb_rx_last
+top.tb_top.eth_tb_rx_ok
+[color] 7
+top.tb_top.eth_tb_tx_ready
+[color] 2
+top.tb_top.eth_tb_tx_valid
+@22
+#{top.tb_top.eth_tb_tx_data[7:0]} top.tb_top.eth_tb_tx_data[7] top.tb_top.eth_tb_tx_data[6] top.tb_top.eth_tb_tx_data[5] top.tb_top.eth_tb_tx_data[4] top.tb_top.eth_tb_tx_data[3] top.tb_top.eth_tb_tx_data[2] top.tb_top.eth_tb_tx_data[1] top.tb_top.eth_tb_tx_data[0]
+@28
+top.tb_top.eth_tb_tx_last
+@1401200
+-TB
+@800200
+-controller
+@28
+top.tb_top.top_inst.design_inst.controller_inst.clk_i
+top.tb_top.top_inst.design_inst.controller_inst.rst_i
+[color] 7
+top.tb_top.top_inst.design_inst.controller_inst.uart_rx_ready_o
+[color] 2
+top.tb_top.top_inst.design_inst.controller_inst.uart_rx_valid_i
+@22
+#{top.tb_top.top_inst.design_inst.controller_inst.uart_rx_data_i[7:0]} top.tb_top.top_inst.design_inst.controller_inst.uart_rx_data_i[7] top.tb_top.top_inst.design_inst.controller_inst.uart_rx_data_i[6] top.tb_top.top_inst.design_inst.controller_inst.uart_rx_data_i[5] top.tb_top.top_inst.design_inst.controller_inst.uart_rx_data_i[4] top.tb_top.top_inst.design_inst.controller_inst.uart_rx_data_i[3] top.tb_top.top_inst.design_inst.controller_inst.uart_rx_data_i[2] top.tb_top.top_inst.design_inst.controller_inst.uart_rx_data_i[1] top.tb_top.top_inst.design_inst.controller_inst.uart_rx_data_i[0]
+@28
+[color] 7
+top.tb_top.top_inst.design_inst.controller_inst.uart_tx_ready_i
+[color] 2
+top.tb_top.top_inst.design_inst.controller_inst.uart_tx_valid_o
+@22
+#{top.tb_top.top_inst.design_inst.controller_inst.uart_tx_data_o[7:0]} top.tb_top.top_inst.design_inst.controller_inst.uart_tx_data_o[7] top.tb_top.top_inst.design_inst.controller_inst.uart_tx_data_o[6] top.tb_top.top_inst.design_inst.controller_inst.uart_tx_data_o[5] top.tb_top.top_inst.design_inst.controller_inst.uart_tx_data_o[4] top.tb_top.top_inst.design_inst.controller_inst.uart_tx_data_o[3] top.tb_top.top_inst.design_inst.controller_inst.uart_tx_data_o[2] top.tb_top.top_inst.design_inst.controller_inst.uart_tx_data_o[1] top.tb_top.top_inst.design_inst.controller_inst.uart_tx_data_o[0]
+@420
+top.tb_top.top_inst.design_inst.controller_inst.key_num_i
+@28
+top.tb_top.top_inst.design_inst.controller_inst.key_pressed_n_i
+[color] 7
+top.tb_top.top_inst.design_inst.controller_inst.cmd_ready_i
+[color] 2
+top.tb_top.top_inst.design_inst.controller_inst.cmd_valid_o
+@22
+#{top.tb_top.top_inst.design_inst.controller_inst.cmd_data_o[7:0]} top.tb_top.top_inst.design_inst.controller_inst.cmd_data_o[7] top.tb_top.top_inst.design_inst.controller_inst.cmd_data_o[6] top.tb_top.top_inst.design_inst.controller_inst.cmd_data_o[5] top.tb_top.top_inst.design_inst.controller_inst.cmd_data_o[4] top.tb_top.top_inst.design_inst.controller_inst.cmd_data_o[3] top.tb_top.top_inst.design_inst.controller_inst.cmd_data_o[2] top.tb_top.top_inst.design_inst.controller_inst.cmd_data_o[1] top.tb_top.top_inst.design_inst.controller_inst.cmd_data_o[0]
+@420
+top.tb_top.top_inst.design_inst.controller_inst.key_num
+@28
+top.tb_top.top_inst.design_inst.controller_inst.key_pressed
+top.tb_top.top_inst.design_inst.controller_inst.key_released
+[color] 7
+top.tb_top.top_inst.design_inst.controller_inst.w2b_ready
+[color] 2
+top.tb_top.top_inst.design_inst.controller_inst.w2b_valid
+@22
+#{top.tb_top.top_inst.design_inst.controller_inst.w2b_data[79:0]} top.tb_top.top_inst.design_inst.controller_inst.w2b_data[79] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[78] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[77] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[76] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[75] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[74] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[73] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[72] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[71] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[70] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[69] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[68] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[67] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[66] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[65] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[64] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[63] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[62] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[61] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[60] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[59] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[58] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[57] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[56] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[55] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[54] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[53] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[52] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[51] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[50] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[49] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[48] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[47] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[46] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[45] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[44] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[43] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[42] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[41] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[40] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[39] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[38] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[37] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[36] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[35] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[34] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[33] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[32] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[31] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[30] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[29] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[28] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[27] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[26] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[25] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[24] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[23] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[22] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[21] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[20] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[19] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[18] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[17] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[16] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[15] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[14] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[13] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[12] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[11] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[10] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[9] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[8] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[7] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[6] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[5] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[4] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[3] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[2] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[1] top.tb_top.top_inst.design_inst.controller_inst.w2b_data[0]
+@28
+top.tb_top.top_inst.design_inst.controller_inst.w2b_last
+@420
+top.tb_top.top_inst.design_inst.controller_inst.w2b_bytes
+@28
+top.tb_top.top_inst.design_inst.controller_inst.initialized
+@1000200
+-controller
 [pattern_trace] 1
 [pattern_trace] 0

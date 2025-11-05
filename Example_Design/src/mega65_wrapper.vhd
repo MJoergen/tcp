@@ -9,7 +9,8 @@ library work;
 
 entity mega65_wrapper is
   generic (
-    G_SIM : boolean
+    G_UART_BAUDRATE : natural;
+    G_SIM           : boolean
   );
   port (
     --------------------------------------------------------
@@ -92,7 +93,6 @@ end entity mega65_wrapper;
 architecture synthesis of mega65_wrapper is
 
   constant C_USER_CLK_KHZ  : natural := 100_000;
-  constant C_UART_BAUDRATE : natural := 115_200;
 
   signal   vga_clk : std_logic;
   signal   vga_rst : std_logic;
@@ -124,7 +124,7 @@ begin
 
   uart_serdes_inst : entity work.uart_serdes
     generic map (
-      G_DIVISOR => (C_USER_CLK_KHZ * 1000) / C_UART_BAUDRATE
+      G_DIVISOR => (C_USER_CLK_KHZ * 1000) / G_UART_BAUDRATE
     )
     port map (
       clk_i      => user_clk_o,
