@@ -114,7 +114,7 @@ begin
 
   video_chars_inst : entity work.video_chars
     generic map (
-      G_SCALING    => 4,
+      G_SCALING    => 3,
       G_FONT_FILE  => "font8x8.txt",
       G_VIDEO_MODE => C_VIDEO_MODE
     )

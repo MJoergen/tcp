@@ -40,7 +40,7 @@ TOP = top
 ################## Don't change anything below here ******************************
 
 # Specify install location of the AMD Vivado tool
-VIVADO_DIR = /opt/Xilinx/Vivado/2024.1
+VIVADO_DIR = /opt/Xilinx/2025.1/Vivado
 
 PART = xc7a200tfbg484-2
 
@@ -71,7 +71,7 @@ build/$(TOP).tcl: Makefile
 	echo "set_property PART $(PART) [current_project]" >> $@
 	echo "set_property XPM_LIBRARIES {XPM_CDC XPM_FIFO} [current_project]" >> $@
 	echo "synth_design -top $(TOP) $(OPTIONS) -generic { $(GENERICS) }" >> $@
-#	echo "source ../synth/debug.tcl" >> $@
+	echo "source debug.tcl" >> $@
 	echo "opt_design" >> $@
 	echo "place_design" >> $@
 	echo "phys_opt_design" >> $@

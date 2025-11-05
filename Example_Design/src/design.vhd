@@ -63,7 +63,7 @@ architecture synthesis of design is
   signal   eth_rx_data : std_logic_vector(7 downto 0);
   signal   eth_rx_last : std_logic;
 
-  type     state_type is (IDLE_ST, BUSY_ST, LAST_ST);
+  type     state_type is (IDLE_ST, BUSY_ST, LAST_ST, CLEAR_ST);
   signal   state : state_type    := IDLE_ST;
 
   signal   cmd_ready : std_logic;
@@ -238,7 +238,6 @@ begin
             eth_rx_data <= eth_rx_data_i;
             eth_rx_last <= eth_rx_last_i;
 
-            vga_addr_o  <= vga_addr_o + 1;
             vga_data_o  <= X"CC44" & to_hex(eth_rx_data_i(7 downto 4));
             vga_wren_o  <= '1';
             state       <= BUSY_ST;
@@ -252,11 +251,30 @@ begin
 
         when LAST_ST =>
           if eth_rx_last = '1' then
-            vga_addr_o <= (vga_addr_o and X"FF00") + X"0100";
+            vga_addr_o <= (vga_addr_o and x"FF00") + x"0200";
+          elsif vga_addr_o(7 downto 0) = 159 then
+            vga_addr_o <= (vga_addr_o and x"FF00") + x"0100";
+          else
+            vga_addr_o <= vga_addr_o + 1;
           end if;
           state <= IDLE_ST;
 
+        when CLEAR_ST =>
+          vga_addr_o <= vga_addr_o + 1;
+          vga_data_o <= x"FFFFFF";
+          vga_wren_o <= '1';
+
+          if vga_addr_o = x"FFFE" then
+            vga_addr_o <= x"0000";
+            state      <= IDLE_ST;
+          end if;
+
       end case;
+
+      if cmd_valid = '1' and cmd_ready = '1' and (cmd_data = x"43" or cmd_data = x"63") then
+        vga_addr_o <= x"FFFF";
+        state      <= CLEAR_ST;
+      end if;
 
       if rst_i = '1' then
         eth_rx_last <= '0';
