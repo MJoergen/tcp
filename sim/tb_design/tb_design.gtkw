@@ -1,0 +1,66 @@
+[*]
+[*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
+[*] Wed Dec 17 20:27:25 2025
+[*]
+[dumpfile] "/home/mike/git/MJoergen/tcp/sim/tb_design/tb_design.ghw"
+[dumpfile_mtime] "Wed Dec 17 20:27:04 2025"
+[dumpfile_size] 25158
+[savefile] "/home/mike/git/MJoergen/tcp/sim/tb_design/tb_design.gtkw"
+[timestart] 0
+[size] 1553 600
+[pos] -1 -1
+*-28.848263 320700000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.tb_design.
+[treeopen] top.tb_design.design_inst.
+[sst_width] 239
+[signals_width] 273
+[sst_expanded] 1
+[sst_vpaned_height] 159
+@800200
+-design
+@28
+top.tb_design.design_inst.clk_i
+top.tb_design.design_inst.rst_i
+[color] 6
+top.tb_design.design_inst.uart_rx_ready_o
+[color] 2
+top.tb_design.design_inst.uart_rx_valid_i
+@22
+#{top.tb_design.design_inst.uart_rx_data_i[7:0]} top.tb_design.design_inst.uart_rx_data_i[7] top.tb_design.design_inst.uart_rx_data_i[6] top.tb_design.design_inst.uart_rx_data_i[5] top.tb_design.design_inst.uart_rx_data_i[4] top.tb_design.design_inst.uart_rx_data_i[3] top.tb_design.design_inst.uart_rx_data_i[2] top.tb_design.design_inst.uart_rx_data_i[1] top.tb_design.design_inst.uart_rx_data_i[0]
+@28
+[color] 6
+top.tb_design.design_inst.uart_tx_ready_i
+[color] 2
+top.tb_design.design_inst.uart_tx_valid_o
+@22
+#{top.tb_design.design_inst.uart_tx_data_o[7:0]} top.tb_design.design_inst.uart_tx_data_o[7] top.tb_design.design_inst.uart_tx_data_o[6] top.tb_design.design_inst.uart_tx_data_o[5] top.tb_design.design_inst.uart_tx_data_o[4] top.tb_design.design_inst.uart_tx_data_o[3] top.tb_design.design_inst.uart_tx_data_o[2] top.tb_design.design_inst.uart_tx_data_o[1] top.tb_design.design_inst.uart_tx_data_o[0]
+@420
+top.tb_design.design_inst.key_num_i
+@28
+top.tb_design.design_inst.key_pressed_n_i
+[color] 6
+top.tb_design.design_inst.eth_rx_ready_o
+@22
+#{top.tb_design.design_inst.eth_rx_data_i[7:0]} top.tb_design.design_inst.eth_rx_data_i[7] top.tb_design.design_inst.eth_rx_data_i[6] top.tb_design.design_inst.eth_rx_data_i[5] top.tb_design.design_inst.eth_rx_data_i[4] top.tb_design.design_inst.eth_rx_data_i[3] top.tb_design.design_inst.eth_rx_data_i[2] top.tb_design.design_inst.eth_rx_data_i[1] top.tb_design.design_inst.eth_rx_data_i[0]
+@28
+[color] 2
+top.tb_design.design_inst.eth_rx_valid_i
+top.tb_design.design_inst.eth_rx_last_i
+[color] 6
+top.tb_design.design_inst.eth_tx_ready_i
+[color] 2
+top.tb_design.design_inst.eth_tx_valid_o
+@22
+#{top.tb_design.design_inst.eth_tx_data_o[7:0]} top.tb_design.design_inst.eth_tx_data_o[7] top.tb_design.design_inst.eth_tx_data_o[6] top.tb_design.design_inst.eth_tx_data_o[5] top.tb_design.design_inst.eth_tx_data_o[4] top.tb_design.design_inst.eth_tx_data_o[3] top.tb_design.design_inst.eth_tx_data_o[2] top.tb_design.design_inst.eth_tx_data_o[1] top.tb_design.design_inst.eth_tx_data_o[0]
+@28
+top.tb_design.design_inst.eth_tx_last_o
+@22
+#{top.tb_design.design_inst.vga_addr_o[15:0]} top.tb_design.design_inst.vga_addr_o[15] top.tb_design.design_inst.vga_addr_o[14] top.tb_design.design_inst.vga_addr_o[13] top.tb_design.design_inst.vga_addr_o[12] top.tb_design.design_inst.vga_addr_o[11] top.tb_design.design_inst.vga_addr_o[10] top.tb_design.design_inst.vga_addr_o[9] top.tb_design.design_inst.vga_addr_o[8] top.tb_design.design_inst.vga_addr_o[7] top.tb_design.design_inst.vga_addr_o[6] top.tb_design.design_inst.vga_addr_o[5] top.tb_design.design_inst.vga_addr_o[4] top.tb_design.design_inst.vga_addr_o[3] top.tb_design.design_inst.vga_addr_o[2] top.tb_design.design_inst.vga_addr_o[1] top.tb_design.design_inst.vga_addr_o[0]
+#{top.tb_design.design_inst.vga_data_o[23:0]} top.tb_design.design_inst.vga_data_o[23] top.tb_design.design_inst.vga_data_o[22] top.tb_design.design_inst.vga_data_o[21] top.tb_design.design_inst.vga_data_o[20] top.tb_design.design_inst.vga_data_o[19] top.tb_design.design_inst.vga_data_o[18] top.tb_design.design_inst.vga_data_o[17] top.tb_design.design_inst.vga_data_o[16] top.tb_design.design_inst.vga_data_o[15] top.tb_design.design_inst.vga_data_o[14] top.tb_design.design_inst.vga_data_o[13] top.tb_design.design_inst.vga_data_o[12] top.tb_design.design_inst.vga_data_o[11] top.tb_design.design_inst.vga_data_o[10] top.tb_design.design_inst.vga_data_o[9] top.tb_design.design_inst.vga_data_o[8] top.tb_design.design_inst.vga_data_o[7] top.tb_design.design_inst.vga_data_o[6] top.tb_design.design_inst.vga_data_o[5] top.tb_design.design_inst.vga_data_o[4] top.tb_design.design_inst.vga_data_o[3] top.tb_design.design_inst.vga_data_o[2] top.tb_design.design_inst.vga_data_o[1] top.tb_design.design_inst.vga_data_o[0]
+@28
+top.tb_design.design_inst.vga_wren_o
+@1000200
+-design
+[pattern_trace] 1
+[pattern_trace] 0
