@@ -23,8 +23,8 @@ end entity tb_mac_wrapper_stress;
 
 architecture simulation of tb_mac_wrapper_stress is
 
+  constant C_USER_BYTES        : natural                       := 8;
   constant C_ETH_PAYLOAD_BYTES : natural                       := 20;
-  constant C_USER_BYTES        : natural                       := 4;
   constant C_ADDRESS_CLIENT    : std_logic_vector(47 downto 0) := x"C713C7131234";
   constant C_ADDRESS_SERVER    : std_logic_vector(47 downto 0) := x"535353535678";
   constant C_PROTOCOL          : std_logic_vector(15 downto 0) := x"0800";
@@ -33,6 +33,7 @@ architecture simulation of tb_mac_wrapper_stress is
 
   signal   clk : std_logic                                     := '1';
   signal   rst : std_logic                                     := '1';
+  signal   running : std_logic                                 := '1';
 
   signal   client_user_established : std_logic;
   signal   server_user_established : std_logic;
@@ -95,7 +96,7 @@ begin
   -- Clock and reset
   ----------------------------------------------------------
 
-  clk <= not clk after 5 ns;
+  clk <= running and not clk after 5 ns;
   rst <= '1', '0' after 100 ns;
 
 

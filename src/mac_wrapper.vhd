@@ -54,9 +54,21 @@ architecture synthesis of mac_wrapper is
   subtype  R_MAC_SRC_ADDRESS is natural range 8 * 12 - 1 downto 8 * 6;
   subtype  R_MAC_PROTOCOL    is natural range 8 * 14 - 1 downto 8 * 12;
   constant C_MAC_HEADER_LENGTH : natural := 14;
-  constant C_MAC_BROADCAST : std_logic_vector(47 downto 0) := (others => '1');
+  constant C_MAC_BROADCAST : std_logic_vector(47 downto 0) := X"FFFFFFFFFFFF";
+
+  -- Connection state
+  type     state_type is (IDLE_ST, ACTIVE_ST);
+  signal   state : state_type           := IDLE_ST;
+
+  signal   user_protocol    : std_logic_vector(15 downto 0);
+  signal   user_src_address : std_logic_vector(47 downto 0);
+  signal   user_dst_address : std_logic_vector(47 downto 0);
+
 
   -- Tx path
+  signal   user_tx_ready : std_logic;
+  signal   user_tx_valid : std_logic;
+
   type     tx_state_type is (TX_IDLE_ST, TX_DATA_ST);
   signal   tx_state : tx_state_type      := TX_IDLE_ST;
 
@@ -81,12 +93,56 @@ begin
 
   assert G_ETH_PAYLOAD_BYTES > C_MAC_HEADER_LENGTH;
 
-  user_established_o <= user_start_i;
+
+  -------------------------------------
+  -- Connection state
+  -------------------------------------
+
+  state_proc : process (clk_i)
+  begin
+    if rising_edge(clk_i) then
+
+      case state is
+
+        when IDLE_ST =>
+          if user_start_i = '1' then
+            user_protocol    <= user_protocol_i;
+            user_src_address <= user_src_address_i;
+            user_dst_address <= user_dst_address_i;
+            state            <= ACTIVE_ST;
+          end if;
+
+        when ACTIVE_ST =>
+          if user_start_i = '0' then
+            user_protocol    <= (others => '0');
+            user_src_address <= (others => '0');
+            user_dst_address <= (others => '0');
+            state            <= IDLE_ST;
+          end if;
+
+      end case;
+
+      if rst_i = '1' then
+        user_protocol    <= (others => '0');
+        user_src_address <= (others => '0');
+        user_dst_address <= (others => '0');
+        state            <= IDLE_ST;
+      end if;
+    end if;
+  end process state_proc;
+
+  user_established_o     <= '1' when state = ACTIVE_ST else
+                            '0';
 
 
   -------------------------------------
   -- Tx Path
   -------------------------------------
+
+  user_tx_ready_o <= user_tx_ready when state = ACTIVE_ST else
+                     '0';
+  user_tx_valid   <= user_tx_valid_i when state = ACTIVE_ST else
+                     '0';
 
   axi_pipe_flexible_tx_inst : entity work.axi_pipe_flexible
     generic map (
@@ -96,8 +152,8 @@ begin
     port map (
       clk_i     => clk_i,
       rst_i     => rst_i,
-      s_ready_o => user_tx_ready_o,
-      s_valid_i => user_tx_valid_i,
+      s_ready_o => user_tx_ready,
+      s_valid_i => user_tx_valid,
       s_data_i  => user_tx_data_i,
       s_start_i => 0,
       s_end_i   => user_tx_bytes_i,
@@ -110,7 +166,7 @@ begin
       m_last_o  => tx_m_last
     ); -- axi_pipe_flexible_tx_inst : entity work.axi_pipe_flexible
 
-  tx_m_ready             <= not eth_payload_tx_valid_o when tx_state = TX_DATA_ST else
+  tx_m_ready             <= (eth_payload_tx_ready_i or not eth_payload_tx_valid_o) when tx_state = TX_DATA_ST else
                             '0';
 
   tx_proc : process (clk_i)
@@ -123,24 +179,22 @@ begin
       case tx_state is
 
         when TX_IDLE_ST =>
-          if tx_m_valid = '1' and eth_payload_tx_valid_o = '0' then
-            eth_payload_tx_data_o(R_MAC_SRC_ADDRESS) <= user_src_address_i;
-            eth_payload_tx_data_o(R_MAC_DST_ADDRESS) <= user_dst_address_i;
-            eth_payload_tx_data_o(R_MAC_PROTOCOL)    <= user_protocol_i;
-            eth_payload_tx_valid_o                   <= '1';
+          if tx_m_valid = '1' and (eth_payload_tx_ready_i = '1' or eth_payload_tx_valid_o = '0') then
+            eth_payload_tx_data_o(R_MAC_SRC_ADDRESS) <= user_src_address;
+            eth_payload_tx_data_o(R_MAC_DST_ADDRESS) <= user_dst_address;
+            eth_payload_tx_data_o(R_MAC_PROTOCOL)    <= user_protocol;
             eth_payload_tx_bytes_o                   <= C_MAC_HEADER_LENGTH;
             eth_payload_tx_last_o                    <= '0';
-
-            tx_state <= TX_DATA_ST;
+            eth_payload_tx_valid_o                   <= '1';
+            tx_state                                 <= TX_DATA_ST;
           end if;
 
         when TX_DATA_ST =>
           if tx_m_valid = '1' and tx_m_ready = '1' then
-            eth_payload_tx_valid_o <= '1';
             eth_payload_tx_data_o  <= tx_m_data;
             eth_payload_tx_bytes_o <= tx_m_bytes;
             eth_payload_tx_last_o  <= tx_m_last;
-
+            eth_payload_tx_valid_o <= '1';
             if tx_m_last = '1' then
               tx_state <= TX_IDLE_ST;
             end if;
@@ -149,6 +203,8 @@ begin
       end case;
 
       if rst_i = '1' then
+        eth_payload_tx_data_o  <= (others => '0');
+        eth_payload_tx_last_o  <= '0';
         eth_payload_tx_valid_o <= '0';
         tx_state               <= TX_IDLE_ST;
       end if;
@@ -160,7 +216,7 @@ begin
   -- Rx Path
   -------------------------------------
 
-  eth_payload_rx_ready_o <= '1' when user_established_o = '1' and rx_s_valid = '0' else
+  eth_payload_rx_ready_o <= (rx_s_ready or not rx_s_valid) when state = ACTIVE_ST else
                             '0';
 
   rx_proc : process (clk_i)

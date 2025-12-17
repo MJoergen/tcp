@@ -91,6 +91,9 @@ architecture synthesis of axi_stim_verf is
   -- This controls the number of bytes sent in this beat.
   subtype  R_RAND_BYTES    is natural range 15 downto 0;
 
+  -- This controls the first byte sent in this beat.
+  subtype  R_RAND_START    is natural range 35 downto 20;
+
 begin
 
   assert G_MAX_LENGTH < 2 ** C_LENGTH_SIZE;
@@ -162,7 +165,7 @@ begin
             if stim_do_valid = '1' then
               start_v := 0;
               if not G_START_ZERO then
-                start_v := to_integer(rand(R_RAND_BYTES)) mod G_M_DATA_BYTES;
+                start_v := to_integer(rand(R_RAND_START)) mod G_M_DATA_BYTES;
               end if;
 
               bytes_v := (to_integer(rand(R_RAND_BYTES)) mod (G_M_DATA_BYTES - start_v)) + 1;
