@@ -3,17 +3,17 @@
 # Description: Makefile for simulating the axi_pipe_wide.vhd file.
 
 # List of source files
-SRC += $(SRC_DIR)/axis_remove_fixed_header.vhd
+SRC += $(SRC_DIR)/axis_insert_fixed_header.vhd
 
 # List of test specific simulation files
 SRC += $(SIM_SRC_DIR)/lfsr.vhd
 SRC += $(SIM_SRC_DIR)/random.vhd
 SRC += $(SIM_SRC_DIR)/axi_stim_verf.vhd
 SRC += $(SIM_SRC_DIR)/axi_fifo_sync.vhd
-SRC += tb_axis_remove_fixed_header.vhd
+SRC += tb_axis_insert_fixed_header.vhd
 
 # Top level entity
-DUT = axis_remove_fixed_header
+DUT = axis_insert_fixed_header
 
 # Test duration
 STOP_TIME = 100us

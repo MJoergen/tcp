@@ -3,6 +3,7 @@
 
 DUTS += axi_pipe_flexible
 DUTS += axis_remove_fixed_header
+DUTS += axis_insert_fixed_header
 
 BMC        = $(patsubst %,%_bmc,$(DUTS))
 COVER      = $(patsubst %,%_cover,$(DUTS))
