@@ -6,7 +6,7 @@ library ieee;
 -- Data is left-aligned.
 -- When 'last' is 0 then 'bytes' is ignored (i.e. assumed to be G_BYTES).
 
-entity mac_wrapper is
+entity mac_handler is
   generic (
     G_SIM_NAME : string; -- Used in simulation
     G_BYTES    : natural -- Width of data interface
@@ -47,9 +47,9 @@ entity mac_wrapper is
     eth_payload_tx_last_o  : out   std_logic;
     eth_payload_tx_bytes_o : out   natural range 0 to G_BYTES
   );
-end entity mac_wrapper;
+end entity mac_handler;
 
-architecture synthesis of mac_wrapper is
+architecture synthesis of mac_handler is
 
   constant C_MAC_HEADER_LENGTH : natural                       := 14;
   constant C_MAC_BROADCAST     : std_logic_vector(47 downto 0) := x"FFFFFFFFFFFF";

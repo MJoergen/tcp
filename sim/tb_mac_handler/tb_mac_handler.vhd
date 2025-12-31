@@ -8,7 +8,7 @@ library std;
 -- The packet flow is as follows:
 -- TB -> Client -> Server -> User -> Loopback -> User -> Server -> Client -> TB
 
-entity tb_mac_wrapper_stress is
+entity tb_mac_handler is
   generic (
     G_BYTES         : natural;
     G_MIN_LENGTH    : natural;
@@ -18,11 +18,11 @@ entity tb_mac_wrapper_stress is
     G_FAST          : boolean;
     G_SHOW_PACKETS  : boolean
   );
-end entity tb_mac_wrapper_stress;
+end entity tb_mac_handler;
 
 -- Connect a MAC client and a MAC server and send data back and forth.
 
-architecture simulation of tb_mac_wrapper_stress is
+architecture simulation of tb_mac_handler is
 
   constant C_ADDRESS_CLIENT : std_logic_vector(47 downto 0) := x"C713C7131234";
   constant C_ADDRESS_SERVER : std_logic_vector(47 downto 0) := x"535353535678";
@@ -131,7 +131,7 @@ begin
   -- Instantiate DUT client (initiator)
   ----------------------------------------------------------
 
-  mac_wrapper_client_inst : entity work.mac_wrapper
+  mac_handler_client_inst : entity work.mac_handler
     generic map (
       G_SIM_NAME => "CLIENT",
       G_BYTES    => G_BYTES
@@ -164,14 +164,14 @@ begin
       eth_payload_tx_data_o  => tb_eth_payload_c2s_data,
       eth_payload_tx_bytes_o => tb_eth_payload_c2s_bytes,
       eth_payload_tx_last_o  => tb_eth_payload_c2s_last
-    ); -- mac_wrapper_client_inst : entity work.mac_wrapper
+    ); -- mac_handler_client_inst : entity work.mac_handler
 
 
   ----------------------------------------------------------
   -- Instantiate DUT server (responder)
   ----------------------------------------------------------
 
-  mac_wrapper_server_inst : entity work.mac_wrapper
+  mac_handler_server_inst : entity work.mac_handler
     generic map (
       G_SIM_NAME => "SERVER",
       G_BYTES    => G_BYTES
@@ -204,7 +204,7 @@ begin
       eth_payload_tx_data_o  => tb_eth_payload_s2c_data,
       eth_payload_tx_bytes_o => tb_eth_payload_s2c_bytes,
       eth_payload_tx_last_o  => tb_eth_payload_s2c_last
-    ); -- mac_wrapper_server_inst : entity work.mac_wrapper
+    ); -- mac_handler_server_inst : entity work.mac_handler
 
 
   ----------------------------------------------------------

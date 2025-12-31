@@ -82,12 +82,17 @@ vunit axis_insert_fixed_header_inst(axis_insert_fixed_header(synthesis))
    signal f_m_bytes      : natural range 0 to 1000;
    signal f_s_length     : natural range 0 to 1000;
    signal f_m_length     : natural range 0 to 1000;
+   signal f_h_cnt : natural range 0 to 9;
    signal f_s_cnt : natural range 0 to 9;
    signal f_m_cnt : natural range 0 to 9;
 
    f_bytes_proc : process (clk_i)
    begin
      if rising_edge(clk_i) then
+       if h_valid_i = '1' and h_ready_o = '1' then
+         f_h_cnt <= f_h_cnt + 1;
+       end if;
+
        if s_valid_i = '1' and s_ready_o = '1' then
          if s_last_i = '1' then
            f_s_length <= f_s_bytes + s_bytes_i;
@@ -113,6 +118,7 @@ vunit axis_insert_fixed_header_inst(axis_insert_fixed_header(synthesis))
          f_m_bytes <= 0;
          f_s_length <= 0;
          f_m_length <= 0;
+         f_h_cnt <= 0;
          f_s_cnt <= 0;
          f_m_cnt <= 0;
        end if;
@@ -155,7 +161,8 @@ vunit axis_insert_fixed_header_inst(axis_insert_fixed_header(synthesis))
    f_master_bytes_header : assert always {f_m_first = '1' and m_valid_o = '1' and rst_i = '0'} |-> {m_bytes_o >= G_HEADER_BYTES};
 
 -- Output must appear when header and input have appeared.
---   f_master_out : assert always {f_data_in and f_header_in and m_ready_i = '1' and rst_i = '0'} |=> {f_header_out};
+   f_master_out : assert always {f_data_in and f_header_in and m_ready_i = '1' and rst_i = '0' and f_h_cnt = f_s_cnt}
+     |=> {f_header_out};
 
 
 -----------------------------
