@@ -6,16 +6,17 @@ library std;
   use std.env.stop;
 
 -- The packet flow is as follows:
--- TB -> Client -> Server -> Loopback -> Server -> Client -> TB
+-- TB -> Client -> Server -> User -> Loopback -> User -> Server -> Client -> TB
 
 entity tb_mac_wrapper_stress is
   generic (
+    G_BYTES         : natural;
+    G_MIN_LENGTH    : natural;
     G_MAX_LENGTH    : natural;
     G_CNT_SIZE      : natural;
     G_RANDOM        : boolean;
     G_FAST          : boolean;
-    G_SHOW_PACKETS  : boolean;
-    G_SHOW_PROTOCOL : boolean
+    G_SHOW_PACKETS  : boolean
   );
 end entity tb_mac_wrapper_stress;
 
@@ -23,17 +24,12 @@ end entity tb_mac_wrapper_stress;
 
 architecture simulation of tb_mac_wrapper_stress is
 
-  constant C_USER_BYTES        : natural                       := 8;
-  constant C_ETH_PAYLOAD_BYTES : natural                       := 20;
-  constant C_ADDRESS_CLIENT    : std_logic_vector(47 downto 0) := x"C713C7131234";
-  constant C_ADDRESS_SERVER    : std_logic_vector(47 downto 0) := x"535353535678";
-  constant C_PROTOCOL          : std_logic_vector(15 downto 0) := x"0800";
+  constant C_ADDRESS_CLIENT : std_logic_vector(47 downto 0) := x"C713C7131234";
+  constant C_ADDRESS_SERVER : std_logic_vector(47 downto 0) := x"535353535678";
+  constant C_PROTOCOL       : std_logic_vector(15 downto 0) := x"0800";
 
-  constant C_TIMEOUT : time                                    := 200 ns;
-
-  signal   clk : std_logic                                     := '1';
-  signal   rst : std_logic                                     := '1';
-  signal   running : std_logic                                 := '1';
+  signal   clk : std_logic                                  := '1';
+  signal   rst : std_logic                                  := '1';
 
   signal   client_user_established : std_logic;
   signal   server_user_established : std_logic;
@@ -41,53 +37,54 @@ architecture simulation of tb_mac_wrapper_stress is
   -- TB to Client
   signal   client_user_tx_ready : std_logic;
   signal   client_user_tx_valid : std_logic;
-  signal   client_user_tx_data  : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
-  signal   client_user_tx_bytes : natural range 0 to C_USER_BYTES;
+  signal   client_user_tx_data  : std_logic_vector(G_BYTES * 8 - 1 downto 0);
   signal   client_user_tx_last  : std_logic;
+  signal   client_user_tx_bytes : natural range 0 to G_BYTES;
 
   -- Client to Server
   signal   tb_eth_payload_c2s_ready : std_logic;
   signal   tb_eth_payload_c2s_valid : std_logic;
-  signal   tb_eth_payload_c2s_data  : std_logic_vector(C_ETH_PAYLOAD_BYTES * 8 - 1 downto 0);
-  signal   tb_eth_payload_c2s_bytes : natural range 0 to C_ETH_PAYLOAD_BYTES;
+  signal   tb_eth_payload_c2s_data  : std_logic_vector(G_BYTES * 8 - 1 downto 0);
   signal   tb_eth_payload_c2s_last  : std_logic;
+  signal   tb_eth_payload_c2s_bytes : natural range 0 to G_BYTES;
 
   -- Server to User
-  signal   server_user_rx_ready     : std_logic;
-  signal   server_user_rx_valid     : std_logic;
-  signal   server_user_rx_data      : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
-  signal   server_user_rx_bytes     : natural range 0 to C_USER_BYTES;
-  signal   server_user_rx_bytes_slv : std_logic_vector(7 downto 0);
-  signal   server_user_rx_last      : std_logic;
+  signal   server_user_rx_ready : std_logic;
+  signal   server_user_rx_valid : std_logic;
+  signal   server_user_rx_data  : std_logic_vector(G_BYTES * 8 - 1 downto 0);
+  signal   server_user_rx_last  : std_logic;
+  signal   server_user_rx_bytes : natural range 0 to G_BYTES;
 
-  -- Loopback data from server to client
+  -- Loopback data from server user to client user
 
-  subtype  R_AXI_FIFO_DATA is natural range C_USER_BYTES * 8 - 1 downto 0;
+  subtype  R_AXI_FIFO_DATA is natural range G_BYTES * 8 - 1 downto 0;
 
-  subtype  R_AXI_FIFO_BYTES is natural range C_USER_BYTES * 8 + 7 downto C_USER_BYTES * 8;
+  subtype  R_AXI_FIFO_BYTES is natural range G_BYTES * 8 + 7 downto G_BYTES * 8;
 
-  constant C_AXI_FIFO_LAST : natural                           := C_USER_BYTES * 8 + 8;
+  constant C_AXI_FIFO_LAST : natural                        := G_BYTES * 8 + 8;
+
+  signal   server_user_rx_in  : std_logic_vector(G_BYTES * 8 + 8 downto 0);
+  signal   server_user_tx_out : std_logic_vector(G_BYTES * 8 + 8 downto 0);
 
   -- User to Server
-  signal   server_user_tx_ready     : std_logic;
-  signal   server_user_tx_valid     : std_logic;
-  signal   server_user_tx_data      : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
-  signal   server_user_tx_bytes     : natural range 0 to C_USER_BYTES;
-  signal   server_user_tx_bytes_slv : std_logic_vector(7 downto 0);
-  signal   server_user_tx_last      : std_logic;
+  signal   server_user_tx_ready : std_logic;
+  signal   server_user_tx_valid : std_logic;
+  signal   server_user_tx_data  : std_logic_vector(G_BYTES * 8 - 1 downto 0);
+  signal   server_user_tx_bytes : natural range 0 to G_BYTES;
+  signal   server_user_tx_last  : std_logic;
 
   -- Server to Client
   signal   tb_eth_payload_s2c_ready : std_logic;
   signal   tb_eth_payload_s2c_valid : std_logic;
-  signal   tb_eth_payload_s2c_data  : std_logic_vector(C_ETH_PAYLOAD_BYTES * 8 - 1 downto 0);
-  signal   tb_eth_payload_s2c_bytes : natural range 0 to C_ETH_PAYLOAD_BYTES;
+  signal   tb_eth_payload_s2c_data  : std_logic_vector(G_BYTES * 8 - 1 downto 0);
+  signal   tb_eth_payload_s2c_bytes : natural range 0 to G_BYTES;
   signal   tb_eth_payload_s2c_last  : std_logic;
 
   -- Client to TB
   signal   client_user_rx_ready : std_logic;
   signal   client_user_rx_valid : std_logic;
-  signal   client_user_rx_data  : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
-  signal   client_user_rx_bytes : natural range 0 to C_USER_BYTES;
+  signal   client_user_rx_data  : std_logic_vector(G_BYTES * 8 - 1 downto 0);
+  signal   client_user_rx_bytes : natural range 0 to G_BYTES;
   signal   client_user_rx_last  : std_logic;
 
 begin
@@ -96,7 +93,7 @@ begin
   -- Clock and reset
   ----------------------------------------------------------
 
-  clk <= running and not clk after 5 ns;
+  clk <= not clk after 5 ns;
   rst <= '1', '0' after 100 ns;
 
 
@@ -104,16 +101,15 @@ begin
   -- Generate stimuli and verify response
   ----------------------------------------------------------
 
-  axi_stim_verf_flexible_inst : entity work.axi_stim_verf_flexible
+  axi_stim_verf_inst : entity work.axi_stim_verf
     generic map (
-      G_START_ZERO   => true,
-      G_DEBUG        => false,
-      G_RANDOM       => G_RANDOM,
-      G_FAST         => G_FAST,
-      G_MAX_LENGTH   => G_MAX_LENGTH,
-      G_CNT_SIZE     => G_CNT_SIZE,
-      G_M_DATA_BYTES => C_USER_BYTES,
-      G_S_DATA_BYTES => C_USER_BYTES
+      G_DEBUG      => false,
+      G_RANDOM     => G_RANDOM,
+      G_FAST       => G_FAST,
+      G_MIN_LENGTH => G_MIN_LENGTH,
+      G_MAX_LENGTH => G_MAX_LENGTH,
+      G_CNT_SIZE   => G_CNT_SIZE,
+      G_DATA_BYTES => G_BYTES
     )
     port map (
       clk_i     => clk,
@@ -121,15 +117,14 @@ begin
       m_ready_i => client_user_tx_ready,
       m_valid_o => client_user_tx_valid,
       m_data_o  => client_user_tx_data,
-      m_start_o => open,
-      m_end_o   => client_user_tx_bytes,
       m_last_o  => client_user_tx_last,
+      m_bytes_o => client_user_tx_bytes,
       s_ready_o => client_user_rx_ready,
       s_valid_i => client_user_rx_valid,
       s_data_i  => client_user_rx_data,
-      s_bytes_i => client_user_rx_bytes,
-      s_last_i  => client_user_rx_last
-    ); -- axi_stim_verf_flexible_inst : entity work.axi_stim_verf_flexible
+      s_last_i  => client_user_rx_last,
+      s_bytes_i => client_user_rx_bytes
+    ); -- axi_stim_verf_inst : entity work.axi_stim_verf
 
 
   ----------------------------------------------------------
@@ -138,9 +133,8 @@ begin
 
   mac_wrapper_client_inst : entity work.mac_wrapper
     generic map (
-      G_SIM_NAME          => "CLIENT",
-      G_ETH_PAYLOAD_BYTES => C_ETH_PAYLOAD_BYTES,
-      G_USER_BYTES        => C_USER_BYTES
+      G_SIM_NAME => "CLIENT",
+      G_BYTES    => G_BYTES
     )
     port map (
       clk_i                  => clk,
@@ -179,9 +173,8 @@ begin
 
   mac_wrapper_server_inst : entity work.mac_wrapper
     generic map (
-      G_SIM_NAME          => "SERVER",
-      G_ETH_PAYLOAD_BYTES => C_ETH_PAYLOAD_BYTES,
-      G_USER_BYTES        => C_USER_BYTES
+      G_SIM_NAME => "SERVER",
+      G_BYTES    => G_BYTES
     )
     port map (
       clk_i                  => clk,
@@ -221,26 +214,27 @@ begin
   axi_fifo_sync_inst : entity work.axi_fifo_sync
     generic map (
       G_RAM_STYLE => "auto",
-      G_DATA_SIZE => C_USER_BYTES * 8 + 9,
+      G_DATA_SIZE => G_BYTES * 8 + 9,
       G_RAM_DEPTH => 4
     )
     port map (
-      clk_i                      => clk,
-      rst_i                      => rst,
-      s_ready_o                  => server_user_rx_ready,
-      s_valid_i                  => server_user_rx_valid,
-      s_data_i(R_AXI_FIFO_DATA)  => server_user_rx_data,
-      s_data_i(R_AXI_FIFO_BYTES) => server_user_rx_bytes_slv,
-      s_data_i(C_AXI_FIFO_LAST)  => server_user_rx_last,
-      m_ready_i                  => server_user_tx_ready,
-      m_valid_o                  => server_user_tx_valid,
-      m_data_o(R_AXI_FIFO_DATA)  => server_user_tx_data,
-      m_data_o(R_AXI_FIFO_BYTES) => server_user_tx_bytes_slv,
-      m_data_o(C_AXI_FIFO_LAST)  => server_user_tx_last
+      clk_i     => clk,
+      rst_i     => rst,
+      s_ready_o => server_user_rx_ready,
+      s_valid_i => server_user_rx_valid,
+      s_data_i  => server_user_rx_in,
+      m_ready_i => server_user_tx_ready,
+      m_valid_o => server_user_tx_valid,
+      m_data_o  => server_user_tx_out
     ); -- axi_fifo_sync_inst : entity work.axi_fifo_sync
 
-  server_user_rx_bytes_slv <= to_stdlogicvector(server_user_rx_bytes, 8);
-  server_user_tx_bytes     <= to_integer(server_user_tx_bytes_slv);
+  server_user_rx_in(R_AXI_FIFO_DATA)  <= server_user_rx_data;
+  server_user_rx_in(R_AXI_FIFO_BYTES) <= to_stdlogicvector(server_user_rx_bytes, 8);
+  server_user_rx_in(C_AXI_FIFO_LAST)  <= server_user_rx_last;
+
+  server_user_tx_data                 <= server_user_tx_out(R_AXI_FIFO_DATA);
+  server_user_tx_bytes                <= to_integer(server_user_tx_out(R_AXI_FIFO_BYTES));
+  server_user_tx_last                 <= server_user_tx_out(C_AXI_FIFO_LAST);
 
 
   ----------------------------------------------------------
@@ -249,9 +243,10 @@ begin
 
   data_logger_c2s_inst : entity work.data_logger
     generic map (
-      G_ENABLE     => G_SHOW_PACKETS,
-      G_LOG_NAME   => "C2S", -- Client to Server
-      G_DATA_BYTES => C_ETH_PAYLOAD_BYTES
+      G_ENABLE        => G_SHOW_PACKETS,
+      G_LOG_NAME      => "C2S", -- Client to Server
+      G_BYTES_PER_ROW => G_BYTES,
+      G_DATA_BYTES    => G_BYTES
     )
     port map (
       clk_i   => clk,
@@ -259,16 +254,16 @@ begin
       ready_i => tb_eth_payload_c2s_ready,
       valid_i => tb_eth_payload_c2s_valid,
       data_i  => tb_eth_payload_c2s_data,
-      start_i => 0,
-      end_i   => tb_eth_payload_c2s_bytes,
-      last_i  => tb_eth_payload_c2s_last
+      last_i  => tb_eth_payload_c2s_last,
+      bytes_i => tb_eth_payload_c2s_bytes
     ); -- data_logger_c2s_inst : entity work.data_logger
 
   data_logger_s2c_inst : entity work.data_logger
     generic map (
-      G_ENABLE     => G_SHOW_PACKETS,
-      G_LOG_NAME   => "S2C", -- Server to Client
-      G_DATA_BYTES => C_ETH_PAYLOAD_BYTES
+      G_ENABLE        => G_SHOW_PACKETS,
+      G_LOG_NAME      => "S2C", -- Server to Client
+      G_BYTES_PER_ROW => G_BYTES,
+      G_DATA_BYTES    => G_BYTES
     )
     port map (
       clk_i   => clk,
@@ -276,9 +271,8 @@ begin
       ready_i => tb_eth_payload_s2c_ready,
       valid_i => tb_eth_payload_s2c_valid,
       data_i  => tb_eth_payload_s2c_data,
-      start_i => 0,
-      end_i   => tb_eth_payload_s2c_bytes,
-      last_i  => tb_eth_payload_s2c_last
+      last_i  => tb_eth_payload_s2c_last,
+      bytes_i => tb_eth_payload_s2c_bytes
     ); -- data_logger_s2c_inst : entity work.data_logger
 
 end architecture simulation;
