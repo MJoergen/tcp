@@ -30,8 +30,7 @@ end entity design;
 
 architecture synthesis of design is
 
-  constant C_ETH_BYTES  : natural   := 60;
-  constant C_USER_BYTES : natural   := 46;
+  constant C_BYTES : natural        := 46;
 
   signal   mac_user_start       : std_logic;
   signal   mac_user_src_address : std_logic_vector(47 downto 0); -- MAC address
@@ -45,25 +44,25 @@ architecture synthesis of design is
 
   signal   mac_user_rx_ready : std_logic;
   signal   mac_user_rx_valid : std_logic;
-  signal   mac_user_rx_data  : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
-  signal   mac_user_rx_bytes : natural range 0 to C_USER_BYTES;
+  signal   mac_user_rx_data  : std_logic_vector(C_BYTES * 8 - 1 downto 0);
+  signal   mac_user_rx_bytes : natural range 0 to C_BYTES;
   signal   mac_user_rx_last  : std_logic;
   signal   mac_user_tx_ready : std_logic;
   signal   mac_user_tx_valid : std_logic;
-  signal   mac_user_tx_data  : std_logic_vector(C_USER_BYTES * 8 - 1 downto 0);
-  signal   mac_user_tx_bytes : natural range 0 to C_USER_BYTES;
+  signal   mac_user_tx_data  : std_logic_vector(C_BYTES * 8 - 1 downto 0);
+  signal   mac_user_tx_bytes : natural range 0 to C_BYTES;
   signal   mac_user_tx_last  : std_logic;
 
   signal   eth_rx_wide_ready : std_logic;
   signal   eth_rx_wide_valid : std_logic;
   signal   eth_rx_wide_last  : std_logic;
-  signal   eth_rx_wide_bytes : natural range 0 to C_ETH_BYTES;
-  signal   eth_rx_wide_data  : std_logic_vector(C_ETH_BYTES * 8 - 1 downto 0);
+  signal   eth_rx_wide_bytes : natural range 0 to C_BYTES;
+  signal   eth_rx_wide_data  : std_logic_vector(C_BYTES * 8 - 1 downto 0);
   signal   eth_tx_wide_ready : std_logic;
   signal   eth_tx_wide_valid : std_logic;
   signal   eth_tx_wide_last  : std_logic;
-  signal   eth_tx_wide_bytes : natural range 0 to C_ETH_BYTES;
-  signal   eth_tx_wide_data  : std_logic_vector(C_ETH_BYTES * 8 - 1 downto 0);
+  signal   eth_tx_wide_bytes : natural range 0 to C_BYTES;
+  signal   eth_tx_wide_data  : std_logic_vector(C_BYTES * 8 - 1 downto 0);
 
   signal   mac_user_rx_byte_ready  : std_logic;
   signal   mac_user_rx_byte_valid  : std_logic;
@@ -145,11 +144,10 @@ begin
   -- MAC wrapper
   --------------------------------------------------
 
-  mac_wrapper_inst : entity work.mac_wrapper
+  mac_handler_inst : entity work.mac_handler
     generic map (
-      G_SIM_NAME          => "DESIGN",
-      G_ETH_PAYLOAD_BYTES => C_ETH_BYTES,
-      G_USER_BYTES        => C_USER_BYTES
+      G_SIM_NAME => "DESIGN",
+      G_BYTES    => C_BYTES
     )
     port map (
       clk_i                  => clk_i,
@@ -162,28 +160,28 @@ begin
       user_rx_ready_i        => mac_user_rx_ready,
       user_rx_valid_o        => mac_user_rx_valid,
       user_rx_data_o         => mac_user_rx_data,
-      user_rx_bytes_o        => mac_user_rx_bytes,
       user_rx_last_o         => mac_user_rx_last,
+      user_rx_bytes_o        => mac_user_rx_bytes,
       user_tx_ready_o        => mac_user_tx_ready,
       user_tx_valid_i        => mac_user_tx_valid,
       user_tx_data_i         => mac_user_tx_data,
-      user_tx_bytes_i        => mac_user_tx_bytes,
       user_tx_last_i         => mac_user_tx_last,
+      user_tx_bytes_i        => mac_user_tx_bytes,
       eth_payload_rx_ready_o => eth_rx_wide_ready,
       eth_payload_rx_valid_i => eth_rx_wide_valid,
       eth_payload_rx_data_i  => eth_rx_wide_data,
-      eth_payload_rx_bytes_i => eth_rx_wide_bytes,
       eth_payload_rx_last_i  => eth_rx_wide_last,
+      eth_payload_rx_bytes_i => eth_rx_wide_bytes,
       eth_payload_tx_ready_i => eth_tx_wide_ready,
       eth_payload_tx_valid_o => eth_tx_wide_valid,
       eth_payload_tx_data_o  => eth_tx_wide_data,
-      eth_payload_tx_bytes_o => eth_tx_wide_bytes,
-      eth_payload_tx_last_o  => eth_tx_wide_last
-    ); -- mac_wrapper_inst : entity work.mac_wrapper
+      eth_payload_tx_last_o  => eth_tx_wide_last,
+      eth_payload_tx_bytes_o => eth_tx_wide_bytes
+    ); -- mac_handler_inst : entity work.mac_handler
 
   wide2byte_inst : entity work.wide2byte
     generic map (
-      G_BYTES => C_ETH_BYTES
+      G_BYTES => C_BYTES
     )
     port map (
       clk_i     => clk_i,
@@ -201,7 +199,7 @@ begin
 
   byte2wide_inst : entity work.byte2wide
     generic map (
-      G_BYTES => C_ETH_BYTES
+      G_BYTES => C_BYTES
     )
     port map (
       clk_i     => clk_i,
@@ -224,7 +222,7 @@ begin
 
   wide2byte_rx_inst : entity work.wide2byte
     generic map (
-      G_BYTES => C_USER_BYTES
+      G_BYTES => C_BYTES
     )
     port map (
       clk_i     => clk_i,

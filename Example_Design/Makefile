@@ -1,7 +1,8 @@
 # List of library files
 LIB_SRC_DIR = ../src
-SRC += $(LIB_SRC_DIR)/axi_pipe_flexible.vhd
-SRC += $(LIB_SRC_DIR)/mac_wrapper.vhd
+SRC += $(LIB_SRC_DIR)/axis_insert_fixed_header.vhd
+SRC += $(LIB_SRC_DIR)/axis_remove_fixed_header.vhd
+SRC += $(LIB_SRC_DIR)/mac_handler.vhd
 #SRC += $(LIB_SRC_DIR)/ip_wrapper.vhd
 #SRC += $(LIB_SRC_DIR)/tcp_protocol.vhd
 #SRC += $(LIB_SRC_DIR)/tcp_wrapper.vhd

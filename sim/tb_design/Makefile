@@ -10,8 +10,9 @@ SRC += $(EXAMPLE_SRC_DIR)/wide2byte.vhd
 SRC += $(EXAMPLE_SRC_DIR)/controller.vhd
 SRC += $(EXAMPLE_SRC_DIR)/design.vhd
 
-SRC += $(SRC_DIR)/axi_pipe_flexible.vhd
-SRC += $(SRC_DIR)/mac_wrapper.vhd
+SRC += $(SRC_DIR)/axis_remove_fixed_header.vhd
+SRC += $(SRC_DIR)/axis_insert_fixed_header.vhd
+SRC += $(SRC_DIR)/mac_handler.vhd
 
 # Top level entity
 DUT = design
