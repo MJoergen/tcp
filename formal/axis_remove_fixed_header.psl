@@ -82,8 +82,8 @@ vunit axis_remove_fixed_header_inst(axis_remove_fixed_header(synthesis))
    signal f_m_bytes      : natural range 0 to 1000;
    signal f_s_length     : natural range 0 to 1000;
    signal f_m_length     : natural range 0 to 1000;
-   signal f_s_length_cnt : natural range 0 to 9;
-   signal f_m_length_cnt : natural range 0 to 9;
+   signal f_s_cnt : natural range 0 to 9;
+   signal f_m_cnt : natural range 0 to 9;
 
    f_bytes_proc : process (clk_i)
    begin
@@ -91,7 +91,7 @@ vunit axis_remove_fixed_header_inst(axis_remove_fixed_header(synthesis))
        if s_valid_i = '1' and s_ready_o = '1' then
          if s_last_i = '1' then
            f_s_length <= f_s_bytes + s_bytes_i;
-           f_s_length_cnt <= f_s_length_cnt + 1;
+           f_s_cnt <= f_s_cnt + 1;
            f_s_bytes <= 0;
          else
            f_s_bytes <= f_s_bytes + s_bytes_i;
@@ -101,7 +101,7 @@ vunit axis_remove_fixed_header_inst(axis_remove_fixed_header(synthesis))
        if m_valid_o = '1' and m_ready_i = '1' then
          if m_last_o = '1' then
            f_m_length <= f_m_bytes + m_bytes_o;
-           f_m_length_cnt <= f_m_length_cnt + 1;
+           f_m_cnt <= f_m_cnt + 1;
            f_m_bytes <= 0;
          else
            f_m_bytes <= f_m_bytes + m_bytes_o;
@@ -113,8 +113,8 @@ vunit axis_remove_fixed_header_inst(axis_remove_fixed_header(synthesis))
          f_m_bytes <= 0;
          f_s_length <= 0;
          f_m_length <= 0;
-         f_s_length_cnt <= 0;
-         f_m_length_cnt <= 0;
+         f_s_cnt <= 0;
+         f_m_cnt <= 0;
        end if;
 
      end if;
@@ -148,7 +148,7 @@ vunit axis_remove_fixed_header_inst(axis_remove_fixed_header(synthesis))
    f_master_buffer_full : assert always {rst_i = '0'} |-> {m_bytes_o = 0 or m_valid_o = '1'};
 
 -- Packet length must match
-   f_master_length : assert always {f_s_length_cnt = f_m_length_cnt and f_s_length_cnt > 0 and rst_i = '0'} |->
+   f_master_length : assert always {f_s_cnt = f_m_cnt and f_s_cnt > 0 and rst_i = '0'} |->
      {f_s_length = f_m_length + G_HEADER_BYTES};
 
 

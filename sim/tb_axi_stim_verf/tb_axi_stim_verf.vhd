@@ -59,7 +59,7 @@ begin
   -- Generate stimuli and verify response
   ----------------------------------------------------------
 
-  axi_stim_verf_inst : entity work.axi_stim_verf
+  axi_stim_verf_flexible_inst : entity work.axi_stim_verf_flexible
     generic map (
       G_START_ZERO   => G_START_ZERO,
       G_DEBUG        => G_DEBUG,
@@ -84,7 +84,7 @@ begin
       s_data_i  => tb_s_data,
       s_bytes_i => tb_s_bytes,
       s_last_i  => tb_s_last
-    ); -- axi_stim_verf_inst : entity work.axi_stim_verf
+    ); -- axi_stim_verf_flexible_inst : entity work.axi_stim_verf_flexible
 
 
   ----------------------------------------------------------

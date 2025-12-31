@@ -9,7 +9,7 @@ library ieee;
 library std;
   use std.env.stop;
 
-entity axi_stim_verf is
+entity axi_stim_verf_flexible is
   generic (
     G_START_ZERO   : boolean;
     G_DEBUG        : boolean;
@@ -39,9 +39,9 @@ entity axi_stim_verf is
     s_bytes_i : in    natural range 0 to G_S_DATA_BYTES;
     s_last_i  : in    std_logic
   );
-end entity axi_stim_verf;
+end entity axi_stim_verf_flexible;
 
-architecture synthesis of axi_stim_verf is
+architecture synthesis of axi_stim_verf_flexible is
 
   -- C_LENGTH_SIZE is the number of bits necessary to encode the packet length.
   -- The value 8 allows packet lengths up to 255 bytes.

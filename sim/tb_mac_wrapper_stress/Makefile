@@ -12,7 +12,7 @@ SRC += $(SIM_SRC_DIR)/data_logger.vhd
 SRC += $(SIM_SRC_DIR)/lfsr.vhd
 SRC += $(SIM_SRC_DIR)/random.vhd
 SRC += $(SIM_SRC_DIR)/axi_fifo_sync.vhd
-SRC += $(SIM_SRC_DIR)/axi_stim_verf.vhd
+SRC += $(SIM_SRC_DIR)/axi_stim_verf_flexible.vhd
 
 # Top level entity
 DUT = mac_wrapper_stress

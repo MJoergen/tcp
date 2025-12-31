@@ -4,14 +4,14 @@
 
 # List of test specific simulation files
 SRC += tb_axi_stim_verf.vhd
-SRC += $(SIM_SRC_DIR)/axi_stim_verf.vhd
+SRC += $(SIM_SRC_DIR)/axi_stim_verf_flexible.vhd
 SRC += $(SIM_SRC_DIR)/lfsr.vhd
 SRC += $(SIM_SRC_DIR)/random.vhd
 SRC += $(SIM_SRC_DIR)/axi_fifo_sync.vhd
 SRC += $(SIM_SRC_DIR)/data_logger.vhd
 
 # Top level entity
-DUT = axi_stim_verf
+DUT = axi_stim_verf_flexible
 
 # Test duration
 STOP_TIME = 30us
