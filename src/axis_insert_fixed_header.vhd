@@ -36,19 +36,19 @@ end entity axis_insert_fixed_header;
 
 architecture synthesis of axis_insert_fixed_header is
 
-  type   state_type is (IDLE_ST, WAIT_HEADER_ST, BUSY_ST, LAST_ST);
+  type   state_type is (IDLE_ST, WAIT_HEADER_ST, WAIT_DATA_ST, BUSY_ST, LAST_ST);
   signal state : state_type := IDLE_ST;
 
+  signal h_data  : std_logic_vector(G_HEADER_BYTES * 8 - 1 downto 0);
   signal s_data  : std_logic_vector(G_DATA_BYTES * 8 - 1 downto 0);
   signal s_last  : std_logic;
   signal s_bytes : natural range 0 to G_DATA_BYTES;
 
 begin
 
-  s_ready_o <= (m_ready_i or not m_valid_o) when state = IDLE_ST or state = BUSY_ST else
+  s_ready_o <= (m_ready_i or not m_valid_o) when state = IDLE_ST or state = WAIT_DATA_ST or state = BUSY_ST else
                '0';
-  h_ready_o <= s_valid_i and (m_ready_i or not m_valid_o) when state = IDLE_ST else
-               (m_ready_i or not m_valid_o) when state = WAIT_HEADER_ST else
+  h_ready_o <= (m_ready_i or not m_valid_o) when state = IDLE_ST or state = WAIT_HEADER_ST else
                '0';
 
   state_proc : process (clk_i)
@@ -86,6 +86,9 @@ begin
             s_last  <= s_last_i;
             s_bytes <= s_bytes_i;
             state   <= WAIT_HEADER_ST;
+          elsif h_valid_i = '1' and h_ready_o = '1' then
+            h_data  <= h_data_i;
+            state   <= WAIT_DATA_ST;
           end if;
 
         when WAIT_HEADER_ST =>
@@ -101,6 +104,27 @@ begin
               else
                 m_last_o  <= '1';
                 m_bytes_o <= s_bytes + G_HEADER_BYTES;
+                state     <= IDLE_ST;
+              end if;
+            end if;
+          end if;
+
+        when WAIT_DATA_ST =>
+          if s_valid_i = '1' and s_ready_o = '1' then
+            s_data    <= s_data_i;
+            s_last    <= s_last_i;
+            s_bytes   <= s_bytes_i;
+            m_valid_o <= '1';
+            m_data_o  <= h_data & s_data_i(G_DATA_BYTES * 8 - 1 downto G_HEADER_BYTES * 8);
+            m_last_o  <= '0';
+            m_bytes_o <= G_DATA_BYTES;
+            state     <= BUSY_ST;
+            if s_last_i = '1' then
+              if s_bytes_i > G_DATA_BYTES - G_HEADER_BYTES then
+                state     <= LAST_ST;
+              else
+                m_last_o  <= '1';
+                m_bytes_o <= s_bytes_i + G_HEADER_BYTES;
                 state     <= IDLE_ST;
               end if;
             end if;

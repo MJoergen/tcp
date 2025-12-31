@@ -135,6 +135,10 @@ vunit axis_remove_fixed_header_inst(axis_remove_fixed_header(synthesis))
    f_master_stable : assert always {m_valid_o = '1' and m_ready_i = '0' and rst_i = '0'} |=>
      {stable(m_valid_o) and stable(m_data_o) and stable(m_last_o) and stable(m_bytes_o)};
 
+-- Master must be stable
+   f_header_stable : assert always {h_valid_o = '1' and h_ready_i = '0' and rst_i = '0'} |=>
+     {stable(h_valid_o) and stable(h_data_o)};
+
 -- Data on master must have been from slave
    f_master_data_seen : assert always {f_data_out and rst_i = '0'} |-> {f_data_in};
 

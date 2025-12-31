@@ -47,7 +47,7 @@ begin
 
   assert G_DATA_BYTES >= G_HEADER_BYTES;
 
-  s_ready_o <= (m_ready_i or not m_valid_o) when state = IDLE_ST or state = BUSY_ST else
+  s_ready_o <= (m_ready_i or not m_valid_o) and (h_ready_i or not h_valid_o) when state = IDLE_ST or state = BUSY_ST else
                '0';
 
   state_proc : process (clk_i)

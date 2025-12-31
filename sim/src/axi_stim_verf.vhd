@@ -177,7 +177,6 @@ begin
               end loop;
 
               m_valid_o <= '1';
-              -- m_last_o  <= '0'; TBD??
               m_bytes_o <= bytes_v;
               if stim_length = bytes_v then
                 m_last_o   <= '1';

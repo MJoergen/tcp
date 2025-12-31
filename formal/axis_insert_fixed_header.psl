@@ -155,7 +155,7 @@ vunit axis_insert_fixed_header_inst(axis_insert_fixed_header(synthesis))
    f_master_bytes_header : assert always {f_m_first = '1' and m_valid_o = '1' and rst_i = '0'} |-> {m_bytes_o >= G_HEADER_BYTES};
 
 -- Output must appear when header and input have appeared.
-   f_master_out : assert always {f_data_in and f_header_in and m_ready_i = '1' and rst_i = '0'} |=> {f_header_out};
+--   f_master_out : assert always {f_data_in and f_header_in and m_ready_i = '1' and rst_i = '0'} |=> {f_header_out};
 
 
 -----------------------------

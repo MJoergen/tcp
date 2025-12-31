@@ -1,10 +1,10 @@
 [*]
 [*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
-[*] Mon Dec 29 16:05:03 2025
+[*] Wed Dec 31 08:42:03 2025
 [*]
 [dumpfile] "/home/mike/git/MJoergen/tcp/formal/axis_insert_fixed_header_bmc/engine_0/trace.vcd"
-[dumpfile_mtime] "Mon Dec 29 16:04:17 2025"
-[dumpfile_size] 4486
+[dumpfile_mtime] "Wed Dec 31 08:40:59 2025"
+[dumpfile_size] 5697
 [savefile] "/home/mike/git/MJoergen/tcp/formal/axis_insert_fixed_header.gtkw"
 [timestart] 0
 [size] 1276 825
@@ -48,12 +48,12 @@ axis_insert_fixed_header.m_data_o[39:0]
 axis_insert_fixed_header.m_last_o
 @24
 axis_insert_fixed_header.m_bytes_o[2:0]
-@28
-axis_insert_fixed_header.state[1:0]
 @22
 axis_insert_fixed_header.s_data[39:0]
 @24
 axis_insert_fixed_header.s_bytes[2:0]
+@28
+axis_insert_fixed_header.state[2:0]
 @1000200
 -DUT
 @28
