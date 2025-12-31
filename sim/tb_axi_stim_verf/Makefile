@@ -4,26 +4,26 @@
 
 # List of test specific simulation files
 SRC += tb_axi_stim_verf.vhd
-SRC += $(SIM_SRC_DIR)/axi_stim_verf_flexible.vhd
+SRC += $(SIM_SRC_DIR)/axi_stim_verf.vhd
 SRC += $(SIM_SRC_DIR)/lfsr.vhd
 SRC += $(SIM_SRC_DIR)/random.vhd
 SRC += $(SIM_SRC_DIR)/axi_fifo_sync.vhd
 SRC += $(SIM_SRC_DIR)/data_logger.vhd
 
 # Top level entity
-DUT = axi_stim_verf_flexible
+DUT = axi_stim_verf
 
 # Test duration
-STOP_TIME = 30us
+STOP_TIME = 40us
 
 # Test specific generics
-GENERIC += -gG_START_ZERO=false
 GENERIC += -gG_DEBUG=false
 GENERIC += -gG_SHOW_PACKETS=false
 GENERIC += -gG_RANDOM=true
 GENERIC += -gG_FAST=true
+GENERIC += -gG_MIN_LENGTH=3
 GENERIC += -gG_MAX_LENGTH=40
-GENERIC += -gG_CNT_SIZE=12
+GENERIC += -gG_CNT_SIZE=14
 
 # Don't stop on errors
 #ASSERT_LEVEL = none

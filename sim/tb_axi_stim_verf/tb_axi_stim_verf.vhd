@@ -4,11 +4,11 @@ library ieee;
 
 entity tb_axi_stim_verf is
   generic (
-    G_START_ZERO   : boolean;
-    G_DEBUG        : boolean;
     G_SHOW_PACKETS : boolean;
+    G_DEBUG        : boolean;
     G_RANDOM       : boolean;
     G_FAST         : boolean;
+    G_MIN_LENGTH   : natural;
     G_MAX_LENGTH   : natural;
     G_CNT_SIZE     : natural
   );
@@ -28,8 +28,7 @@ architecture simulation of tb_axi_stim_verf is
   signal   tb_m_ready     : std_logic;
   signal   tb_m_valid     : std_logic;
   signal   tb_m_data      : std_logic_vector(C_DATA_BYTES * 8 - 1 downto 0);
-  signal   tb_m_start     : natural range 0 to C_DATA_BYTES - 1;
-  signal   tb_m_end       : natural range 0 to C_DATA_BYTES;
+  signal   tb_m_bytes     : natural range 0 to C_DATA_BYTES;
   signal   tb_m_bytes_slv : std_logic_vector(7 downto 0);
   signal   tb_m_last      : std_logic;
 
@@ -59,16 +58,15 @@ begin
   -- Generate stimuli and verify response
   ----------------------------------------------------------
 
-  axi_stim_verf_flexible_inst : entity work.axi_stim_verf_flexible
+  axi_stim_verf_inst : entity work.axi_stim_verf
     generic map (
-      G_START_ZERO   => G_START_ZERO,
-      G_DEBUG        => G_DEBUG,
-      G_RANDOM       => G_RANDOM,
-      G_FAST         => G_FAST,
-      G_MAX_LENGTH   => G_MAX_LENGTH,
-      G_CNT_SIZE     => G_CNT_SIZE,
-      G_M_DATA_BYTES => C_DATA_BYTES,
-      G_S_DATA_BYTES => C_DATA_BYTES
+      G_DEBUG      => G_DEBUG,
+      G_RANDOM     => G_RANDOM,
+      G_FAST       => G_FAST,
+      G_MIN_LENGTH => G_MIN_LENGTH,
+      G_MAX_LENGTH => G_MAX_LENGTH,
+      G_CNT_SIZE   => G_CNT_SIZE,
+      G_DATA_BYTES => C_DATA_BYTES
     )
     port map (
       clk_i     => clk,
@@ -76,15 +74,14 @@ begin
       m_ready_i => tb_m_ready,
       m_valid_o => tb_m_valid,
       m_data_o  => tb_m_data,
-      m_start_o => tb_m_start,
-      m_end_o   => tb_m_end,
       m_last_o  => tb_m_last,
+      m_bytes_o => tb_m_bytes,
       s_ready_o => tb_s_ready,
       s_valid_i => tb_s_valid,
       s_data_i  => tb_s_data,
-      s_bytes_i => tb_s_bytes,
-      s_last_i  => tb_s_last
-    ); -- axi_stim_verf_flexible_inst : entity work.axi_stim_verf_flexible
+      s_last_i  => tb_s_last,
+      s_bytes_i => tb_s_bytes
+    ); -- axi_stim_verf_inst : entity work.axi_stim_verf
 
 
   ----------------------------------------------------------
@@ -103,7 +100,7 @@ begin
       fill_o            => tb_fill,
       s_ready_o         => tb_m_ready,
       s_valid_i         => tb_m_valid,
-      s_data_i(R_DATA)  => rotate_right(tb_m_data, tb_m_start * 8),
+      s_data_i(R_DATA)  => tb_m_data,
       s_data_i(R_BYTES) => tb_m_bytes_slv,
       s_data_i(C_LAST)  => tb_m_last,
       m_ready_i         => tb_s_ready,
@@ -113,7 +110,7 @@ begin
       m_data_o(C_LAST)  => tb_s_last
     ); -- axi_fifo_sync_inst : entity work.axi_fifo_sync
 
-  tb_m_bytes_slv <= to_stdlogicvector(tb_m_end - tb_m_start, 8);
+  tb_m_bytes_slv <= to_stdlogicvector(tb_m_bytes, 8);
   tb_s_bytes     <= to_integer(tb_s_bytes_slv);
 
 
@@ -133,8 +130,8 @@ begin
       ready_i => tb_m_ready,
       valid_i => tb_m_valid,
       data_i  => tb_m_data,
-      start_i => tb_m_start,
-      end_i   => tb_m_end,
+      start_i => 0,
+      end_i   => tb_m_bytes,
       last_i  => tb_m_last
     ); -- data_logger_m_inst : entity work.data_logger
 
