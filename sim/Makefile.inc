@@ -36,6 +36,8 @@ RUN_OPTIONS += --assert-level=$(ASSERT_LEVEL)
 EXAMPLE_SRC_DIR = ../../Example_Design/src
 SRC_DIR = ../../src
 SIM_SRC_DIR = ../src
+FPGA_UTILITIES_SRC_DIR = ../../fpga_utilities/src
+FPGA_UTILITIES_SIM_SRC_DIR = ../../fpga_utilities/sim/src
 
 # Specify install location of the AMD Vivado tool and XPM libraries
 VIVADO_DIR = /opt/Xilinx/Vivado/2024.1

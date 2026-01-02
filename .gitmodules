@@ -1,0 +1,3 @@
+[submodule "fpga_utilities"]
+	path = fpga_utilities
+	url = https://github.com/MJoergen/fpga_utilities.git

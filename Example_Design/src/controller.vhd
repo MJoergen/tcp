@@ -150,9 +150,9 @@ begin
     end if;
   end process w2b_proc;
 
-  wide2byte_inst : entity work.wide2byte
+  axip_to_axis_inst : entity work.axip_to_axis
     generic map (
-      G_BYTES => C_W2B_BYTES
+      G_DATA_BYTES => C_W2B_BYTES
     )
     port map (
       clk_i     => clk_i,
@@ -166,7 +166,7 @@ begin
       m_valid_o => uart_tx_valid_o,
       m_last_o  => open,
       m_data_o  => uart_tx_data_o
-    ); -- wide2byte_inst : entity work.wide2byte
+    ); -- axip_to_axis_inst : entity work.axip_to_axis
 
   key_proc : process (clk_i)
   begin

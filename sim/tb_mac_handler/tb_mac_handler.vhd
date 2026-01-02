@@ -55,17 +55,6 @@ architecture simulation of tb_mac_handler is
   signal   server_user_rx_last  : std_logic;
   signal   server_user_rx_bytes : natural range 0 to G_BYTES;
 
-  -- Loopback data from server user to client user
-
-  subtype  R_AXI_FIFO_DATA is natural range G_BYTES * 8 - 1 downto 0;
-
-  subtype  R_AXI_FIFO_BYTES is natural range G_BYTES * 8 + 7 downto G_BYTES * 8;
-
-  constant C_AXI_FIFO_LAST : natural                        := G_BYTES * 8 + 8;
-
-  signal   server_user_rx_in  : std_logic_vector(G_BYTES * 8 + 8 downto 0);
-  signal   server_user_tx_out : std_logic_vector(G_BYTES * 8 + 8 downto 0);
-
   -- User to Server
   signal   server_user_tx_ready : std_logic;
   signal   server_user_tx_valid : std_logic;
@@ -101,7 +90,7 @@ begin
   -- Generate stimuli and verify response
   ----------------------------------------------------------
 
-  axi_stim_verf_inst : entity work.axi_stim_verf
+  axip_sim_inst : entity work.axip_sim
     generic map (
       G_DEBUG      => false,
       G_RANDOM     => G_RANDOM,
@@ -124,7 +113,7 @@ begin
       s_data_i  => client_user_rx_data,
       s_last_i  => client_user_rx_last,
       s_bytes_i => client_user_rx_bytes
-    ); -- axi_stim_verf_inst : entity work.axi_stim_verf
+    ); -- axip_sim_inst : entity work.axip_sim
 
 
   ----------------------------------------------------------
@@ -211,37 +200,33 @@ begin
   -- Loopback data from server to client
   ----------------------------------------------------------
 
-  axi_fifo_sync_inst : entity work.axi_fifo_sync
+  axip_fifo_sync_inst : entity work.axip_fifo_sync
     generic map (
-      G_RAM_STYLE => "auto",
-      G_DATA_SIZE => G_BYTES * 8 + 9,
-      G_RAM_DEPTH => 4
+      G_RAM_STYLE  => "auto",
+      G_DATA_BYTES => G_BYTES,
+      G_RAM_DEPTH  => 4
     )
     port map (
       clk_i     => clk,
       rst_i     => rst,
       s_ready_o => server_user_rx_ready,
       s_valid_i => server_user_rx_valid,
-      s_data_i  => server_user_rx_in,
+      s_data_i  => server_user_rx_data,
+      s_last_i  => server_user_rx_last,
+      s_bytes_i => server_user_rx_bytes,
       m_ready_i => server_user_tx_ready,
       m_valid_o => server_user_tx_valid,
-      m_data_o  => server_user_tx_out
+      m_data_o  => server_user_tx_data,
+      m_last_o  => server_user_tx_last,
+      m_bytes_o => server_user_tx_bytes
     ); -- axi_fifo_sync_inst : entity work.axi_fifo_sync
-
-  server_user_rx_in(R_AXI_FIFO_DATA)  <= server_user_rx_data;
-  server_user_rx_in(R_AXI_FIFO_BYTES) <= to_stdlogicvector(server_user_rx_bytes, 8);
-  server_user_rx_in(C_AXI_FIFO_LAST)  <= server_user_rx_last;
-
-  server_user_tx_data                 <= server_user_tx_out(R_AXI_FIFO_DATA);
-  server_user_tx_bytes                <= to_integer(server_user_tx_out(R_AXI_FIFO_BYTES));
-  server_user_tx_last                 <= server_user_tx_out(C_AXI_FIFO_LAST);
 
 
   ----------------------------------------------------------
   -- Dump data packets
   ----------------------------------------------------------
 
-  data_logger_c2s_inst : entity work.data_logger
+  axip_logger_c2s_inst : entity work.axip_logger
     generic map (
       G_ENABLE        => G_SHOW_PACKETS,
       G_LOG_NAME      => "C2S", -- Client to Server
@@ -256,9 +241,9 @@ begin
       data_i  => tb_eth_payload_c2s_data,
       last_i  => tb_eth_payload_c2s_last,
       bytes_i => tb_eth_payload_c2s_bytes
-    ); -- data_logger_c2s_inst : entity work.data_logger
+    ); -- axip_logger_c2s_inst : entity work.axip_logger
 
-  data_logger_s2c_inst : entity work.data_logger
+  axip_logger_s2c_inst : entity work.axip_logger
     generic map (
       G_ENABLE        => G_SHOW_PACKETS,
       G_LOG_NAME      => "S2C", -- Server to Client
@@ -273,7 +258,7 @@ begin
       data_i  => tb_eth_payload_s2c_data,
       last_i  => tb_eth_payload_s2c_last,
       bytes_i => tb_eth_payload_s2c_bytes
-    ); -- data_logger_s2c_inst : entity work.data_logger
+    ); -- axip_logger_s2c_inst : entity work.axip_logger
 
 end architecture simulation;
 

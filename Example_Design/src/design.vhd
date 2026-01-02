@@ -179,9 +179,9 @@ begin
       eth_payload_tx_bytes_o => eth_tx_wide_bytes
     ); -- mac_handler_inst : entity work.mac_handler
 
-  wide2byte_inst : entity work.wide2byte
+  axip_to_axis_inst : entity work.axip_to_axis
     generic map (
-      G_BYTES => C_BYTES
+      G_DATA_BYTES => C_BYTES
     )
     port map (
       clk_i     => clk_i,
@@ -195,11 +195,11 @@ begin
       m_valid_o => eth_tx_valid_o,
       m_last_o  => eth_tx_last_o,
       m_data_o  => eth_tx_data_o
-    ); -- wide2byte_inst : entity work.wide2byte
+    ); -- axip_to_axis_inst : entity work.axip_to_axis
 
-  byte2wide_inst : entity work.byte2wide
+  axis_to_axip_inst : entity work.axis_to_axip
     generic map (
-      G_BYTES => C_BYTES
+      G_DATA_BYTES => C_BYTES
     )
     port map (
       clk_i     => clk_i,
@@ -213,16 +213,16 @@ begin
       m_last_o  => eth_rx_wide_last,
       m_data_o  => eth_rx_wide_data,
       m_bytes_o => eth_rx_wide_bytes
-    ); -- byte2wide_inst : entity work.byte2wide
+    ); -- axis_to_axip_inst : entity work.axis_to_axip
 
 
   --------------------------------------------------
   -- Receive path
   --------------------------------------------------
 
-  wide2byte_rx_inst : entity work.wide2byte
+  axip_to_axis_rx_inst : entity work.axip_to_axis
     generic map (
-      G_BYTES => C_BYTES
+      G_DATA_BYTES => C_BYTES
     )
     port map (
       clk_i     => clk_i,
@@ -236,7 +236,7 @@ begin
       m_valid_o => mac_user_rx_byte_valid,
       m_last_o  => mac_user_rx_byte_last,
       m_data_o  => mac_user_rx_byte_data
-    ); -- wide2byte_rx_inst : entity work.wide2byte
+    ); -- axip_to_axis_rx_inst : entity work.axip_to_axis
 
   mac_user_rx_byte_ready <= '1' when rx_state = RX_IDLE_ST else
                             '0';
