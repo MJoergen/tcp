@@ -3,22 +3,21 @@
 # Description: Makefile for simulating the entire project
 #
 
+TARGETS += sim
+TARGETS += Example_Design
 
-DIRS += formal
-DIRS += sim
+all: $(TARGETS)
 
-.PHONY: run
-run: $(patsubst %,%/PASS,$(DIRS))
+.PHONY: sim
+sim:
+	make -C sim
 
-.PHONY: %/PASS
-%/PASS: DIR=$(patsubst %/PASS,%,$@)
-%/PASS:
-	make -C $(DIR)
+.PHONY: Example_Design
+Example_Design:
+	make -C Example_Design
 
-clean: $(patsubst %,%/CLEAN,$(DIRS))
-
-.PHONY: %/CLEAN
-%/CLEAN: DIR=$(patsubst %/CLEAN,%,$@)
-%/CLEAN:
-	make -C $(DIR) clean
+.PHONY: clean
+clean:
+	make -C sim clean
+	make -C Example_Design clean
 

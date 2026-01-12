@@ -8,10 +8,10 @@ SRC += $(EXAMPLE_SRC_DIR)/clk_rst.vhd
 SRC += $(EXAMPLE_SRC_DIR)/controller.vhd
 SRC += $(EXAMPLE_SRC_DIR)/design.vhd
 
-SRC += $(FPGA_UTILITIES_SRC_DIR)/axip_to_axis.vhd
-SRC += $(FPGA_UTILITIES_SRC_DIR)/axis_insert_fixed_header.vhd
-SRC += $(FPGA_UTILITIES_SRC_DIR)/axis_remove_fixed_header.vhd
-SRC += $(FPGA_UTILITIES_SRC_DIR)/axis_to_axip.vhd
+SRC += $(FPGA_UTILITIES_SRC_DIR)/axip/axip_insert_fixed_header.vhd
+SRC += $(FPGA_UTILITIES_SRC_DIR)/axip/axip_remove_fixed_header.vhd
+SRC += $(FPGA_UTILITIES_SRC_DIR)/converters/axip_to_axis.vhd
+SRC += $(FPGA_UTILITIES_SRC_DIR)/converters/axis_to_axip.vhd
 
 SRC += $(SRC_DIR)/mac_handler.vhd
 

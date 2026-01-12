@@ -157,7 +157,7 @@ begin
   tx_h_data(R_MAC_PROTOCOL)    <= user_protocol;
   tx_h_valid                   <= user_established_o;
 
-  axis_insert_fixed_header_inst : entity work.axis_insert_fixed_header
+  axip_insert_fixed_header_inst : entity work.axip_insert_fixed_header
     generic map (
       G_DATA_BYTES   => G_BYTES,
       G_HEADER_BYTES => C_MAC_HEADER_LENGTH
@@ -178,14 +178,14 @@ begin
       m_data_o  => eth_payload_tx_data_o,
       m_last_o  => eth_payload_tx_last_o,
       m_bytes_o => eth_payload_tx_bytes_o
-    ); -- axis_insert_fixed_header_inst : entity work.axis_insert_fixed_header
+    ); -- axip_insert_fixed_header_inst : entity work.axip_insert_fixed_header
 
 
   -------------------------------------
   -- Rx Path
   -------------------------------------
 
-  axis_remove_fixed_header_inst : entity work.axis_remove_fixed_header
+  axip_remove_fixed_header_inst : entity work.axip_remove_fixed_header
     generic map (
       G_DATA_BYTES   => G_BYTES,
       G_HEADER_BYTES => C_MAC_HEADER_LENGTH
@@ -206,7 +206,7 @@ begin
       h_ready_i => mac_rx_ready,
       h_valid_o => mac_rx_valid,
       h_data_o  => mac_rx_data
-    ); -- axis_remove_fixed_header_inst : entity work.axis_remove_fixed_header
+    ); -- axip_remove_fixed_header_inst : entity work.axip_remove_fixed_header
 
   mac_rx_ready    <= '1';
 

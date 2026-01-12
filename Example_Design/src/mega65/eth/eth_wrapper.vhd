@@ -220,7 +220,7 @@ begin
   -- The frame buffer holds 4 kB of data.
   --------------------------------------------------
 
-  axi_dropper_inst : entity work.axi_dropper
+  axip_dropper_inst : entity work.axip_dropper
     generic map (
       G_DATA_SIZE => 8,
       G_ADDR_SIZE => 12,
@@ -238,7 +238,7 @@ begin
       m_valid_o => eth_drop_valid,
       m_last_o  => eth_drop_last,
       m_data_o  => eth_drop_data
-    ); -- axi_dropper_inst : entity work.axi_dropper
+    ); -- axip_dropper_inst : entity work.axip_dropper
 
 
   --------------------------------------------------

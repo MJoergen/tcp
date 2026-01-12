@@ -2,20 +2,17 @@
 #
 # Description: Makefile for simulating the entire project
 
-TESTS += tb_design
-TESTS += tb_mac_handler
+DUTS += tb_design
+DUTS += tb_mac_handler
 
-.PHONY: run
-run: $(patsubst %,%/PASS,$(TESTS))
+DUT_PASS   = $(patsubst %,%/PASS,$(DUTS))
 
-%/PASS: TEST=$(patsubst %/PASS,%,$@)
+all: $(DUT_PASS)
+
+%/PASS: DUT=$(patsubst %/PASS,%,$@)
 %/PASS:
-	make -C $(TEST)
+	make -C $(DUT)
 
-clean: $(patsubst %,%/CLEAN,$(TESTS))
-
-.PHONY: %/CLEAN
-%/CLEAN: TEST=$(patsubst %/CLEAN,%,$@)
-%/CLEAN:
-	make -C $(TEST) clean
+clean:
+	for i in $(DUTS); do make -C $$i clean; done
 

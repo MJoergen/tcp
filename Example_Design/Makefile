@@ -1,17 +1,22 @@
 # List of library files
 LIB_SRC_DIR = ../src
-SRC += $(LIB_SRC_DIR)/axis_insert_fixed_header.vhd
-SRC += $(LIB_SRC_DIR)/axis_remove_fixed_header.vhd
 SRC += $(LIB_SRC_DIR)/mac_handler.vhd
 #SRC += $(LIB_SRC_DIR)/ip_wrapper.vhd
 #SRC += $(LIB_SRC_DIR)/tcp_protocol.vhd
 #SRC += $(LIB_SRC_DIR)/tcp_wrapper.vhd
 
+# List of utility files
+FPGA_UTILITIES_SRC_DIR = ../../fpga_utilities/src
+SRC += $(FPGA_UTILITIES_SRC_DIR)/axip/axip_insert_fixed_header.vhd
+SRC += $(FPGA_UTILITIES_SRC_DIR)/axip/axip_remove_fixed_header.vhd
+SRC += $(FPGA_UTILITIES_SRC_DIR)/axip/axip_dropper.vhd
+SRC += $(FPGA_UTILITIES_SRC_DIR)/axis/axis_fifo_sync.vhd
+SRC += $(FPGA_UTILITIES_SRC_DIR)/converters/axip_to_axis.vhd
+SRC += $(FPGA_UTILITIES_SRC_DIR)/converters/axis_to_axip.vhd
+
 # List of platform files
 SRC_DIR = src
 SRC += $(SRC_DIR)/clk_rst.vhd
-SRC += $(SRC_DIR)/mega65/axi_dropper.vhd
-SRC += $(SRC_DIR)/mega65/axi_fifo_sync.vhd
 SRC += $(SRC_DIR)/mega65/uart_serdes.vhd
 SRC += $(SRC_DIR)/mega65/tdp_ram.vhd
 SRC += $(SRC_DIR)/mega65/keyboard/kb_matrix_ram.vhd
@@ -30,8 +35,6 @@ SRC += $(SRC_DIR)/mega65_wrapper.vhd
 SRC += $(SRC_DIR)/top.vhd
 
 # List of Example Design files
-SRC += $(SRC_DIR)/byte2wide.vhd
-SRC += $(SRC_DIR)/wide2byte.vhd
 SRC += $(SRC_DIR)/controller.vhd
 SRC += $(SRC_DIR)/design.vhd
 

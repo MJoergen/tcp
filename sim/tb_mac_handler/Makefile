@@ -4,10 +4,10 @@
 
 # List of source files
 SRC += $(SRC_DIR)/mac_handler.vhd
-SRC += $(FPGA_UTILITIES_SRC_DIR)/axip_fifo_sync.vhd
-SRC += $(FPGA_UTILITIES_SRC_DIR)/axis_fifo_sync.vhd
-SRC += $(FPGA_UTILITIES_SRC_DIR)/axis_insert_fixed_header.vhd
-SRC += $(FPGA_UTILITIES_SRC_DIR)/axis_remove_fixed_header.vhd
+SRC += $(FPGA_UTILITIES_SRC_DIR)/axip/axip_fifo_sync.vhd
+SRC += $(FPGA_UTILITIES_SRC_DIR)/axip/axip_insert_fixed_header.vhd
+SRC += $(FPGA_UTILITIES_SRC_DIR)/axip/axip_remove_fixed_header.vhd
+SRC += $(FPGA_UTILITIES_SRC_DIR)/axis/axis_fifo_sync.vhd
 
 # List of test specific simulation files
 SRC += tb_mac_handler.vhd
